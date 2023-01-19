@@ -1,0 +1,71 @@
+Temp/
+Logs/
+/obj/
+UnityGenerated/
+Library/
+Assets/Examples/
+Assets/Examples.meta
+Assets/SuperScrollView/Demo/
+Assets/SuperScrollView/Demo.meta
+Logs/IncrementalCompiler/
+MemoryCaptures/
+.vscode/
+.idea/
+*.csproj
+*.sln
+*.suo
+*.apk
+#*.unitypackage
+/.vs
+
+Assets/Unity.VisualScripting.Generated/VisualScripting.Flow/UnitOptions.db
+Assets/Unity.VisualScripting.Generated/VisualScripting.Flow/UnitOptions.db.meta
+Assets/Unity.VisualScripting.Generated/VisualScripting.Core/Property Providers
+Assets/Unity.VisualScripting.Generated/VisualScripting.Core/Property Providers.meta
+
+# Visual Studio / MonoDevelop generated #
+ 
+ExportedObj/
+*.svd
+*.userprefs
+*.pidb
+*.user
+*.unityproj
+*.booproj
+.vsconfig
+
+# OS generated #
+
+.DS_Store 
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+Android.meta
+UserSettings/QuickSearch.settings
+Assets/Assets.index
+Assets/Assets.index.meta
+.VSCodeCounter
+
+## Bolt
+
+Assets/Ludiq/Bolt.Flow/Generated/UnitOptions.db
+Assets/Ludiq/Bolt.Flow/Generated/UnitOptions.db.meta
+Assets/Ludiq/Ludiq.Core/Generated/Property Providers
+Assets/Ludiq/Ludiq.Core/Generated/Property Providers.meta
+Assets/Resources/DevelopmentConfig.asset
+Assets/Resources/DevelopmentConfig.asset.meta
+Assets/AmplifyShaderEditor/Examples
+Assets/AmplifyShaderEditor/Examples.meta
+Assets/Configs/Contexts/Player.asset
+Assets/Configs/Contexts/Player.asset.meta
+Resource/
+Resource/xlt/
+ProjectSettings/Packages/com.unity.probuilder/*
+UserSettings/
+
+Assets/StreamingAssets/google-services-desktop.*
+Assets/AddressableAssetsData/*/addressables_content_state.bin
+Assets/AddressableAssetsData/*/addressables_content_state.bin.meta
