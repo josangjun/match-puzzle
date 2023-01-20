@@ -29,6 +29,14 @@ MonoBehaviour:
     m_Address: Fonts
     m_ReadOnly: 0
     m_SerializedLabels: []
+  - m_GUID: 273f8186d31b54df3a2f5b5c750e7734
+    m_Address: Assets/Prefabs/Base/Jewel.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 3cfa9af4ccaa340ecab849703e185c8d
+    m_Address: Assets/Configs/FontConfig.asset
+    m_ReadOnly: 0
+    m_SerializedLabels: []
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: 3a2bc81335aa9c94fa23a84c61f2d568, type: 2}
   m_SchemaSet:

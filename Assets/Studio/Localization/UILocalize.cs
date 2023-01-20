@@ -47,9 +47,6 @@ namespace Studio.Common
             [SerializeField, ShowIf(nameof(_HasRawImage))]
             public TextureTag[] textures;
 
-            [SerializeField, ShowIf(nameof(_HasText))] int originalFontSize;
-            [SerializeField, ShowIf(nameof(_HasText))] float originalLineSpacing;
-
             public void Collect(GameObject go)
             {
                 if (graphic == null)
@@ -74,28 +71,10 @@ namespace Studio.Common
                 else if (graphic is TMP_Text)
                 {
                     type = UIType.TMP_Text;
-                    var t = graphic as TMP_Text;
-                    if (originalFontSize == 0)
-                    {
-                        originalFontSize = (int)t.fontSize;
-                    }
-                    if (originalLineSpacing == 0)
-                    {
-                        originalLineSpacing = t.lineSpacing;
-                    }
                 }
                 else if (graphic is Text)
                 {
                     type = UIType.Text;
-                    var t = graphic as Text;
-                    if (originalFontSize == 0)
-                    {
-                        originalFontSize = t.fontSize;
-                    }
-                    if (originalLineSpacing == 0)
-                    {
-                        originalLineSpacing = t.lineSpacing;
-                    }
                 }
                 else if (!System.Enum.TryParse(graphic.GetType().Name, out type))
                     type = UIType.Nothing;
@@ -163,8 +142,6 @@ namespace Studio.Common
 
                 Font newFont = fontConfig.GetFontByLanguage(text.font, lang);
                 text.font = newFont;
-                text.fontSize = fontConfig.GetFontSizeByLanguage(originalFontSize, lang);
-                text.lineSpacing = fontConfig.GetLineSpacingByLanguage(originalLineSpacing, lang);
             }
 
             private void ApplyFont(TMP_Text tmpText)

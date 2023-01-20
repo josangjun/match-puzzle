@@ -311,7 +311,7 @@ namespace Studio
             Instance = this;
 
             Davinci.SetFilePath(FileTool.GetResourceDir() + "/images/");
-            FontConfig.Init("Assets/Configs/GSpin/FontConfig.asset");
+            FontConfig.Init("Assets/Configs/FontConfig.asset");
             //Davinci.ClearAllCachedFiles();
             goPool = gameObject.GetOrNewComponent<GoPool>();
             uiManager = gameObject.GetOrNewComponent<UIManager>();
