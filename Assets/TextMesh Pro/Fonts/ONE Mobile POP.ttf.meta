@@ -1,0 +1,30 @@
+fileFormatVersion: 2
+guid: 3a182ae3d82e5ee4fb0612c3e26a9942
+TrueTypeFontImporter:
+  externalObjects: {}
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontNames:
+  - ONE Mobile POP
+  - PSL Omyim Pro
+  - LINE
+  - FZCuYuanB-M03
+  - LINE-Seurat ProN
+  fallbackFontReferences:
+  - {fileID: 12800000, guid: 029d1b6b90ca5d4418c9a7d014eed9bd, type: 3}
+  - {fileID: 12800000, guid: eddc49aa649e3164fb9512d26a830d85, type: 3}
+  - {fileID: 12800000, guid: 186941b6db124cc40a46e7357e6542cd, type: 3}
+  - {fileID: 12800000, guid: 820cb65195cc6664d9770cf88e69cf0d, type: 3}
+  - {fileID: 12800000, guid: dd82048d81b87e14e9652478c5099a85, type: 3}
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  useLegacyBoundsCalculation: 0
+  shouldRoundAdvanceValue: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

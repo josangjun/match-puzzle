@@ -16,7 +16,19 @@ MonoBehaviour:
   m_Data:
     m_SerializedData: []
   m_GUID: 5e4b8c7afebc6d14483138b95934d8a3
-  m_SerializeEntries: []
+  m_SerializeEntries:
+  - m_GUID: 7357e3b5145b744eea6bae7380087eef
+    m_Address: Assets/Configs/ContentConfig.asset
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 3f5b5dff67a942289a9defa416b206f3
+    m_Address: TMP Settings.asset
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 731f1baa9d144a9897cb1d341c2092b8
+    m_Address: Fonts
+    m_ReadOnly: 0
+    m_SerializedLabels: []
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: 3a2bc81335aa9c94fa23a84c61f2d568, type: 2}
   m_SchemaSet:
