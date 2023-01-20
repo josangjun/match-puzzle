@@ -1,9 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
-using UnityEngine.AddressableAssets;
-using UnityEngine.ResourceManagement.AsyncOperations;
 
 namespace Studio.Framework
 {
@@ -27,6 +24,8 @@ namespace Studio.Framework
             for (var i = list.Count-1; i >= 0; --i)
             {
                 var config = list[i];
+                if (config == null)
+                    continue;
                 if (dict.ContainsKey(config.GetInstanceID()))
                 {
                     list.RemoveAt(i);

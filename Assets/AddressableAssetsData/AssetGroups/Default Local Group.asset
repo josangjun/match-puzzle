@@ -37,6 +37,10 @@ MonoBehaviour:
     m_Address: Assets/Configs/FontConfig.asset
     m_ReadOnly: 0
     m_SerializedLabels: []
+  - m_GUID: 08860b42f2456f14e918e47f82475d73
+    m_Address: Assets/Configs/Sound/SoundConfig.asset
+    m_ReadOnly: 0
+    m_SerializedLabels: []
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: 3a2bc81335aa9c94fa23a84c61f2d568, type: 2}
   m_SchemaSet:
