@@ -18,6 +18,17 @@ namespace Studio.Game
 
         private List<Gem> _gems = new List<Gem>();
 
+        private Gem[,] _board = new Gem[COL, ROW];
+
+        public Gem this[int x, int y]
+        {
+            get => _board[x, y];
+            set
+            {
+                _board[x, y] = value;
+            }
+        }
+
         // Start is called before the first frame update
         IEnumerator Start()
         {
@@ -104,13 +115,25 @@ namespace Studio.Game
             var rhs = g;
             var tf = lhs.IsAdjacency(rhs);
             pressedGem.Set(null);
+            if (tf)
+            {
+                commands.AddFirst(new Commands.SwapGem
+                {
+                    x = lhs.x,
+                    y = lhs.y,
+                    z = rhs.x,
+                    w = rhs.y
+                });
+            }
             SLogger.Log($"adjacency:{lhs}, {rhs}, {tf}");
         }
 
         public readonly LinkedList<ICommand> commands = new LinkedList<ICommand>();
 
+        public readonly BatchJob job = new BatchJob();
+
         // Update is called once per frame
-        void Update()
+        public void Update()
         {
             if (commands.Count > 0)
             {
@@ -120,6 +143,8 @@ namespace Studio.Game
                 if (!cmd.IsRunning())
                     commands.RemoveFirst();
             }
+            if (!job.IsProcessing && job.Count > 0)
+                StartCoroutine(job.Process());
         }
     }
 }

@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
+using DG.Tweening;
 
 namespace Studio.Game
 {
@@ -55,6 +56,7 @@ namespace Studio.Game
             base.OnRent();
 
             x = y = -1;
+            image.transform.localScale = new Vector2(1, 1);
         }
 
         public void OnDrag(PointerEventData eventData)
@@ -90,7 +92,42 @@ namespace Studio.Game
             this.x = x;
             this.y = y;
 
-            rect.anchoredPosition = new Vector2(x * Size.x - Offset.x, y * -Size.y + Offset.y);
+            rect.anchoredPosition = GetAnchoredPosition(x, y);
+            Stage.Instance[x, y] = this;
+        }
+
+        public static Vector2 GetAnchoredPosition(int x, int y)
+        {
+            return new Vector2(x * Size.x - Offset.x, y * -Size.y + Offset.y);
+        }
+
+        public Tween MovePosition(int x, int y, float time = 0.3f)
+        {
+            var h = _lock.Lock();
+            var dest = GetAnchoredPosition(x, y);
+
+            var tween = rect.DOAnchorPos(dest, time).OnComplete(() =>
+            {
+                h.Dispose();
+            });
+            return tween;
+        }
+
+        public bool IsIdle() => _lock.count == 0;
+        public bool IsLocked() => _lock.count > 0;
+
+        public System.IDisposable Lock() => _lock.Lock();
+
+        private CountingLock _lock = new CountingLock();
+
+        public void Explode()
+        {
+            var h = _lock.Lock();
+            image.transform.DOScale(0, 0.3f).OnComplete(() =>
+            {
+                h.Dispose();
+                Return();
+            });
         }
 
         private void Refresh(GemType type)
