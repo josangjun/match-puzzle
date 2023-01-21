@@ -525,7 +525,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e02fd269356234b04b6feb1ff234180b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _jewelFactory: {fileID: 20891333}
+  _gemFactory: {fileID: 20891333}
 --- !u!1 &1814590357
 GameObject:
   m_ObjectHideFlags: 0

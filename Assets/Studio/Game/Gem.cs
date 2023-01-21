@@ -9,24 +9,39 @@ using UnityEngine.EventSystems;
 namespace Studio.Game
 {
     public enum Direction { None, Up, Right, Down, Left };
+    public enum GemType { None, Red, Orange, Yellow, Green, Blue, Purple, White }
 
-    public class Jewel : GoItem, IDragHandler, IPointerDownHandler
+    public class Gem : GoItem, IDragHandler, IPointerDownHandler
     {
-        public readonly UniRx.Subject<Jewel> onPress = new UniRx.Subject<Jewel>();
+        public readonly UniRx.Subject<Gem> onPress = new UniRx.Subject<Gem>();
 
-        [System.NonSerialized]
-        [NaughtyAttributes.ShowNonSerializedField]
+        [System.NonSerialized, NaughtyAttributes.ShowNonSerializedField]
         public int x, y;
 
         [SerializeField]
         private Image _image;
         public Image image => _image;
 
+        [SerializeField]
+        private GemVisualizer _visualizer;
+
         public RectTransform rect => (RectTransform)transform;
+
+        [SerializeField]
+        private GemType _type = GemType.None;
+        public GemType type
+        {
+            get => _type;
+            set
+            {
+                _type = value;
+                Refresh(_type);
+            }
+        }
 
         public override string ToString()
         {
-            return $"Jewel[{x},{y}]";
+            return $"Gem[{type},{x},{y}]";
         }
 
         // Start is called before the first frame update
@@ -53,7 +68,7 @@ namespace Studio.Game
             onPress.OnNext(this);
         }
 
-        public bool IsAdjacency(Jewel other)
+        public bool IsAdjacency(Gem other)
         {
             var diffx = Mathf.Abs(x - other.x);
             var diffy = Mathf.Abs(y - other.y);
@@ -76,6 +91,16 @@ namespace Studio.Game
             this.y = y;
 
             rect.anchoredPosition = new Vector2(x * Size.x - Offset.x, y * -Size.y + Offset.y);
+        }
+
+        private void Refresh(GemType type)
+        {
+            _visualizer.SetAttribute(this, type);
+        }
+
+        protected void OnValidate()
+        {
+            Refresh(_type);
         }
     }
 }

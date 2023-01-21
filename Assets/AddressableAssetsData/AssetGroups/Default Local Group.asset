@@ -30,7 +30,7 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
   - m_GUID: 273f8186d31b54df3a2f5b5c750e7734
-    m_Address: Assets/Prefabs/Base/Jewel.prefab
+    m_Address: Assets/Prefabs/Base/Gem.prefab
     m_ReadOnly: 0
     m_SerializedLabels: []
   - m_GUID: 3cfa9af4ccaa340ecab849703e185c8d

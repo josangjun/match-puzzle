@@ -2,21 +2,21 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UniRx;
-using System.Threading.Tasks;
-using System.Linq;
 using Studio.Framework;
+using Studio.Common;
 
 namespace Studio.Game
 {
-    public class Stage : MonoBehaviour
+    public class Stage : Singleton<Stage>
     {
         public const int COL = 8;
         public const int ROW = 8;
 
         [SerializeField]
-        private JewelFactory _jewelFactory;
+        private GemFactory _gemFactory;
+        public GemFactory gemFactory => _gemFactory;
 
-        private List<Jewel> jewels = new List<Jewel>();
+        private List<Gem> _gems = new List<Gem>();
 
         // Start is called before the first frame update
         IEnumerator Start()
@@ -24,13 +24,13 @@ namespace Studio.Game
             if (!Service.ready)
                 yield return Service.Init();
 
-            _jewelFactory.onInit.Subscribe(OnInit).AddTo(this);
-            yield return _jewelFactory.Prepare().ToObservable().ToYieldInstruction();
+            gemFactory.onInit.Subscribe(OnInit).AddTo(this);
+            yield return gemFactory.Prepare().ToObservable().ToYieldInstruction();
 
             var count = COL * ROW;
             for (var i = 0; i < count; ++i)
             {
-                _jewelFactory.Produce();
+                gemFactory.Produce();
             }
             
             ArrangePosition();
@@ -38,80 +38,88 @@ namespace Studio.Game
 
         private void ArrangePosition()
         {
-            var j = jewels[0];
-            var size = j.rect.sizeDelta;
-            var board = (RectTransform)_jewelFactory.transform;
+            var g = _gems[0];
+            var size = g.rect.sizeDelta;
+            var board = (RectTransform)gemFactory.transform;
             var offset = board.sizeDelta * 0.5f;
             offset.x -= size.x * 0.5f;
             offset.y -= size.y * 0.5f;
 
-            Jewel.Init(size, offset);
+            Gem.Init(size, offset);
             
             int i = 0;
             for (var x = 0; x < COL; ++x)
             {
                 for (var y = 0; y < ROW; ++y)
                 {
-                    j = jewels[i];
-                    j.transform.SetSiblingIndex(i);
-                    j.SetPosition(x, y);
+                    g = _gems[i];
+                    g.transform.SetSiblingIndex(i);
+                    g.SetPosition(x, y);
                     ++i;
                 }
             }
         }
 
-        private class PressdedJewel
+        private class PressedGem
         {
-            private Jewel _j;
+            private Gem _g;
 
-            public Jewel val
+            public Gem val
             {
-                get => _j;
+                get => _g;
                 private set
                 {
-                    if (_j)
-                        _j.image.SetAlpha(1f);
-                    _j = value;
-                    if (_j)
-                        _j.image.SetAlpha(0.7f);
+                    if (_g)
+                        _g.image.SetAlpha(1f);
+                    _g = value;
+                    if (_g)
+                        _g.image.SetAlpha(0.7f);
                 }
             }
 
-            public void Set(Jewel j)
+            public void Set(Gem j)
             {
                 val = j;
             }
         }
 
-        private PressdedJewel pressedJewel = new PressdedJewel();
+        private PressedGem pressedGem = new PressedGem();
 
-        private void OnInit(Jewel j)
+        private void OnInit(Gem g)
         {
-            j.onPress.TakeUntilDisable(j).Subscribe(OnPress).AddTo(this);
-            jewels.Add(j);
+            g.onPress.TakeUntilDisable(g).Subscribe(OnPress).AddTo(this);
+            _gems.Add(g);
         }
 
-        private void OnPress(Jewel j)
+        private void OnPress(Gem g)
         {
-            SLogger.Log(j);
-            if (pressedJewel.val == null)
+            SLogger.Log(g);
+            if (pressedGem.val == null)
             {
-                pressedJewel.Set(j);
-                j.image.SetAlpha(0.7f);
+                pressedGem.Set(g);
                 return;
             }
 
-            var lhs = pressedJewel.val;
-            var rhs = j;
+            var lhs = pressedGem.val;
+            var rhs = g;
             var tf = lhs.IsAdjacency(rhs);
-            pressedJewel.Set(null);
+            pressedGem.Set(null);
             SLogger.Log($"adjacency:{lhs}, {rhs}, {tf}");
         }
+
+        public readonly LinkedList<ICommand> commands = new LinkedList<ICommand>();
 
         // Update is called once per frame
         void Update()
         {
-
+            if (commands.Count > 0)
+            {
+                var cmd = commands.First.Value;
+                if (!cmd.IsRunning())
+                    cmd.Run();
+                if (!cmd.IsRunning())
+                    commands.RemoveFirst();
+            }
         }
     }
 }
