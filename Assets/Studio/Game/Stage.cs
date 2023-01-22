@@ -11,6 +11,7 @@ namespace Studio.Game
     {
         public const int COL = 8;
         public const int ROW = 8;
+        public const int MATCH = 3;
 
         [SerializeField]
         private GemFactory _gemFactory;
@@ -22,9 +23,18 @@ namespace Studio.Game
 
         public Gem this[int x, int y]
         {
-            get => _board[x, y];
+            get
+            {
+                if (x < 0 || x >= COL ||
+                    y < 0 || y >= ROW)
+                    return default;
+                return _board[x, y];
+            }
             set
             {
+                if (x < 0 || x >= COL ||
+                    y < 0 || y >= ROW)
+                    return;
                 _board[x, y] = value;
             }
         }
@@ -119,10 +129,8 @@ namespace Studio.Game
             {
                 commands.AddFirst(new Commands.SwapGem
                 {
-                    x = lhs.x,
-                    y = lhs.y,
-                    z = rhs.x,
-                    w = rhs.y
+                    lhs = lhs,
+                    rhs = rhs
                 });
             }
             SLogger.Log($"adjacency:{lhs}, {rhs}, {tf}");
@@ -135,16 +143,18 @@ namespace Studio.Game
         // Update is called once per frame
         public void Update()
         {
-            if (commands.Count > 0)
+            while (commands.Count > 0)
             {
                 var cmd = commands.First.Value;
                 if (!cmd.IsRunning())
                     cmd.Run();
                 if (!cmd.IsRunning())
-                    commands.RemoveFirst();
+                    commands.Remove(cmd);
             }
             if (!job.IsProcessing && job.Count > 0)
                 StartCoroutine(job.Process());
         }
+
+        public readonly Judge judge = new Judge();
     }
 }

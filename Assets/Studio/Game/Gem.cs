@@ -9,11 +9,18 @@ using DG.Tweening;
 
 namespace Studio.Game
 {
+    [System.Flags]
     public enum Direction { None, Up, Right, Down, Left };
     public enum GemType { None, Red, Orange, Yellow, Green, Blue, Purple, White }
+    public enum Axis { Horizontal, Vetical };
 
     public class Gem : GoItem, IDragHandler, IPointerDownHandler
     {
+        public static implicit operator Point(Gem gem)
+        {
+            return new Point { x = gem.x, y = gem.y };
+        }
+
         public readonly UniRx.Subject<Gem> onPress = new UniRx.Subject<Gem>();
 
         [System.NonSerialized, NaughtyAttributes.ShowNonSerializedField]
@@ -109,6 +116,7 @@ namespace Studio.Game
             var tween = rect.DOAnchorPos(dest, time).OnComplete(() =>
             {
                 h.Dispose();
+                SetPosition(x, y);
             });
             return tween;
         }
@@ -122,6 +130,8 @@ namespace Studio.Game
 
         public void Explode()
         {
+            if (IsLocked())
+                return;
             var h = _lock.Lock();
             image.transform.DOScale(0, 0.3f).OnComplete(() =>
             {
@@ -138,6 +148,12 @@ namespace Studio.Game
         protected void OnValidate()
         {
             Refresh(_type);
+        }
+
+        public Gem GetNext(Direction dir)
+        {
+            var p = (Point)this;
+            return (Gem)p.Move(dir);
         }
     }
 }
