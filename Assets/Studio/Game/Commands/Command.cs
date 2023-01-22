@@ -25,6 +25,8 @@ namespace Studio.Game.Commands
 
         private Judge judge => Stage.Instance.judge;
 
+        public UniRx.Subject<UniRx.Unit> onFinished = new UniRx.Subject<UniRx.Unit>();
+
         public async void Run()
         {
             var gx = (Gem)lhs;
@@ -39,37 +41,8 @@ namespace Studio.Game.Commands
             var t = gy.MovePosition(lhs.x, lhs.y);
             while (s.IsActive() || t.IsActive())
                 await Task.Yield();
-            
-            var matched = Match(gx) || Match(gy);
-            
-            if (!matched)
-            {
-                var u = gx.MovePosition(lhs.x, lhs.y);
-                var v = gy.MovePosition(rhs.x, rhs.y);
-                while (u.IsActive() || v.IsActive())
-                    await Task.Yield();
-            }
-        }
 
-        public bool Match(Point p)
-        {
-            if (!judge.Match(p))
-                return false;
-
-            var explosion = new Explosion();
-
-            if (judge.horizontalList.Count >= Stage.MATCH)
-            {
-                foreach (var g in judge.horizontalList)
-                    explosion.points.Add(g);
-            }
-            if (judge.verticalList.Count >= Stage.MATCH)
-            {
-                foreach (var g in judge.verticalList)
-                    explosion.points.Add(g);
-            }
-            Stage.Instance.commands.AddFirst(explosion);
-            return true;
+            onFinished.OnNext(UniRx.Unit.Default);
         }
     }
 

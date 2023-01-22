@@ -1,3 +1,4 @@
+using Studio.Game.Commands;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -19,6 +20,35 @@ namespace Studio.Game
                 verticalList.Count >= Stage.MATCH;
         }
 
+        public bool MatchAndExplode(Point p)
+        {
+            if (Match(p))
+            {
+                var exp = MakeExplosion();
+                Stage.Instance.commands.AddLast(exp);
+                return true;
+            }
+            return false;
+        }
+
+        public Commands.Explosion MakeExplosion()
+        {
+            Commands.Explosion exp = null;
+            if (horizontalList.Count >= Stage.MATCH)
+            {
+                exp = new Explosion();
+                foreach (var g in horizontalList)
+                    exp.points.Add(g);
+            }
+            if (verticalList.Count >= Stage.MATCH)
+            {
+                exp = exp ?? new Explosion();
+                foreach (var g in verticalList)
+                    exp.points.Add(g);
+            }
+            return exp;
+        }
+
         public bool Match(Point p, Axis axis, List<Gem> buffer)
         {
             var g = (Gem)p;
@@ -34,7 +64,7 @@ namespace Studio.Game
                 Match_(p, buffer, Direction.Up);
                 Match_(p, buffer, Direction.Down);
             }
-            return buffer.Count > Stage.MATCH;
+            return buffer.Count >= Stage.MATCH;
         }
 
         private void Match_(Gem g, List<Gem> list, Direction dir)

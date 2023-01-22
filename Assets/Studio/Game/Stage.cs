@@ -81,7 +81,7 @@ namespace Studio.Game
             }
         }
 
-        private class PressedGem
+        public class PressedGem
         {
             private Gem _g;
 
@@ -104,7 +104,7 @@ namespace Studio.Game
             }
         }
 
-        private PressedGem pressedGem = new PressedGem();
+        public readonly PressedGem pressedGem = new PressedGem();
 
         private void OnInit(Gem g)
         {
@@ -125,18 +125,37 @@ namespace Studio.Game
             var rhs = g;
             var tf = lhs.IsAdjacency(rhs);
             pressedGem.Set(null);
+#if UNITY_EDITOR
+            if (Input.GetKey(KeyCode.LeftShift))
+                return;
+#endif
             if (tf)
             {
-                commands.AddFirst(new Commands.SwapGem
+                var cmd = new Commands.SwapGem
                 {
                     lhs = lhs,
                     rhs = rhs
+                };
+                cmd.onFinished.Take(1).Subscribe(_ =>
+                {
+                    var matchedL = judge.MatchAndExplode(lhs);
+                    var matchedR = judge.MatchAndExplode(rhs);
+                    if (!matchedL && !matchedR)
+                    {
+                        commands.AddLast(new Commands.SwapGem
+                        {
+                            lhs = rhs,
+                            rhs = lhs
+                        });
+                    }
                 });
+                commands.AddLast(cmd);
             }
             SLogger.Log($"adjacency:{lhs}, {rhs}, {tf}");
         }
 
         public readonly LinkedList<ICommand> commands = new LinkedList<ICommand>();
+        public readonly LinkedList<ICommand> consequence = new LinkedList<ICommand>();
 
         public readonly BatchJob job = new BatchJob();
 

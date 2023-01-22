@@ -263,6 +263,219 @@ Transform:
   m_Father: {fileID: 1362193642}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &656357248
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 656357249}
+  - component: {fileID: 656357250}
+  - component: {fileID: 656357251}
+  m_Layer: 0
+  m_Name: StageCheat
+  m_TagString: EditorOnly
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &656357249
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 656357248}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1058663902}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &656357250
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 656357248}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9343a60a84509734bb78b6f63cb86b31, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &656357251
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 656357248}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 38dcf4de0202249eab730b321c3c7ae9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _evtSys: {fileID: 1058663901}
+  bindings:
+  - name: 0.Alpha1, SetGemType(1)
+    key: 49
+    modifiers:
+      alt: 0
+      control: 0
+      shift: 0
+    evt:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 656357250}
+          m_TargetAssemblyTypeName: Studio.Game.StageCheat, Studio.Game
+          m_MethodName: SetGemType
+          m_Mode: 3
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 1
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+    ordinal: 0
+  - name: 1.Alpha2, SetGemType(2)
+    key: 50
+    modifiers:
+      alt: 0
+      control: 0
+      shift: 0
+    evt:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 656357250}
+          m_TargetAssemblyTypeName: Studio.Game.StageCheat, Studio.Game
+          m_MethodName: SetGemType
+          m_Mode: 3
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 2
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+    ordinal: 0
+  - name: 2.Alpha3, SetGemType(3)
+    key: 51
+    modifiers:
+      alt: 0
+      control: 0
+      shift: 0
+    evt:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 656357250}
+          m_TargetAssemblyTypeName: Studio.Game.StageCheat, Studio.Game
+          m_MethodName: SetGemType
+          m_Mode: 3
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 3
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+    ordinal: 0
+  - name: 3.Alpha4, SetGemType(4)
+    key: 52
+    modifiers:
+      alt: 0
+      control: 0
+      shift: 0
+    evt:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 656357250}
+          m_TargetAssemblyTypeName: Studio.Game.StageCheat, Studio.Game
+          m_MethodName: SetGemType
+          m_Mode: 3
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 4
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+    ordinal: 0
+  - name: 4.Alpha5, SetGemType(5)
+    key: 53
+    modifiers:
+      alt: 0
+      control: 0
+      shift: 0
+    evt:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 656357250}
+          m_TargetAssemblyTypeName: Studio.Game.StageCheat, Studio.Game
+          m_MethodName: SetGemType
+          m_Mode: 3
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 5
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+    ordinal: 0
+  - name: 5.Alpha6, SetGemType(6)
+    key: 54
+    modifiers:
+      alt: 0
+      control: 0
+      shift: 0
+    evt:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 656357250}
+          m_TargetAssemblyTypeName: Studio.Game.StageCheat, Studio.Game
+          m_MethodName: SetGemType
+          m_Mode: 3
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 6
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+    ordinal: 0
+  - name: 6.Alpha7, SetGemType(7)
+    key: 55
+    modifiers:
+      alt: 0
+      control: 0
+      shift: 0
+    evt:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 656357250}
+          m_TargetAssemblyTypeName: Studio.Game.StageCheat, Studio.Game
+          m_MethodName: SetGemType
+          m_Mode: 3
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 7
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+    ordinal: 0
 --- !u!1 &1058663899
 GameObject:
   m_ObjectHideFlags: 0
@@ -327,7 +540,8 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 656357249}
   m_Father: {fileID: 0}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
