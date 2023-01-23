@@ -66,10 +66,11 @@ namespace Studio.Game
             image.transform.localScale = new Vector2(1, 1);
         }
 
+        public readonly UniRx.Subject<PointerEventData> onDrag = new UniRx.Subject<PointerEventData>();
+        
         public void OnDrag(PointerEventData eventData)
         {
-            var diff = eventData.position - eventData.pressPosition;
-            Debug.Log(diff.magnitude);
+            onDrag.OnNext(eventData);
         }
 
         public void OnPointerDown(PointerEventData eventData)

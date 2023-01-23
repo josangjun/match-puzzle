@@ -4,6 +4,7 @@ using UnityEngine;
 using UniRx;
 using Studio.Framework;
 using Studio.Common;
+using UnityEngine.EventSystems;
 
 namespace Studio.Game
 {
@@ -109,7 +110,25 @@ namespace Studio.Game
         private void OnInit(Gem g)
         {
             g.onPress.TakeUntilDisable(g).Subscribe(OnPress).AddTo(this);
+            g.onDrag.TakeUntilDisable(g).Subscribe(OnDrag).AddTo(this);
             _gems.Add(g);
+        }
+
+        private void OnDrag(PointerEventData eventData)
+        {
+            var diff = eventData.position - eventData.pressPosition;
+            
+            if (diff.sqrMagnitude < 300)
+                return;
+
+            pressedGem.Set(null);
+            var g = eventData.pointerDrag.GetComponent<Gem>();
+            if (g == null)
+                return;
+            var h = (Mathf.Abs(diff.x) > Mathf.Abs(diff.y)) ?
+                g.GetNext(diff.x < 0 ? Direction.Left : Direction.Right) :
+                g.GetNext(diff.y > 0 ? Direction.Up : Direction.Down);
+            Swap(g, h);
         }
 
         private void OnPress(Gem g)
@@ -131,27 +150,35 @@ namespace Studio.Game
 #endif
             if (tf)
             {
-                var cmd = new Commands.SwapGem
-                {
-                    lhs = lhs,
-                    rhs = rhs
-                };
-                cmd.onFinished.Take(1).Subscribe(_ =>
-                {
-                    var matchedL = judge.MatchAndExplode(lhs);
-                    var matchedR = judge.MatchAndExplode(rhs);
-                    if (!matchedL && !matchedR)
-                    {
-                        commands.AddLast(new Commands.SwapGem
-                        {
-                            lhs = rhs,
-                            rhs = lhs
-                        });
-                    }
-                });
-                commands.AddLast(cmd);
+                Swap(lhs, rhs);
             }
             SLogger.Log($"adjacency:{lhs}, {rhs}, {tf}");
+        }
+
+        public void Swap(Gem lhs, Gem rhs)
+        {
+            if (lhs == null || rhs == null)
+                return;
+
+            var cmd = new Commands.SwapGem
+            {
+                lhs = lhs,
+                rhs = rhs
+            };
+            cmd.onFinished.Take(1).Subscribe(_ =>
+            {
+                var matchedL = judge.MatchAndExplode(lhs);
+                var matchedR = judge.MatchAndExplode(rhs);
+                if (!matchedL && !matchedR)
+                {
+                    commands.AddLast(new Commands.SwapGem
+                    {
+                        lhs = rhs,
+                        rhs = lhs
+                    });
+                }
+            });
+            commands.AddLast(cmd);
         }
 
         public readonly LinkedList<ICommand> commands = new LinkedList<ICommand>();

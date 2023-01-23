@@ -7,8 +7,18 @@ namespace Studio.Game
 {
     public class StageCheat : MonoBehaviour
     {
-        public void SetGemType(int type)
+        public void SetGemType(string strType)
         {
+            System.Enum.TryParse<GemType>(strType, out var type);
+
+            if (Stage.Instance.pressedGem.val)
+            {
+                var g = Stage.Instance.pressedGem.val;
+                g.type = type;
+                Stage.Instance.pressedGem.Set(null);
+                return;
+            }
+
             var screenPt = Input.mousePosition;
             var go = GameObject.FindWithTag("UICamera");
             var camera = go.GetComponent<Camera>();
@@ -25,7 +35,7 @@ namespace Studio.Game
                     var lpt = g.transform.InverseTransformPoint(worldPt);
                     if (g.rect.rect.Contains(lpt))
                     {
-                        g.type = (GemType)type;
+                        g.type = type;
                         Debug.Log($"{g}, {lpt}");
                         break;
                     }

@@ -322,7 +322,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _evtSys: {fileID: 1058663901}
   bindings:
-  - name: 0.Alpha1, SetGemType(1)
+  - name: 0.Alpha1, SetGemType(Red)
     key: 49
     modifiers:
       alt: 0
@@ -334,17 +334,17 @@ MonoBehaviour:
         - m_Target: {fileID: 656357250}
           m_TargetAssemblyTypeName: Studio.Game.StageCheat, Studio.Game
           m_MethodName: SetGemType
-          m_Mode: 3
+          m_Mode: 5
           m_Arguments:
             m_ObjectArgument: {fileID: 0}
             m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
             m_IntArgument: 1
             m_FloatArgument: 0
-            m_StringArgument: 
+            m_StringArgument: Red
             m_BoolArgument: 0
           m_CallState: 2
     ordinal: 0
-  - name: 1.Alpha2, SetGemType(2)
+  - name: 1.Alpha2, SetGemType(Orange)
     key: 50
     modifiers:
       alt: 0
@@ -356,17 +356,17 @@ MonoBehaviour:
         - m_Target: {fileID: 656357250}
           m_TargetAssemblyTypeName: Studio.Game.StageCheat, Studio.Game
           m_MethodName: SetGemType
-          m_Mode: 3
+          m_Mode: 5
           m_Arguments:
             m_ObjectArgument: {fileID: 0}
             m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
             m_IntArgument: 2
             m_FloatArgument: 0
-            m_StringArgument: 
+            m_StringArgument: Orange
             m_BoolArgument: 0
           m_CallState: 2
     ordinal: 0
-  - name: 2.Alpha3, SetGemType(3)
+  - name: 2.Alpha3, SetGemType(Yellow)
     key: 51
     modifiers:
       alt: 0
@@ -378,17 +378,17 @@ MonoBehaviour:
         - m_Target: {fileID: 656357250}
           m_TargetAssemblyTypeName: Studio.Game.StageCheat, Studio.Game
           m_MethodName: SetGemType
-          m_Mode: 3
+          m_Mode: 5
           m_Arguments:
             m_ObjectArgument: {fileID: 0}
             m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
             m_IntArgument: 3
             m_FloatArgument: 0
-            m_StringArgument: 
+            m_StringArgument: Yellow
             m_BoolArgument: 0
           m_CallState: 2
     ordinal: 0
-  - name: 3.Alpha4, SetGemType(4)
+  - name: 3.Alpha4, SetGemType(Green)
     key: 52
     modifiers:
       alt: 0
@@ -400,17 +400,17 @@ MonoBehaviour:
         - m_Target: {fileID: 656357250}
           m_TargetAssemblyTypeName: Studio.Game.StageCheat, Studio.Game
           m_MethodName: SetGemType
-          m_Mode: 3
+          m_Mode: 5
           m_Arguments:
             m_ObjectArgument: {fileID: 0}
             m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
             m_IntArgument: 4
             m_FloatArgument: 0
-            m_StringArgument: 
+            m_StringArgument: Green
             m_BoolArgument: 0
           m_CallState: 2
     ordinal: 0
-  - name: 4.Alpha5, SetGemType(5)
+  - name: 4.Alpha5, SetGemType(Blue)
     key: 53
     modifiers:
       alt: 0
@@ -422,17 +422,17 @@ MonoBehaviour:
         - m_Target: {fileID: 656357250}
           m_TargetAssemblyTypeName: Studio.Game.StageCheat, Studio.Game
           m_MethodName: SetGemType
-          m_Mode: 3
+          m_Mode: 5
           m_Arguments:
             m_ObjectArgument: {fileID: 0}
             m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
             m_IntArgument: 5
             m_FloatArgument: 0
-            m_StringArgument: 
+            m_StringArgument: Blue
             m_BoolArgument: 0
           m_CallState: 2
     ordinal: 0
-  - name: 5.Alpha6, SetGemType(6)
+  - name: 5.Alpha6, SetGemType(Purple)
     key: 54
     modifiers:
       alt: 0
@@ -444,17 +444,17 @@ MonoBehaviour:
         - m_Target: {fileID: 656357250}
           m_TargetAssemblyTypeName: Studio.Game.StageCheat, Studio.Game
           m_MethodName: SetGemType
-          m_Mode: 3
+          m_Mode: 5
           m_Arguments:
             m_ObjectArgument: {fileID: 0}
             m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
             m_IntArgument: 6
             m_FloatArgument: 0
-            m_StringArgument: 
+            m_StringArgument: Purple
             m_BoolArgument: 0
           m_CallState: 2
     ordinal: 0
-  - name: 6.Alpha7, SetGemType(7)
+  - name: 6.Alpha7, SetGemType(White)
     key: 55
     modifiers:
       alt: 0
@@ -466,13 +466,13 @@ MonoBehaviour:
         - m_Target: {fileID: 656357250}
           m_TargetAssemblyTypeName: Studio.Game.StageCheat, Studio.Game
           m_MethodName: SetGemType
-          m_Mode: 3
+          m_Mode: 5
           m_Arguments:
             m_ObjectArgument: {fileID: 0}
             m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
             m_IntArgument: 7
             m_FloatArgument: 0
-            m_StringArgument: 
+            m_StringArgument: White
             m_BoolArgument: 0
           m_CallState: 2
     ordinal: 0
