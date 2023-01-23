@@ -6,6 +6,7 @@ using UnityEngine.UI;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
 using DG.Tweening;
+using UniRx;
 
 namespace Studio.Game
 {
@@ -23,7 +24,7 @@ namespace Studio.Game
 
         public readonly UniRx.Subject<Gem> onPress = new UniRx.Subject<Gem>();
 
-        [System.NonSerialized, NaughtyAttributes.ShowNonSerializedField]
+        //[System.NonSerialized, NaughtyAttributes.ShowNonSerializedField]
         public int x, y;
 
         [SerializeField]
@@ -33,7 +34,9 @@ namespace Studio.Game
         [SerializeField]
         private GemVisualizer _visualizer;
 
-        public RectTransform rect => (RectTransform)transform;
+        private RectTransform _rectTransform;
+
+        public RectTransform rectTransform => _rectTransform;
 
         [SerializeField]
         private GemType _type = GemType.None;
@@ -53,9 +56,9 @@ namespace Studio.Game
         }
 
         // Start is called before the first frame update
-        void Start()
+        private void Awake()
         {
-
+            _rectTransform = (RectTransform)transform;
         }
 
         public override void OnRent()
@@ -95,12 +98,21 @@ namespace Studio.Game
             Offset = offset;
         }
         
+        public void SetPosition(Point pt)
+        {
+            SetPosition(pt.x, pt.y);
+        }
+
         public void SetPosition(int x, int y)
         {
+            var old = Stage.Instance[this.x, this.y];
+            if (old && old.GetInstanceID() == GetInstanceID())
+                Stage.Instance[this.x, this.y] = null;
+
             this.x = x;
             this.y = y;
 
-            rect.anchoredPosition = GetAnchoredPosition(x, y);
+            rectTransform.anchoredPosition = GetAnchoredPosition(x, y);
             Stage.Instance[x, y] = this;
         }
 
@@ -114,7 +126,7 @@ namespace Studio.Game
             var h = _lock.Lock();
             var dest = GetAnchoredPosition(x, y);
 
-            var tween = rect.DOAnchorPos(dest, time).OnComplete(() =>
+            var tween = rectTransform.DOAnchorPos(dest, time).OnComplete(() =>
             {
                 h.Dispose();
                 SetPosition(x, y);
@@ -129,6 +141,8 @@ namespace Studio.Game
 
         private CountingLock _lock = new CountingLock();
 
+        public UniRx.Subject<Point> onExplosion = new Subject<Point>();
+
         public void Explode()
         {
             if (IsLocked())
@@ -137,8 +151,34 @@ namespace Studio.Game
             image.transform.DOScale(0, 0.3f).OnComplete(() =>
             {
                 h.Dispose();
+                Stage.Instance[x, y] = null;
+                onExplosion.OnNext(this);
                 Return();
             });
+        }
+
+        private FreeFall _freeFall = new FreeFall();
+
+        [ContextMenu("Fall")]
+        public void Fall()
+        {
+            _freeFall.target = this;
+            _freeFall.start = rectTransform.anchoredPosition;
+            _freeFall.elapsed = 0f;
+            _freeFall.dest = GetAnchoredPosition(x, y);
+
+            var h = Lock();
+            IEnumerator Tick_()
+            {
+                do
+                {
+                    _freeFall.Tick();
+                    yield return null;
+                } while (_freeFall.keepWaiting);
+                h.Dispose();
+            }
+            if (isActiveAndEnabled)
+                StartCoroutine(Tick_());
         }
 
         private void Refresh(GemType type)

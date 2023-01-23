@@ -31,9 +31,9 @@ namespace Studio.Game
             return false;
         }
 
-        public Commands.Explosion MakeExplosion()
+        public Explosion MakeExplosion()
         {
-            Commands.Explosion exp = null;
+            Explosion exp = null;
             if (horizontalList.Count >= Stage.MATCH)
             {
                 exp = new Explosion();

@@ -7,40 +7,61 @@ namespace Studio.Game
 {
     public class StageCheat : MonoBehaviour
     {
-        public void SetGemType(string strType)
+        private Gem GetFocusedGem()
         {
-            System.Enum.TryParse<GemType>(strType, out var type);
-
-            if (Stage.Instance.pressedGem.val)
+            if (Stage.Instance.focusedGem.val)
             {
-                var g = Stage.Instance.pressedGem.val;
-                g.type = type;
-                Stage.Instance.pressedGem.Set(null);
-                return;
+                var g = Stage.Instance.focusedGem.val;
+                Stage.Instance.focusedGem.val = null;
+                return g;
             }
 
             var screenPt = Input.mousePosition;
             var go = GameObject.FindWithTag("UICamera");
             var camera = go.GetComponent<Camera>();
             var worldPt = camera.ScreenToWorldPoint(screenPt);
-            
+
             worldPt.z = Stage.Instance.transform.position.z;
-            Debug.Log(worldPt);
 
             for (var i = 0; i < Stage.COL; ++i)
             {
                 for (var j = 0; j < Stage.ROW; ++j)
                 {
                     var g = Stage.Instance[i, j];
+                    if (g == null)
+                        continue;
                     var lpt = g.transform.InverseTransformPoint(worldPt);
-                    if (g.rect.rect.Contains(lpt))
+                    if (g.rectTransform.rect.Contains(lpt))
                     {
-                        g.type = type;
                         Debug.Log($"{g}, {lpt}");
-                        break;
+                        return g;
                     }
                 }
             }
+            return null;
+        }
+
+        public void SetGemType(string strType)
+        {
+            System.Enum.TryParse<GemType>(strType, out var type);
+
+            var g = GetFocusedGem();
+            if (g)
+                g.type = type;
+        }
+
+        public void Explode()
+        {
+            var g = GetFocusedGem();
+            if (g)
+                g.Explode();
+        }
+
+        public void Fall()
+        {
+            var g = GetFocusedGem();
+            if (g)
+                g.Fall();
         }
     }
 }

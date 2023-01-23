@@ -18,8 +18,6 @@ namespace Studio.Game
         private GemFactory _gemFactory;
         public GemFactory gemFactory => _gemFactory;
 
-        private List<Gem> _gems = new List<Gem>();
-
         private Gem[,] _board = new Gem[COL, ROW];
 
         public Gem this[int x, int y]
@@ -49,19 +47,21 @@ namespace Studio.Game
             gemFactory.onInit.Subscribe(OnInit).AddTo(this);
             yield return gemFactory.Prepare().ToObservable().ToYieldInstruction();
 
+            var gems = new List<Gem>();
             var count = COL * ROW;
             for (var i = 0; i < count; ++i)
             {
-                gemFactory.Produce();
+                var g = gemFactory.Produce();
+                gems.Add(g);
             }
             
-            ArrangePosition();
+            ArrangePosition(gems);
         }
 
-        private void ArrangePosition()
+        private void ArrangePosition(List<Gem> gems)
         {
-            var g = _gems[0];
-            var size = g.rect.sizeDelta;
+            var g = gems[0];
+            var size = g.rectTransform.sizeDelta;
             var board = (RectTransform)gemFactory.transform;
             var offset = board.sizeDelta * 0.5f;
             offset.x -= size.x * 0.5f;
@@ -74,7 +74,7 @@ namespace Studio.Game
             {
                 for (var y = 0; y < ROW; ++y)
                 {
-                    g = _gems[i];
+                    g = gems[i];
                     g.transform.SetSiblingIndex(i);
                     g.SetPosition(x, y);
                     ++i;
@@ -82,14 +82,14 @@ namespace Studio.Game
             }
         }
 
-        public class PressedGem
+        public class FocusedGem
         {
             private Gem _g;
 
             public Gem val
             {
                 get => _g;
-                private set
+                set
                 {
                     if (_g)
                         _g.image.SetAlpha(1f);
@@ -98,20 +98,26 @@ namespace Studio.Game
                         _g.image.SetAlpha(0.7f);
                 }
             }
-
-            public void Set(Gem j)
-            {
-                val = j;
-            }
         }
 
-        public readonly PressedGem pressedGem = new PressedGem();
+        public readonly FocusedGem focusedGem = new FocusedGem();
 
         private void OnInit(Gem g)
         {
             g.onPress.TakeUntilDisable(g).Subscribe(OnPress).AddTo(this);
             g.onDrag.TakeUntilDisable(g).Subscribe(OnDrag).AddTo(this);
-            _gems.Add(g);
+            g.onExplosion.TakeUntilDisable(g).Subscribe(OnExplosion).AddTo(this);
+        }
+
+        private void OnExplosion(Point point)
+        {
+            for (var i = point.y-1; i >= 0; --i)
+            {
+                var g = this[point.x, i];
+                if (g == null)
+                    continue;
+                g.Fall();
+            }
         }
 
         private void OnDrag(PointerEventData eventData)
@@ -121,7 +127,7 @@ namespace Studio.Game
             if (diff.sqrMagnitude < 300)
                 return;
 
-            pressedGem.Set(null);
+            focusedGem.val = null;
             var g = eventData.pointerDrag.GetComponent<Gem>();
             if (g == null)
                 return;
@@ -134,16 +140,16 @@ namespace Studio.Game
         private void OnPress(Gem g)
         {
             SLogger.Log(g);
-            if (pressedGem.val == null)
+            if (focusedGem.val == null)
             {
-                pressedGem.Set(g);
+                focusedGem.val = g;
                 return;
             }
 
-            var lhs = pressedGem.val;
+            var lhs = focusedGem.val;
             var rhs = g;
             var tf = lhs.IsAdjacency(rhs);
-            pressedGem.Set(null);
+            focusedGem.val = null;
 #if UNITY_EDITOR
             if (Input.GetKey(KeyCode.LeftShift))
                 return;
@@ -167,9 +173,9 @@ namespace Studio.Game
             };
             cmd.onFinished.Take(1).Subscribe(_ =>
             {
-                var matchedL = judge.MatchAndExplode(lhs);
-                var matchedR = judge.MatchAndExplode(rhs);
-                if (!matchedL && !matchedR)
+                var matchL = judge.MatchAndExplode(lhs);
+                var matchR = judge.MatchAndExplode(rhs);
+                if (!matchL && !matchR)
                 {
                     commands.AddLast(new Commands.SwapGem
                     {

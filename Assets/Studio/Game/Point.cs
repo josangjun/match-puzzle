@@ -34,5 +34,15 @@ namespace Studio.Game
         {
             return Stage.Instance[p.x, p.y];
         }
+
+        public static implicit operator Vector2(Point p)
+        {
+            return Gem.GetAnchoredPosition(p.x, p.y);
+        }
+
+        public override string ToString()
+        {
+            return $"Pt[{x},{y}]";
+        }
     }
 }

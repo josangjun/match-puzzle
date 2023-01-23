@@ -23,15 +23,13 @@ namespace Studio.Game.Commands
     {
         public Point lhs, rhs;
 
-        private Judge judge => Stage.Instance.judge;
-
         public UniRx.Subject<UniRx.Unit> onFinished = new UniRx.Subject<UniRx.Unit>();
 
         public async void Run()
         {
             var gx = (Gem)lhs;
             var gy = (Gem)rhs;
-            if (gx.IsLocked() || gy.IsLocked())
+            if (!gx || !gy || gx.IsLocked() || gy.IsLocked())
                 return;
 
             using var h1 = gx.Lock();
