@@ -17,7 +17,7 @@ namespace Studio.Game
         const int BottomY = Stage.ROW - 1;
 
         private Gem bottom;
-        private Point endPoint;
+        public Point endPoint;
 
         public Point EndPoint()
         {
@@ -26,16 +26,8 @@ namespace Studio.Game
             bottom = (Gem)next;
             if (next.y <= BottomY && bottom == null)
                 endPoint = next;
+            target.SetPosition(endPoint, false);
             return endPoint;
-            //while (endPoint.y < BottomY)
-            //{
-            //    next = endPoint.Move(Direction.Down);
-            //    bottom = next;
-            //    if (bottom)
-            //        break;
-            //    endPoint = next;
-            //}
-            //return endPoint;
         }
 
         public bool Tick()
@@ -46,27 +38,15 @@ namespace Studio.Game
 
             p.y = Gravity * elapsed * elapsed + start.y;
 
-            EndPoint();
-            var endPos = bottom ? bottom.rectTransform.anchoredPosition + new Vector2(0, Gem.Size.y*0.5f) : (Vector2)endPoint;
-            //target.SetPosition((Point)p, false);
-
+            var endPos = (Vector2)endPoint;
+            
             if (endPos.y >= p.y)
             {
                 target.rectTransform.anchoredPosition = endPos;
                 target.SetPosition(endPoint);
-                return !CanFinish(endPoint);
+                return false;
             }
             target.rectTransform.anchoredPosition = p;
-            return true;
-        }
-
-        private bool CanFinish(Point pt)
-        {
-            for (var i = pt.y+1; i <= BottomY; ++i)
-            {
-                if (Stage.Instance[pt.x, i] == null)
-                    return false;
-            }
             return true;
         }
 

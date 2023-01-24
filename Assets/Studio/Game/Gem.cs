@@ -180,7 +180,7 @@ namespace Studio.Game
             _freeFall.start = rectTransform.anchoredPosition;
             _freeFall.elapsed = 0f;
             _freeFall.EndPoint();
-            
+
             var h = Lock();
             IEnumerator Tick_()
             {
@@ -194,7 +194,7 @@ namespace Studio.Game
             }
             if (isActiveAndEnabled)
             {
-                MainThreadDispatcher.StartUpdateMicroCoroutine(Tick_());
+                StartCoroutine(Tick_());
             }
         }
 
