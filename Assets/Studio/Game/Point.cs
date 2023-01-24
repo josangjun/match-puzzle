@@ -40,6 +40,16 @@ namespace Studio.Game
             return Gem.GetAnchoredPosition(p.x, p.y);
         }
 
+        public static implicit operator Point(Vector3 p)
+        {
+            return Gem.GetPoint((Vector2)p);
+        }
+
+        public static implicit operator Point(Vector2 p)
+        {
+            return Gem.GetPoint(p);
+        }
+
         public override string ToString()
         {
             return $"Pt[{x},{y}]";

@@ -20,25 +20,10 @@ namespace Studio.Game
             var go = GameObject.FindWithTag("UICamera");
             var camera = go.GetComponent<Camera>();
             var worldPt = camera.ScreenToWorldPoint(screenPt);
-
-            worldPt.z = Stage.Instance.transform.position.z;
-
-            for (var i = 0; i < Stage.COL; ++i)
-            {
-                for (var j = 0; j < Stage.ROW; ++j)
-                {
-                    var g = Stage.Instance[i, j];
-                    if (g == null)
-                        continue;
-                    var lpt = g.transform.InverseTransformPoint(worldPt);
-                    if (g.rectTransform.rect.Contains(lpt))
-                    {
-                        Debug.Log($"{g}, {lpt}");
-                        return g;
-                    }
-                }
-            }
-            return null;
+            var root = Stage.Instance.transform;
+            worldPt.z = root.position.z;
+            var localPt = root.InverseTransformPoint(worldPt);
+            return (Gem)(Point)localPt;
         }
 
         public void SetGemType(string strType)

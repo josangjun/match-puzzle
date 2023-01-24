@@ -5,11 +5,11 @@ using UnityEngine;
 namespace Studio.Game
 {
     [System.Serializable]
-    public class FreeFall : CustomYieldInstruction
+    public class FreeFall
     {
-        public const float Gravity = -9.81f * 5;
+        public const float Gravity = -9.81f * 10;
         public Vector2 start;
-        public Vector2 dest;
+        
         public float elapsed = 0f;
 
         public Gem target;
@@ -32,11 +32,7 @@ namespace Studio.Game
             return pt;
         }
 
-        private bool _keepWaiting;
-
-        public override bool keepWaiting => _keepWaiting;
-
-        public void Tick()
+        public bool Tick()
         {
             elapsed += Time.deltaTime;
 
@@ -51,16 +47,14 @@ namespace Studio.Game
             {
                 target.rectTransform.anchoredPosition = p;
                 target.SetPosition(endPoint);
-                _keepWaiting = false;
-                return;
+                return false;
             }
             target.rectTransform.anchoredPosition = p;
-            _keepWaiting = true;
+            return true;
         }
 
-        public override void Reset()
+        public void Reset()
         {
-            base.Reset();
             elapsed = 0f;
         }
     }

@@ -12,7 +12,7 @@ namespace Studio.Game
 {
     [System.Flags]
     public enum Direction { None, Up, Right, Down, Left };
-    public enum GemType { None, Red, Orange, Yellow, Green, Blue, Purple, White }
+    public enum GemType { None, Red, Orange, Yellow, Green, Blue, Purple, White, Max }
     public enum Axis { Horizontal, Vetical };
 
     public class Gem : GoItem, IDragHandler, IPointerDownHandler
@@ -114,11 +114,25 @@ namespace Studio.Game
 
             rectTransform.anchoredPosition = GetAnchoredPosition(x, y);
             Stage.Instance[x, y] = this;
+#if UNITY_EDITOR
+            name = $"Gem[{x},{y},{type}]";
+#endif
         }
 
         public static Vector2 GetAnchoredPosition(int x, int y)
         {
             return new Vector2(x * Size.x - Offset.x, y * -Size.y + Offset.y);
+        }
+
+        public static Point GetPoint(Vector2 pos)
+        {
+            var board = (RectTransform)Stage.Instance.gemFactory.transform;
+            var rect = board.rect;
+            var diffx = pos.x - rect.xMin;
+            var diffy = Mathf.Round(rect.height / Size.y) - pos.y - rect.yMin;
+            var x = Mathf.FloorToInt(diffx / Size.x);
+            var y = Mathf.FloorToInt(diffy / Size.y);
+            return new Point { x = x, y = y };
         }
 
         public Tween MovePosition(int x, int y, float time = 0.3f)
@@ -150,9 +164,9 @@ namespace Studio.Game
             var h = _lock.Lock();
             image.transform.DOScale(0, 0.3f).OnComplete(() =>
             {
-                h.Dispose();
                 Stage.Instance[x, y] = null;
                 onExplosion.OnNext(this);
+                h.Dispose();
                 Return();
             });
         }
@@ -165,20 +179,22 @@ namespace Studio.Game
             _freeFall.target = this;
             _freeFall.start = rectTransform.anchoredPosition;
             _freeFall.elapsed = 0f;
-            _freeFall.dest = GetAnchoredPosition(x, y);
-
+            
             var h = Lock();
             IEnumerator Tick_()
             {
-                do
+                while (this && isActiveAndEnabled)
                 {
-                    _freeFall.Tick();
+                    if (!_freeFall.Tick())
+                        break;
                     yield return null;
-                } while (_freeFall.keepWaiting);
+                }
                 h.Dispose();
             }
             if (isActiveAndEnabled)
-                StartCoroutine(Tick_());
+            {
+                MainThreadDispatcher.StartUpdateMicroCoroutine(Tick_());
+            }
         }
 
         private void Refresh(GemType type)
