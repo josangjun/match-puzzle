@@ -98,12 +98,12 @@ namespace Studio.Game
             Offset = offset;
         }
         
-        public void SetPosition(Point pt)
+        public void SetPosition(Point pt, bool immediately = true)
         {
-            SetPosition(pt.x, pt.y);
+            SetPosition(pt.x, pt.y, immediately);
         }
 
-        public void SetPosition(int x, int y)
+        public void SetPosition(int x, int y, bool immediately = true)
         {
             var old = Stage.Instance[this.x, this.y];
             if (old && old.GetInstanceID() == GetInstanceID())
@@ -111,8 +111,8 @@ namespace Studio.Game
 
             this.x = x;
             this.y = y;
-
-            rectTransform.anchoredPosition = GetAnchoredPosition(x, y);
+            if (immediately)
+                rectTransform.anchoredPosition = GetAnchoredPosition(x, y);
             Stage.Instance[x, y] = this;
 #if UNITY_EDITOR
             name = $"Gem[{x},{y},{type}]";
@@ -179,6 +179,7 @@ namespace Studio.Game
             _freeFall.target = this;
             _freeFall.start = rectTransform.anchoredPosition;
             _freeFall.elapsed = 0f;
+            _freeFall.EndPoint();
             
             var h = Lock();
             IEnumerator Tick_()

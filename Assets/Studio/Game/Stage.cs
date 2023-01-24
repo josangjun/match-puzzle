@@ -118,6 +118,12 @@ namespace Studio.Game
                     continue;
                 g.Fall();
             }
+            //commands.AddLast(new Commands.ProduceGem
+            //{
+            //    x = point.x,
+            //    y = -1,
+            //    type = (GemType)Random.Range(1, (int)GemType.Max)
+            //});
         }
 
         private void OnDrag(PointerEventData eventData)

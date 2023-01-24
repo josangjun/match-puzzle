@@ -15,6 +15,8 @@ namespace Studio.Game.Commands
         {
             var g = Stage.Instance.gemFactory.Produce(type);
             g.SetPosition(x, y);
+            if (y < 0)
+                g.Fall();
         }
     }
 
