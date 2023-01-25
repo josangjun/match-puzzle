@@ -115,7 +115,9 @@ namespace Studio.Game
             if (immediately)
                 rectTransform.anchoredPosition = GetAnchoredPosition(x, y);
 #if UNITY_EDITOR
-            name = $"Gem[{x},{y},{type}]";
+            var str = $"Gem[{x},{y},{type}]";
+            SLogger.Log($"{name} => {str}");
+            name = str;            
 #endif
         }
 
@@ -137,7 +139,7 @@ namespace Studio.Game
 
         public Tween MovePosition(int x, int y, float time = 0.3f)
         {
-            var h = _lock.Lock();
+            var h = Lock();
             var dest = GetAnchoredPosition(x, y);
 
             var tween = rectTransform.DOAnchorPos(dest, time).OnComplete(() =>
@@ -152,7 +154,7 @@ namespace Studio.Game
         public bool IsLocked() => _lock.count > 0;
 
         public System.IDisposable Lock() => _lock.Lock();
-
+        [SerializeField]
         private CountingLock _lock = new CountingLock();
 
         public UniRx.Subject<Point> onExplosion = new Subject<Point>();
@@ -161,7 +163,7 @@ namespace Studio.Game
         {
             if (IsLocked())
                 return;
-            var h = _lock.Lock();
+            var h = Lock();
             image.transform.DOScale(0, 0.3f).OnComplete(() =>
             {
                 Stage.Instance[x, y] = null;

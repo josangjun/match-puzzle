@@ -46,6 +46,8 @@ namespace Studio.Common
             {
                 settings.Converters = new List<JsonConverter> { new SilentEnumConverter(), new DateTimeParser() };
             }
+            if (!System.IO.Directory.Exists(GetResourceDir()))
+                System.IO.Directory.CreateDirectory(GetResourceDir());
         }
 
         public static void Load<T>(string file, out T[] field)

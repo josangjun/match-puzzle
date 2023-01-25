@@ -1,4 +1,5 @@
 using DG.Tweening;
+using Studio.Framework;
 using System.Collections;
 using UnityEngine;
 
@@ -12,7 +13,7 @@ namespace Studio.Game
     [System.Serializable]
     public class FreeFall : ITickable
     {
-        private const float Gravity = -9.81f * 10;
+        private const float Gravity = -9.81f * 100;
         public Vector2 start;
         
         public float elapsed = 0f;
@@ -61,6 +62,17 @@ namespace Studio.Game
                 target.SetPosition(endPoint);
                 _keepWaiting = false;
                 return false;
+            }
+            else if (bottom)
+            {
+                var limit = bottom.rectTransform.anchoredPosition.y + Gem.Size.y;
+                if (limit > p.y)
+                {
+                    target.rectTransform.SetAnchordPositionY(limit);
+                    elapsed -= Time.deltaTime;
+                    _keepWaiting = true;
+                    return true;
+                }
             }
             target.rectTransform.anchoredPosition = p;
             return true;
