@@ -2,11 +2,20 @@ using System.Collections;
 using System.Collections.Generic;
 using UniRx;
 using UnityEngine;
+using Opencoding.CommandHandlerSystem;
+using Studio.Common;
 
 namespace Studio.Game
 {
     public class StageCheat : MonoBehaviour
     {
+        public void Start()
+        {
+#if !FINAL_BUILD
+            Opencoding.CommandHandlerSystem.CommandHandlers.RegisterCommandHandlers(this);
+#endif
+        }
+
         private Gem GetFocusedGem()
         {
             if (Stage.Instance.focusedGem.val)
@@ -47,6 +56,13 @@ namespace Studio.Game
             var g = GetFocusedGem();
             if (g)
                 g.Fall();
+        }
+
+        [ConsoleCommand]
+        public void DumpBoard()
+        {
+            var txt = Stage.Instance.Dump();
+            FileTool.Write("board.txt", txt);
         }
     }
 }

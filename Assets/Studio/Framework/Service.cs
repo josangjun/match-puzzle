@@ -122,7 +122,7 @@ namespace Studio
 #endif
         }
 
-        private ScriptableObject[] _persistentContents;
+        private ScriptableObject[] _persistentContents = new ScriptableObject[0];
 
         public static void AddAsset(Object asset)
         {

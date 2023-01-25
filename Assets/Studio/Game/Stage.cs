@@ -255,5 +255,30 @@ namespace Studio.Game
             if (!job.IsProcessing && job.Count > 0)
                 StartCoroutine(job.Process());
         }
+
+        [ContextMenu("Dump")]
+        public string Dump()
+        {
+            var sb = new System.Text.StringBuilder();
+            for (var i = 0; i < Stage.ROW; ++i)
+            {
+                for (var j = 0; j < Stage.COL; ++j)
+                {
+                    var g = Stage.Instance[j, i];
+                    if (g)
+                    {
+                        sb.Append(g.type.ToString()[0]).Append(' ');
+                    }
+                    else
+                    {
+                        sb.Append('_').Append(' ');
+                    }
+                }
+                sb.AppendLine();
+            }
+            var txt = sb.ToString();
+            SLogger.Log(txt);
+            return txt;
+        }
     }
 }
