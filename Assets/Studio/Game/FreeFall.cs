@@ -27,10 +27,16 @@ namespace Studio.Game
         public Point EndPoint()
         {
             endPoint = (Point)target.rectTransform.anchoredPosition;
-            var next = endPoint.Move(Direction.Down);
-            bottom = (Gem)next;
-            if (next.y <= BottomY && bottom == null)
+            bottom = null;
+            
+            while (true)
+            {
+                var next = endPoint.Move(Direction.Down);
+                bottom = (Gem)next;
+                if (bottom || next.y > BottomY)
+                    break;
                 endPoint = next;
+            }
             target.SetPosition(endPoint, false);
             _keepWaiting = true;
             return endPoint;

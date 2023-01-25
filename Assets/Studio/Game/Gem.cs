@@ -194,7 +194,7 @@ namespace Studio.Game
             }
             if (isActiveAndEnabled)
             {
-                StartCoroutine(Tick_());
+                MainThreadDispatcher.StartUpdateMicroCoroutine(Tick_());
             }
         }
 

@@ -121,7 +121,6 @@ namespace Studio.Game
         {
             g.onPress.TakeUntilDisable(g).Subscribe(OnPress).AddTo(this);
             g.onDrag.TakeUntilDisable(g).Subscribe(OnDrag).AddTo(this);
-            //g.onExplosion.TakeUntilDisable(g).Subscribe(OnExplosion).AddTo(this);
         }
 
         public void OnExplosion(List<Point> points)
