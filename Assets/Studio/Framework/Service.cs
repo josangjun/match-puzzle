@@ -122,7 +122,6 @@ namespace Studio
 #endif
         }
 
-        [SerializeField][UnityEngine.Serialization.FormerlySerializedAs("_assets")]
         private ScriptableObject[] _persistentContents;
 
         public static void AddAsset(Object asset)

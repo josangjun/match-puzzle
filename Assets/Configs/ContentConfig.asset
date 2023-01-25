@@ -13,4 +13,5 @@ MonoBehaviour:
   m_Name: ContentConfig
   m_EditorClassIdentifier: 
   list:
+  - {fileID: 11400000, guid: 6b6f2d1cb4c8747fb855bf4c27b5b71b, type: 2}
   - {fileID: 11400000, guid: 08860b42f2456f14e918e47f82475d73, type: 2}

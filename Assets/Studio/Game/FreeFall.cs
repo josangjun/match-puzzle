@@ -4,8 +4,13 @@ using UnityEngine;
 
 namespace Studio.Game
 {
+    public interface ITickable
+    {
+        bool Tick();
+    }
+
     [System.Serializable]
-    public class FreeFall
+    public class FreeFall : ITickable
     {
         private const float Gravity = -9.81f * 10;
         public Vector2 start;
@@ -17,7 +22,7 @@ namespace Studio.Game
         const int BottomY = Stage.ROW - 1;
 
         private Gem bottom;
-        public Point endPoint;
+        private Point endPoint;
 
         public Point EndPoint()
         {
@@ -27,8 +32,12 @@ namespace Studio.Game
             if (next.y <= BottomY && bottom == null)
                 endPoint = next;
             target.SetPosition(endPoint, false);
+            _keepWaiting = true;
             return endPoint;
         }
+
+        public bool _keepWaiting = false;
+        public bool keepWaiting => _keepWaiting;
 
         public bool Tick()
         {
@@ -44,6 +53,7 @@ namespace Studio.Game
             {
                 target.rectTransform.anchoredPosition = endPos;
                 target.SetPosition(endPoint);
+                _keepWaiting = false;
                 return false;
             }
             target.rectTransform.anchoredPosition = p;

@@ -1,6 +1,7 @@
 using DG.Tweening;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using UniRx;
 using UnityEngine;
 
 namespace Studio.Game.Commands
@@ -47,42 +48,29 @@ namespace Studio.Game.Commands
     }
 
     [System.Serializable]
-    public class Match : ICommand
-    {
-        public Point p;
-        private Judge judge => Stage.Instance.judge;
-
-        public void Run()
-        {
-            if (!judge.Match(p))
-                return;
-
-            Explosion explosion = new Explosion();
-
-            if (judge.horizontalList.Count >= Stage.MATCH)
-            {
-                foreach (var g in judge.horizontalList)
-                    explosion.points.Add(g);
-            }
-            if (judge.verticalList.Count >= Stage.MATCH)
-            {
-                foreach (var g in judge.verticalList)
-                    explosion.points.Add(g);
-            }
-        }
-    }
-
-    [System.Serializable]
     public class Explosion : ICommand
     {
         public List<Point> points = new List<Point>();
+
+        public UniRx.Subject<List<Point>> onComplete = new UniRx.Subject<List<Point>>();
+
+        public int count;
 
         public void Run()
         {
             foreach (var p in points)
             {
                 var g = (Gem)p;
+                if (g == null)
+                    continue;
+                ++count;
                 g.Explode();
+                g.onExplosion.Take(1).
+                    Subscribe(_ =>
+                    {
+                        if (0 == --count)
+                            onComplete.OnNext(points);
+                    });
             }
         }
     }

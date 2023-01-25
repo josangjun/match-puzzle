@@ -5,6 +5,8 @@ using UniRx;
 using Studio.Framework;
 using Studio.Common;
 using UnityEngine.EventSystems;
+using System.Linq;
+using Studio.Game.Commands;
 
 namespace Studio.Game
 {
@@ -54,7 +56,6 @@ namespace Studio.Game
                 var g = gemFactory.Produce();
                 gems.Add(g);
             }
-            
             ArrangePosition(gems);
         }
 
@@ -80,6 +81,20 @@ namespace Studio.Game
                     ++i;
                 }
             }
+            while (judge.Match())
+            {
+                foreach (var arg in judge.result)
+                {
+                    arg.type = (GemType)Random.Range(1, (int)GemType.Max);
+                }
+            }
+        }
+
+        [ContextMenu("Match")]
+        private void Match()
+        {
+            var tf = judge.Match();
+            Debug.Log($"{tf}\n{judge.result.Select(arg => arg.ToString()).ToArray().ToJson()}");
         }
 
         public class FocusedGem
@@ -106,24 +121,35 @@ namespace Studio.Game
         {
             g.onPress.TakeUntilDisable(g).Subscribe(OnPress).AddTo(this);
             g.onDrag.TakeUntilDisable(g).Subscribe(OnDrag).AddTo(this);
-            g.onExplosion.TakeUntilDisable(g).Subscribe(OnExplosion).AddTo(this);
+            //g.onExplosion.TakeUntilDisable(g).Subscribe(OnExplosion).AddTo(this);
         }
 
-        private void OnExplosion(Point point)
+        public void OnExplosion(List<Point> points)
         {
-            for (var i = point.y-1; i >= 0; --i)
+            points.Sort((lhs, rhs) =>
             {
-                var g = this[point.x, i];
-                if (g == null)
-                    continue;
-                g.Fall();
-            }
-            commands.AddLast(new Commands.ProduceGem
-            {
-                x = point.x,
-                y = -1,
-                type = (GemType)Random.Range(1, (int)GemType.Max)
+                var cmp = lhs.x.CompareTo(rhs.x);
+                if (cmp == 0)
+                    cmp = rhs.y.CompareTo(lhs.y);
+                return cmp;
             });
+
+            foreach (var point in points)
+            {
+                for (var i = point.y - 1; i >= 0; --i)
+                {
+                    var g = this[point.x, i];
+                    if (g == null)
+                        continue;
+                    g.Fall();
+                }
+                commands.AddLast(new Commands.ProduceGem
+                {
+                    x = point.x,
+                    y = -1,
+                    type = (GemType)Random.Range(1, (int)GemType.Max)
+                });
+            }
         }
 
         private void OnDrag(PointerEventData eventData)
@@ -193,10 +219,27 @@ namespace Studio.Game
             commands.AddLast(cmd);
         }
 
+        public void Explode(List<Gem> gems)
+        {
+            if (gems.Count == 0)
+                return;
+            var exp = new Explosion();
+            foreach (var g in gems)
+            {
+                exp.points.Add(g);
+            }
+            exp.onComplete.Take(1).Subscribe(OnExplosion);
+            commands.AddLast(exp);
+        }
+
         public readonly LinkedList<ICommand> commands = new LinkedList<ICommand>();
         public readonly LinkedList<ICommand> consequence = new LinkedList<ICommand>();
 
         public readonly BatchJob job = new BatchJob();
+
+        public readonly Judge judge = new Judge();
+
+        public readonly List<ITickable> ticables = new List<ITickable>();
 
         // Update is called once per frame
         public void Update()
@@ -212,7 +255,5 @@ namespace Studio.Game
             if (!job.IsProcessing && job.Count > 0)
                 StartCoroutine(job.Process());
         }
-
-        public readonly Judge judge = new Judge();
     }
 }

@@ -267,11 +267,14 @@ namespace Studio
             return AssetDatabase.LoadAssetAtPath<T>(path);
         }
 
-        [MenuItem("Tools/Game/Prepare Start #F3")]
+        [MenuItem("Tools/Game/Prepare Start #F2")]
         public static void PrepareStart()
         {
-            var path = FindAssetPath("t:scene Start", "Assets/Scenes");
-            EditorSceneManager.OpenScene(path, OpenSceneMode.Single);
+            var path1 = FindAssetPath("t:scene Game", "Assets/Scenes");
+            EditorSceneManager.OpenScene(path1, OpenSceneMode.Single);
+
+            var path2 = FindAssetPath("t:scene Service", "Assets/Scenes");
+            EditorSceneManager.OpenScene(path2, OpenSceneMode.Additive);
         }
 
         [MenuItem("Tools/Game/Prepare Splash #F4")]

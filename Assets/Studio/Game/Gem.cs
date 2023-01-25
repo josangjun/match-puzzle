@@ -52,7 +52,7 @@ namespace Studio.Game
 
         public override string ToString()
         {
-            return $"Gem[{type},{x},{y}]";
+            return $"Gem[{x},{y},{type}]";
         }
 
         // Start is called before the first frame update
@@ -108,12 +108,12 @@ namespace Studio.Game
             var old = Stage.Instance[this.x, this.y];
             if (old && old.GetInstanceID() == GetInstanceID())
                 Stage.Instance[this.x, this.y] = null;
-
+            Stage.Instance[x, y] = this;
             this.x = x;
             this.y = y;
+
             if (immediately)
                 rectTransform.anchoredPosition = GetAnchoredPosition(x, y);
-            Stage.Instance[x, y] = this;
 #if UNITY_EDITOR
             name = $"Gem[{x},{y},{type}]";
 #endif

@@ -39,7 +39,7 @@ namespace Studio.Game
         {
             var g = GetFocusedGem();
             if (g)
-                g.Explode();
+                Stage.Instance.Explode(new List<Gem> { g });
         }
 
         public void Fall()

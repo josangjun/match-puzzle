@@ -1,5 +1,7 @@
 using Studio.Game.Commands;
+using System;
 using System.Collections.Generic;
+using UniRx;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -8,45 +10,83 @@ namespace Studio.Game
     [System.Serializable]
     public class Judge
     {
-        public readonly List<Gem> horizontalList = new List<Gem>();
-        public readonly List<Gem> verticalList = new List<Gem>();
+        public readonly List<Gem> buffer = new List<Gem>();
+        public readonly List<Gem> result = new List<Gem>();
+
+        public bool Match()
+        {
+            result.Clear();
+            return Match(buffer);
+        }
 
         public bool Match(Point p)
         {
-            Match(p, Axis.Horizontal, horizontalList);
-            Match(p, Axis.Vetical, verticalList);
-            return
-                horizontalList.Count >= Stage.MATCH ||
-                verticalList.Count >= Stage.MATCH;
+            result.Clear();
+            Match(p, Axis.Horizontal, buffer);
+            Match(p, Axis.Vetical, buffer);
+            return result.Count >= Stage.MATCH;
         }
 
         public bool MatchAndExplode(Point p)
         {
             if (Match(p))
             {
-                var exp = MakeExplosion();
-                Stage.Instance.commands.AddLast(exp);
+                if (result.Count >= Stage.MATCH)
+                    Stage.Instance.Explode(result);
                 return true;
             }
             return false;
         }
 
-        public Explosion MakeExplosion()
+        public bool Match(List<Gem> buffer)
         {
-            Explosion exp = null;
-            if (horizontalList.Count >= Stage.MATCH)
+            result.Clear();
+            buffer.Clear();
+            for (var i = 0; i < Stage.COL; ++i)
             {
-                exp = new Explosion();
-                foreach (var g in horizontalList)
-                    exp.points.Add(g);
+                var type = GemType.None;
+                for (var j = 0; j < Stage.ROW; ++j)
+                {
+                    Match_(i, j, ref type, buffer);
+                }
+                FlushBuffer(buffer);
             }
-            if (verticalList.Count >= Stage.MATCH)
+            for (var i = 0; i < Stage.ROW; ++i)
             {
-                exp = exp ?? new Explosion();
-                foreach (var g in verticalList)
-                    exp.points.Add(g);
+                var type = GemType.None;
+                for (var j = 0; j < Stage.COL; ++j)
+                {
+                    Match_(j, i, ref type, buffer);
+                }
+                FlushBuffer(buffer);
             }
-            return exp;
+            return result.Count > 0;
+        }
+
+        private void FlushBuffer(List<Gem> buffer)
+        {
+            if (buffer.Count >= Stage.MATCH)
+                result.AddRange(buffer);
+            buffer.Clear();
+        }
+
+        private void Match_(int x, int y, ref GemType type, List<Gem> buffer)
+        {
+            var g = Stage.Instance[x, y];
+            if (g == null || g.IsLocked())
+            {
+                FlushBuffer(buffer);
+                type = GemType.None;
+                return;
+            }
+            if (g.type != type)
+            {
+                FlushBuffer(buffer);
+                buffer.Add(g);
+                type = g.type;
+            }
+            else if (g.type == type)
+                buffer.Add(g);
         }
 
         public bool Match(Point p, Axis axis, List<Gem> buffer)
@@ -64,6 +104,8 @@ namespace Studio.Game
                 Match_(p, buffer, Direction.Up);
                 Match_(p, buffer, Direction.Down);
             }
+            if (buffer.Count >= Stage.MATCH)
+                result.AddRange(buffer);
             return buffer.Count >= Stage.MATCH;
         }
 
