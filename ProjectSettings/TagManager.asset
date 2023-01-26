@@ -6,6 +6,7 @@ TagManager:
   tags:
   - UICamera
   - PrefabDeflater
+  - Video
   layers:
   - Default
   - TransparentFX

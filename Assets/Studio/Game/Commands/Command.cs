@@ -1,5 +1,6 @@
 using DG.Tweening;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using UniRx;
 using UnityEngine;
@@ -58,6 +59,8 @@ namespace Studio.Game.Commands
 
         public void Run()
         {
+            SLogger.LogEditor("explode:"+points.Select(arg => (Gem)arg).Where(arg => arg).Select(arg => arg.ToString()).ToArray().ToJson());
+
             foreach (var p in points)
             {
                 var g = (Gem)p;

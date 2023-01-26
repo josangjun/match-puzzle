@@ -226,7 +226,13 @@ namespace Studio.Game
             var exp = new Explosion();
             foreach (var g in gems)
             {
-                exp.points.Add(g);
+                var p = (Point)g;
+                if (exp.points.Contains(p))
+                {
+                    SLogger.LogError($"duplicated :{p}");
+                    continue;
+                }
+                exp.points.Add(p);
             }
             exp.onComplete.Take(1).Subscribe(OnExplosion);
             commands.AddLast(exp);
@@ -298,7 +304,6 @@ namespace Studio.Game
             }
             SortGems(gems);
             var txt = sb.ToString();
-            SLogger.Log(txt);
             return txt;
         }
     }

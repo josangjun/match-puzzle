@@ -113,7 +113,9 @@ namespace Studio.Game
             this.y = y;
 
             if (immediately)
+            {
                 rectTransform.anchoredPosition = GetAnchoredPosition(x, y);
+            }
 #if UNITY_EDITOR
             var str = $"Gem[{x},{y},{type}]";
             //SLogger.Log($"{name} => {str}");
@@ -179,7 +181,10 @@ namespace Studio.Game
         public bool Fall()
         {
             if (!isActiveAndEnabled)
+            {
+                SLogger.LogEditor($"ignore:{this}");
                 return false;
+            }
 
             var h = Lock();
             IEnumerator Tick_()
@@ -189,9 +194,7 @@ namespace Studio.Game
                 _freeFall.target = this;
                 _freeFall.start = rectTransform.anchoredPosition;
                 _freeFall.elapsed = 0f;
-
-                while (_freeFall.EndPoint().y < 0)
-                    yield return null;
+                _freeFall.EndPoint();
 
                 while (_freeFall.Tick())
                     yield return null;

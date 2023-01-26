@@ -62,6 +62,7 @@ namespace Studio.Game
         public void DumpBoard()
         {
             var txt = Stage.Instance.Dump();
+            SLogger.Log(txt);
             FileTool.Write("board.txt", txt);
         }
     }

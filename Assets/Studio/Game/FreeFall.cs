@@ -1,6 +1,7 @@
 using DG.Tweening;
 using Studio.Framework;
 using System.Collections;
+using System.Runtime.InteropServices.WindowsRuntime;
 using UnityEngine;
 
 namespace Studio.Game
@@ -38,6 +39,7 @@ namespace Studio.Game
                     break;
                 endPoint = next;
             }
+
             target.SetPosition(endPoint, false);
             _keepWaiting = true;
             return endPoint;
@@ -53,11 +55,9 @@ namespace Studio.Game
                 _keepWaiting = false;
                 return false;
             }
-            if (target.y < 0)
-            {
-                EndPoint();
-                return true;
-            }
+            
+            //EndPoint();
+            
             elapsed += Time.deltaTime;
 
             var p = target.rectTransform.anchoredPosition;
@@ -69,12 +69,12 @@ namespace Studio.Game
             if (endPos.y >= p.y)
             {
                 target.rectTransform.anchoredPosition = endPos;
-                target.SetPosition(endPoint);
-                var freshPt = (Vector2)EndPoint();
-                if (freshPt.y < endPos.y)
-                    return true;
-                _keepWaiting = false;
-                return false;
+                _keepWaiting = !IsFloor();
+                if (_keepWaiting)
+                    EndPoint();
+                else
+                    target.SetPosition(endPoint);
+                return _keepWaiting;
             }
             else if (bottom)
             {
@@ -84,10 +84,24 @@ namespace Studio.Game
                     target.rectTransform.SetAnchordPositionY(limit);
                     elapsed -= Time.deltaTime;
                     _keepWaiting = true;
-                    return true;
+                    return _keepWaiting;
                 }
             }
             target.rectTransform.anchoredPosition = p;
+            _keepWaiting = true;
+            return true;
+        }
+
+        private bool IsFloor()
+        {
+            var pt = (Point)target;
+            for (var i = target.y+1; i <= BottomY; ++i)
+            {
+                pt.y = i;
+                var g = (Gem)pt;
+                if (g == null)
+                    return false;
+            }
             return true;
         }
 

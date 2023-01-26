@@ -3,7 +3,7 @@ using UnityEngine;
 namespace Studio.Game
 {
     [System.Serializable]
-    public struct Point
+    public struct Point : System.IEquatable<Point>
     {
         public int x, y;
 
@@ -53,6 +53,11 @@ namespace Studio.Game
         public override string ToString()
         {
             return $"Pt[{x},{y}]";
+        }
+
+        public bool Equals(Point other)
+        {
+            return x == other.x && y == other.y;
         }
     }
 }
