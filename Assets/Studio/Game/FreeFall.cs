@@ -41,7 +41,7 @@ namespace Studio.Game
             }
 
             target.SetPosition(endPoint, false);
-            _keepWaiting = true;
+            
             return endPoint;
         }
 
@@ -65,7 +65,7 @@ namespace Studio.Game
             p.y = Gravity * elapsed * elapsed + start.y;
 
             var endPos = (Vector2)endPoint;
-            
+
             if (endPos.y >= p.y)
             {
                 target.rectTransform.anchoredPosition = endPos;
@@ -76,15 +76,19 @@ namespace Studio.Game
                     target.SetPosition(endPoint);
                 return _keepWaiting;
             }
-            else if (bottom)
+            else
             {
-                var limit = bottom.rectTransform.anchoredPosition.y + Gem.Size.y;
-                if (limit > p.y)
+                bottom = target.GetNext(Direction.Down);
+                if (bottom)
                 {
-                    target.rectTransform.SetAnchordPositionY(limit);
-                    elapsed -= Time.deltaTime;
-                    _keepWaiting = true;
-                    return _keepWaiting;
+                    var limit = bottom.rectTransform.anchoredPosition.y + Gem.Size.y;
+                    if (limit > p.y)
+                    {
+                        target.rectTransform.SetAnchordPositionY(limit);
+                        elapsed -= Time.deltaTime;
+                        _keepWaiting = true;
+                        return _keepWaiting;
+                    }
                 }
             }
             target.rectTransform.anchoredPosition = p;

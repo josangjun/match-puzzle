@@ -182,31 +182,48 @@ namespace Studio.Game
         {
             if (!isActiveAndEnabled)
             {
-                SLogger.LogEditor($"ignore:{this}");
                 return false;
             }
+            if (IsLocked())
+                return false;
 
             var h = Lock();
-            IEnumerator Tick_()
+            IEnumerator<float> Tick_()
             {
                 while (_freeFall.keepWaiting)
-                    yield return null;
+                    yield return 0f;
                 _freeFall.target = this;
                 _freeFall.start = rectTransform.anchoredPosition;
                 _freeFall.elapsed = 0f;
                 _freeFall.EndPoint();
 
                 while (_freeFall.Tick())
-                    yield return null;
-                
-                h.Dispose();
+                    yield return 0f;
+                if (y < 0)
+                {
+                    Return();
+                    yield break;
+                }
                 Stage.Instance.judge.MatchAndExplode();
             }
             
-            MainThreadDispatcher.StartUpdateMicroCoroutine(Tick_());
+            var hh = MEC.Timing.RunCoroutineSingleton(Tick_(), gameObject, MEC.SingletonBehavior.Wait);
+            hh.OnDestroy(() => h.Dispose());
             return true;
         }
-
+        
+        public void Update()
+        {
+            if (y > Stage.ROW - 1)
+            {
+                if (GetNext(Direction.Down) == null)
+                {
+                    if (!_freeFall.keepWaiting)
+                        Fall();
+                }
+            }
+        }
+        
         private void Refresh(GemType type)
         {
             _visualizer.SetAttribute(this, type);

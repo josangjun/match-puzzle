@@ -229,7 +229,6 @@ namespace Studio.Game
                 var p = (Point)g;
                 if (exp.points.Contains(p))
                 {
-                    SLogger.LogError($"duplicated :{p}");
                     continue;
                 }
                 exp.points.Add(p);
