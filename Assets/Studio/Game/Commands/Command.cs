@@ -26,7 +26,7 @@ namespace Studio.Game.Commands
     {
         public Point lhs, rhs;
 
-        public UniRx.Subject<UniRx.Unit> onFinished = new UniRx.Subject<UniRx.Unit>();
+        public UniRx.Subject<UniRx.Unit> onComplete = new UniRx.Subject<UniRx.Unit>();
 
         public async void Run()
         {
@@ -43,7 +43,7 @@ namespace Studio.Game.Commands
                 while (s.IsActive() || t.IsActive())
                     await Task.Yield();
             }
-            onFinished.OnNext(UniRx.Unit.Default);
+            onComplete.OnNext(UniRx.Unit.Default);
         }
     }
 

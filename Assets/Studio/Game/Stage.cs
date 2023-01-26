@@ -133,6 +133,7 @@ namespace Studio.Game
                 return cmp;
             });
 
+            int c = 1;
             foreach (var point in points)
             {
                 for (var i = point.y - 1; i >= 0; --i)
@@ -145,7 +146,7 @@ namespace Studio.Game
                 commands.AddLast(new Commands.ProduceGem
                 {
                     x = point.x,
-                    y = -1,
+                    y = -1 * c++,
                     type = (GemType)Random.Range(1, (int)GemType.Max)
                 });
             }
@@ -202,7 +203,7 @@ namespace Studio.Game
                 lhs = lhs,
                 rhs = rhs
             };
-            cmd.onFinished.Take(1).Subscribe(_ =>
+            cmd.onComplete.Take(1).Subscribe(_ =>
             {
                 if (!judge.MatchAndExplode())
                 {
@@ -212,7 +213,7 @@ namespace Studio.Game
                         rhs = lhs
                     };
                     commands.AddLast(ret);
-                    ret.onFinished.Take(1).Subscribe(_ => judge.MatchAndExplode());
+                    ret.onComplete.Take(1).Subscribe(_ => judge.MatchAndExplode());
                 }
             });
             commands.AddLast(cmd);
