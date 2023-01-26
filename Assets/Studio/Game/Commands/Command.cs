@@ -34,15 +34,15 @@ namespace Studio.Game.Commands
             var gy = (Gem)rhs;
             if (!gx || !gy || gx.IsLocked() || gy.IsLocked())
                 return;
+            {
+                using var h1 = gx.Lock();
+                using var h2 = gy.Lock();
 
-            using var h1 = gx.Lock();
-            using var h2 = gy.Lock();
-
-            var s = gx.MovePosition(rhs.x, rhs.y);
-            var t = gy.MovePosition(lhs.x, lhs.y);
-            while (s.IsActive() || t.IsActive())
-                await Task.Yield();
-
+                var s = gx.MovePosition(rhs.x, rhs.y);
+                var t = gy.MovePosition(lhs.x, lhs.y);
+                while (s.IsActive() || t.IsActive())
+                    await Task.Yield();
+            }
             onFinished.OnNext(UniRx.Unit.Default);
         }
     }

@@ -204,15 +204,15 @@ namespace Studio.Game
             };
             cmd.onFinished.Take(1).Subscribe(_ =>
             {
-                var matchL = judge.MatchAndExplode(lhs);
-                var matchR = judge.MatchAndExplode(rhs);
-                if (!matchL && !matchR)
+                if (!judge.MatchAndExplode())
                 {
-                    commands.AddLast(new Commands.SwapGem
+                    var ret = new Commands.SwapGem
                     {
                         lhs = rhs,
                         rhs = lhs
-                    });
+                    };
+                    commands.AddLast(ret);
+                    ret.onFinished.Take(1).Subscribe(_ => judge.MatchAndExplode());
                 }
             });
             commands.AddLast(cmd);
@@ -232,13 +232,12 @@ namespace Studio.Game
         }
 
         public readonly LinkedList<ICommand> commands = new LinkedList<ICommand>();
-        public readonly LinkedList<ICommand> consequence = new LinkedList<ICommand>();
 
         public readonly BatchJob job = new BatchJob();
 
         public readonly Judge judge = new Judge();
 
-        public readonly List<ITickable> ticables = new List<ITickable>();
+        public readonly List<ITickable> tickables = new List<ITickable>();
 
         // Update is called once per frame
         public void Update()
@@ -255,17 +254,38 @@ namespace Studio.Game
                 StartCoroutine(job.Process());
         }
 
+        private void SortGems(List<Gem> gems)
+        {
+            gems.Sort((lhs, rhs) =>
+            {
+                var cmp = lhs.x.CompareTo(rhs.x);
+                if (cmp == 0)
+                    cmp = lhs.y.CompareTo(rhs.y);
+                return cmp;
+            });
+
+            int j = 0;
+            for (var i = 0; i < gems.Count; ++i)
+            {
+                if (gems[i] == null)
+                    continue;
+                gems[i].transform.SetSiblingIndex(j++);
+            }
+        }
+
         [ContextMenu("Dump")]
         public string Dump()
         {
+            var gems = new List<Gem>();
             var sb = new System.Text.StringBuilder();
-            for (var i = 0; i < Stage.ROW; ++i)
+            for (var i = 0; i < ROW; ++i)
             {
-                for (var j = 0; j < Stage.COL; ++j)
+                for (var j = 0; j < COL; ++j)
                 {
-                    var g = Stage.Instance[j, i];
+                    var g = this[j, i];
                     if (g)
                     {
+                        gems.Add(g);
                         sb.Append(g.type.ToString()[0]).Append(' ');
                     }
                     else
@@ -275,6 +295,7 @@ namespace Studio.Game
                 }
                 sb.AppendLine();
             }
+            SortGems(gems);
             var txt = sb.ToString();
             SLogger.Log(txt);
             return txt;

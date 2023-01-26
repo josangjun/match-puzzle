@@ -27,13 +27,15 @@ namespace Studio.Game
             return result.Count >= Stage.MATCH;
         }
 
-        public bool MatchAndExplode(Point p)
+        public bool MatchAndExplode()
         {
-            if (Match(p))
+            if (Match())
             {
                 if (result.Count >= Stage.MATCH)
+                {
                     Stage.Instance.Explode(result);
-                return true;
+                    return true;
+                }
             }
             return false;
         }

@@ -48,6 +48,16 @@ namespace Studio.Game
 
         public bool Tick()
         {
+            if (!target || !target.isActiveAndEnabled)
+            {
+                _keepWaiting = false;
+                return false;
+            }
+            if (target.y < 0)
+            {
+                EndPoint();
+                return true;
+            }
             elapsed += Time.deltaTime;
 
             var p = target.rectTransform.anchoredPosition;
@@ -60,6 +70,9 @@ namespace Studio.Game
             {
                 target.rectTransform.anchoredPosition = endPos;
                 target.SetPosition(endPoint);
+                var freshPt = (Vector2)EndPoint();
+                if (freshPt.y < endPos.y)
+                    return true;
                 _keepWaiting = false;
                 return false;
             }

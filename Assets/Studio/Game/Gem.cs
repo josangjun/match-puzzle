@@ -116,7 +116,7 @@ namespace Studio.Game
                 rectTransform.anchoredPosition = GetAnchoredPosition(x, y);
 #if UNITY_EDITOR
             var str = $"Gem[{x},{y},{type}]";
-            SLogger.Log($"{name} => {str}");
+            //SLogger.Log($"{name} => {str}");
             name = str;            
 #endif
         }
@@ -176,28 +176,32 @@ namespace Studio.Game
         private FreeFall _freeFall = new FreeFall();
 
         [ContextMenu("Fall")]
-        public void Fall()
+        public bool Fall()
         {
-            _freeFall.target = this;
-            _freeFall.start = rectTransform.anchoredPosition;
-            _freeFall.elapsed = 0f;
-            _freeFall.EndPoint();
+            if (!isActiveAndEnabled)
+                return false;
 
             var h = Lock();
             IEnumerator Tick_()
             {
-                while (this && isActiveAndEnabled)
-                {
-                    if (!_freeFall.Tick())
-                        break;
+                while (_freeFall.keepWaiting)
                     yield return null;
-                }
+                _freeFall.target = this;
+                _freeFall.start = rectTransform.anchoredPosition;
+                _freeFall.elapsed = 0f;
+
+                while (_freeFall.EndPoint().y < 0)
+                    yield return null;
+
+                while (_freeFall.Tick())
+                    yield return null;
+                
                 h.Dispose();
+                Stage.Instance.judge.MatchAndExplode();
             }
-            if (isActiveAndEnabled)
-            {
-                MainThreadDispatcher.StartUpdateMicroCoroutine(Tick_());
-            }
+            
+            MainThreadDispatcher.StartUpdateMicroCoroutine(Tick_());
+            return true;
         }
 
         private void Refresh(GemType type)
