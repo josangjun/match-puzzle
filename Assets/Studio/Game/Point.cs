@@ -74,6 +74,7 @@ namespace Studio.Game
         }
     }
 
+    [System.Serializable]
     public struct Move
     {
         public Point point;

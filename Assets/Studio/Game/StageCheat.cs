@@ -76,8 +76,14 @@ namespace Studio.Game
         public void HasMove()
         {
             var match = Stage.Instance.judge.Match();
-            var ret = Stage.Instance.judge.HasMove();
-            SLogger.Log($"hasMove:{ret}, match:{match}");
+            var moves = Stage.Instance.judge.CollectMove();
+            SLogger.Log($"hasMove:{moves.ToJson()}, match:{match}");
+        }
+
+        [ConsoleCommand]
+        public void Auto(bool tf)
+        {
+            Stage.Instance.simulator.enabled = tf;
         }
     }
 }

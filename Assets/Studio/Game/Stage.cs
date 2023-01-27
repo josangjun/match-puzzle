@@ -248,11 +248,16 @@ namespace Studio.Game
 
         public readonly Judge judge = new Judge();
 
+        [SerializeField]
+        public Simulator simulator = new Simulator();
+
         public readonly List<ITickable> tickables = new List<ITickable>();
 
         // Update is called once per frame
         public void Update()
         {
+            simulator.Update();
+
             while (commands.Count > 0)
             {
                 var cmd = commands.First.Value;
@@ -317,6 +322,8 @@ namespace Studio.Game
             {
                 foreach (var g in _board)
                 {
+                    if (g == null)
+                        continue;
                     g.type = (GemType)Random.Range(1, (int)GemType.Max);
                 }
             }

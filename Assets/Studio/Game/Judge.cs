@@ -140,8 +140,10 @@ namespace Studio.Game
             return false;
         }
 
-        public void CollectMove(List<Move> moves)
+        public List<Move> CollectMove(List<Move> moves = null)
         {
+            if (moves == null)
+                moves = new List<Move>();
             for (var i = 0; i < Stage.COL - 1; ++i)
             {
                 for (var j = 0; j < Stage.ROW - 1; ++j)
@@ -172,6 +174,7 @@ namespace Studio.Game
             }
 
             moves.Sort((lhs, rhs) => rhs.match.CompareTo(lhs.match));
+            return moves;
         }
 
         private int MatchSwap(Point src, Direction dir)
@@ -179,6 +182,9 @@ namespace Studio.Game
             var dst = src.Move(dir);
             var g = (Gem)src;
             var h = (Gem)dst;
+
+            if (g == null || h == null || g.IsLocked() || h.IsLocked())
+                return 0;
 
             g.SetPosition(dst, false);
             h.SetPosition(src, false);
