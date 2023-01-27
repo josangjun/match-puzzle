@@ -16,7 +16,7 @@ namespace Studio.Game
         public bool Match()
         {
             result.Clear();
-            return Match(buffer);
+            return Match_(buffer);
         }
 
         public bool Match(Point p)
@@ -40,7 +40,7 @@ namespace Studio.Game
             return false;
         }
 
-        public bool Match(List<Gem> buffer)
+        private bool Match_(List<Gem> buffer)
         {
             result.Clear();
             buffer.Clear();
@@ -121,6 +121,77 @@ namespace Studio.Game
                     list.Add(g);
                 else break;
             }
+        }
+
+        public bool HasMove()
+        {
+            for (var i = 0; i < Stage.COL-1; ++i)
+            {
+                for (var j = 0; j < Stage.ROW-1; ++j)
+                {
+                    var pt = new Point(i, j);
+
+                    if (MatchSwap(pt, Direction.Right) > 0 ||
+                        MatchSwap(pt, Direction.Down) > 0)
+                        return true;
+                }
+            }
+
+            return false;
+        }
+
+        public void CollectMove(List<Move> moves)
+        {
+            for (var i = 0; i < Stage.COL - 1; ++i)
+            {
+                for (var j = 0; j < Stage.ROW - 1; ++j)
+                {
+                    var pt = new Point(i, j);
+
+                    var c1 = MatchSwap(pt, Direction.Right);
+                    if (c1 > 0)
+                    {
+                        moves.Add(new Move
+                        {
+                            point = pt,
+                            dir = Direction.Right,
+                            match = c1
+                        });
+                    }
+                    var c2 = MatchSwap(pt, Direction.Down);
+                    if (c2 > 0)
+                    {
+                        moves.Add(new Move
+                        {
+                            point = pt,
+                            dir = Direction.Down,
+                            match = c2
+                        });
+                    }
+                }
+            }
+
+            moves.Sort((lhs, rhs) => rhs.match.CompareTo(lhs.match));
+        }
+
+        private int MatchSwap(Point src, Direction dir)
+        {
+            var dst = src.Move(dir);
+            var g = (Gem)src;
+            var h = (Gem)dst;
+
+            g.SetPosition(dst, false);
+            h.SetPosition(src, false);
+
+            Match(src);
+            var countS = result.Count;
+            Match(dst);
+            var countD = result.Count;
+            var count = countS + countD;
+
+            g.SetPosition(src, false);
+            h.SetPosition(dst, false);
+            return count;
         }
     }
 }

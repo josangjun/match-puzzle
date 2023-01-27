@@ -81,12 +81,10 @@ namespace Studio.Game
                     ++i;
                 }
             }
+
             while (judge.Match())
             {
-                foreach (var arg in judge.result)
-                {
-                    arg.type = (GemType)Random.Range(1, (int)GemType.Max);
-                }
+                Shuffle(true);
             }
         }
 
@@ -304,6 +302,27 @@ namespace Studio.Game
             SortGems(gems);
             var txt = sb.ToString();
             return txt;
+        }
+
+        public void Shuffle(bool matchOnly = false)
+        {
+            if (!matchOnly)
+            {
+                foreach (var g in _board)
+                {
+                    g.type = (GemType)Random.Range(1, (int)GemType.Max);
+                }
+            }
+            
+            while (judge.Match())
+            {
+                do
+                {
+                    foreach (var g in judge.result)
+                        g.type = (GemType)Random.Range(1, (int)GemType.Max);
+                }
+                while (!judge.HasMove());
+            }
         }
     }
 }

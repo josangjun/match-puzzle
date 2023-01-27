@@ -542,6 +542,50 @@ MonoBehaviour:
             m_BoolArgument: 0
           m_CallState: 2
     ordinal: 0
+  - name: 10.S, Shuffle()
+    key: 115
+    modifiers:
+      alt: 0
+      control: 0
+      shift: 0
+    evt:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 656357250}
+          m_TargetAssemblyTypeName: Studio.Game.StageCheat, Studio.Game
+          m_MethodName: Shuffle
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 7
+            m_FloatArgument: 0
+            m_StringArgument: White
+            m_BoolArgument: 0
+          m_CallState: 2
+    ordinal: 0
+  - name: 11.Q, HasMove()
+    key: 113
+    modifiers:
+      alt: 0
+      control: 0
+      shift: 0
+    evt:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 656357250}
+          m_TargetAssemblyTypeName: Studio.Game.StageCheat, Studio.Game
+          m_MethodName: HasMove
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 7
+            m_FloatArgument: 0
+            m_StringArgument: White
+            m_BoolArgument: 0
+          m_CallState: 2
+    ordinal: 0
 --- !u!1 &1058663899
 GameObject:
   m_ObjectHideFlags: 0

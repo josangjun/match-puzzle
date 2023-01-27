@@ -65,5 +65,19 @@ namespace Studio.Game
             SLogger.Log(txt);
             FileTool.Write("board.txt", txt);
         }
+
+        [ConsoleCommand]
+        public void Shuffle()
+        {
+            Stage.Instance.Shuffle();
+        }
+
+        [ConsoleCommand]
+        public void HasMove()
+        {
+            var match = Stage.Instance.judge.Match();
+            var ret = Stage.Instance.judge.HasMove();
+            SLogger.Log($"hasMove:{ret}, match:{match}");
+        }
     }
 }

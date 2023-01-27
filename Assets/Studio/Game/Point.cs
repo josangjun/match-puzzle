@@ -60,4 +60,11 @@ namespace Studio.Game
             return x == other.x && y == other.y;
         }
     }
+
+    public struct Move
+    {
+        public Point point;
+        public Direction dir;
+        public int match;
+    }
 }
