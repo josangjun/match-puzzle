@@ -204,11 +204,14 @@ namespace Studio.Game
                     Return();
                     yield break;
                 }
-                Stage.Instance.judge.MatchAndExplode();
             }
             
             var hh = MEC.Timing.RunCoroutineSingleton(Tick_(), gameObject, MEC.SingletonBehavior.Wait);
-            hh.OnDestroy(() => h.Dispose());
+            hh.OnDestroy(() =>
+            {
+                h.Dispose();
+                Stage.Instance.judge.MatchAndExplode();
+            });
             return true;
         }
         
