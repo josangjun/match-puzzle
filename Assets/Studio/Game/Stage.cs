@@ -211,7 +211,14 @@ namespace Studio.Game
                         rhs = lhs
                     };
                     commands.AddLast(ret);
-                    ret.onComplete.Take(1).Subscribe(_ => judge.MatchAndExplode());
+                    ret.onComplete.Take(1).Subscribe(_ =>
+                    {
+                        judge.MatchAndExplode();
+                        if (!lhs.IsFloor())
+                            lhs.Fall(); 
+                        if (!rhs.IsFloor())
+                            rhs.Fall();
+                    });
                 }
             });
             commands.AddLast(cmd);

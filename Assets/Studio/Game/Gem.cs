@@ -242,5 +242,11 @@ namespace Studio.Game
             var p = (Point)this;
             return (Gem)p.Move(dir);
         }
+
+        public bool IsFloor()
+        {
+            var p = (Point)this;
+            return p.IsFloor();
+        }
     }
 }

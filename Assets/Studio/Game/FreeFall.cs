@@ -96,17 +96,9 @@ namespace Studio.Game
             return true;
         }
 
-        private bool IsFloor()
+        public bool IsFloor()
         {
-            var pt = (Point)target;
-            for (var i = target.y+1; i <= BottomY; ++i)
-            {
-                pt.y = i;
-                var g = (Gem)pt;
-                if (g == null)
-                    return false;
-            }
-            return true;
+            return target.IsFloor();
         }
 
         public void Reset()

@@ -59,6 +59,19 @@ namespace Studio.Game
         {
             return x == other.x && y == other.y;
         }
+
+        public bool IsFloor()
+        {
+            var pt = this;
+            for (var i = y + 1; i < Stage.ROW; ++i)
+            {
+                pt.y = i;
+                var g = (Gem)pt;
+                if (g == null)
+                    return false;
+            }
+            return true;
+        }
     }
 
     public struct Move
