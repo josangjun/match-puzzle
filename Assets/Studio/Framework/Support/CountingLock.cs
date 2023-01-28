@@ -7,7 +7,7 @@ namespace Studio.Framework
     [System.Serializable]
     public class CountingLock
     {
-        public int count { get; private set; }
+        public int count;
 
         [System.Serializable]
         private class Handle : System.IDisposable

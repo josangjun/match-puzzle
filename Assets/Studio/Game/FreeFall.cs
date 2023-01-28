@@ -1,6 +1,8 @@
 using DG.Tweening;
+using MEC;
 using Studio.Framework;
 using System.Collections;
+using System.Collections.Generic;
 using System.Runtime.InteropServices.WindowsRuntime;
 using UnityEngine;
 
@@ -48,6 +50,45 @@ namespace Studio.Game
         public bool _keepWaiting = false;
         public bool keepWaiting => _keepWaiting;
 
+        private MEC.CoroutineHandle handle;
+
+        public void Start(System.Action action)
+        {
+            lastFall = new Log
+            {
+                time = System.DateTime.Now.ToString(),
+                log = System.Environment.StackTrace
+            };
+            handle = Tick_().RunCoroutineSingleton(handle, SingletonBehavior.Wait);
+            if (action != null)
+                handle.OnDestroy(action);
+        }
+
+        public Log lastFall;
+
+        [System.Serializable]
+        public class Log
+        {
+            public string time;
+            public string log;
+        }
+
+        private IEnumerator<float> Tick_()
+        {
+        //    while (keepWaiting)
+        //        yield return 0f;
+            
+            start = target.rectTransform.anchoredPosition;
+            elapsed = 0f;
+            EndPoint();
+
+            while (Tick())
+                yield return 0f;
+
+            if (target.y < 0)
+                target.Return();
+        }
+
         public bool Tick()
         {
             if (!target || !target.isActiveAndEnabled)
@@ -55,8 +96,6 @@ namespace Studio.Game
                 _keepWaiting = false;
                 return false;
             }
-            
-            //EndPoint();
             
             elapsed += Time.deltaTime;
 
@@ -98,7 +137,22 @@ namespace Studio.Game
 
         public bool IsFloor()
         {
-            return target.IsFloor();
+            Gem lastGem = null;
+            var pt = (Point)target;
+            for (var i = pt.y + 1; i < Stage.ROW; ++i)
+            {
+                pt.y = i;
+                var g = (Gem)pt;
+                if (g == null)
+                {
+                    if (lastGem && !lastGem.IsFalling())
+                        lastGem.Fall();
+                    //TODO: enforce falling
+                    return false;
+                }
+                lastGem = g;
+            }
+            return true;
         }
 
         public void Reset()

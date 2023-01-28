@@ -33,7 +33,7 @@ namespace Studio.Game.Commands
         {
             var gx = (Gem)lhs;
             var gy = (Gem)rhs;
-            if (!gx || !gy || gx.IsLocked() || gy.IsLocked())
+            if (!gx || !gy || !gx.CanMove() || !gy.CanMove())
                 return;
             {
                 using var h1 = gx.Lock();

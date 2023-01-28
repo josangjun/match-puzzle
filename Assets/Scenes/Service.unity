@@ -299,7 +299,6 @@ MonoBehaviour:
     name: ContentConfig
     guid: 7357e3b5145b744eea6bae7380087eef
     path: Assets/Configs/ContentConfig.asset
-  _persistentContents: []
 --- !u!4 &1315708938
 Transform:
   m_ObjectHideFlags: 0

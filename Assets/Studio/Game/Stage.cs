@@ -193,7 +193,7 @@ namespace Studio.Game
 
         public void Swap(Gem lhs, Gem rhs)
         {
-            if (lhs == null || rhs == null)
+            if (lhs == null || rhs == null || lhs.IsLocked() || rhs.IsLocked())
                 return;
 
             var cmd = new Commands.SwapGem
@@ -251,13 +251,9 @@ namespace Studio.Game
         [SerializeField]
         public Simulator simulator = new Simulator();
 
-        public readonly List<ITickable> tickables = new List<ITickable>();
-
         // Update is called once per frame
         public void Update()
         {
-            simulator.Update();
-
             while (commands.Count > 0)
             {
                 var cmd = commands.First.Value;
@@ -268,6 +264,11 @@ namespace Studio.Game
             }
             if (!job.IsProcessing && job.Count > 0)
                 StartCoroutine(job.Process());
+        }
+
+        public void LateUpdate()
+        {
+            simulator.Update();
         }
 
         private void SortGems(List<Gem> gems)

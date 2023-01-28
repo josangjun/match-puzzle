@@ -59,6 +59,7 @@ namespace Studio.Game
         private void Awake()
         {
             _rectTransform = (RectTransform)transform;
+            _freeFall.target = this;
         }
 
         public override void OnRent()
@@ -152,6 +153,8 @@ namespace Studio.Game
             return tween;
         }
 
+        public bool CanMove() => _lock.count == 0 && IsFloor();
+
         public bool IsIdle() => _lock.count == 0;
         public bool IsLocked() => _lock.count > 0;
 
@@ -161,12 +164,14 @@ namespace Studio.Game
 
         public UniRx.Subject<Point> onExplosion = new Subject<Point>();
 
+        public float kExplosionTime = 0.3f;
+
         public void Explode()
         {
             if (IsLocked())
                 return;
             var h = Lock();
-            image.transform.DOScale(0, 0.3f).OnComplete(() =>
+            image.transform.DOScale(0, kExplosionTime).OnComplete(() =>
             {
                 Stage.Instance[x, y] = null;
                 onExplosion.OnNext(this);
@@ -175,6 +180,7 @@ namespace Studio.Game
             });
         }
 
+        [SerializeField]
         private FreeFall _freeFall = new FreeFall();
 
         [ContextMenu("Fall")]
@@ -188,33 +194,16 @@ namespace Studio.Game
                 return false;
 
             var h = Lock();
-            IEnumerator<float> Tick_()
-            {
-                while (_freeFall.keepWaiting)
-                    yield return 0f;
-                _freeFall.target = this;
-                _freeFall.start = rectTransform.anchoredPosition;
-                _freeFall.elapsed = 0f;
-                _freeFall.EndPoint();
-
-                while (_freeFall.Tick())
-                    yield return 0f;
-                if (y < 0)
-                {
-                    Return();
-                    yield break;
-                }
-            }
             
-            var hh = MEC.Timing.RunCoroutineSingleton(Tick_(), gameObject, MEC.SingletonBehavior.Wait);
-            hh.OnDestroy(() =>
-            {
-                h.Dispose();
-                Stage.Instance.judge.MatchAndExplode();
-            });
+            _freeFall.Start(() =>
+                {
+                    h.Dispose();
+                    MEC.Timing.CallDelayed(0.5f, () =>
+                    Stage.Instance.judge.MatchAndExplode());
+                });
             return true;
         }
-        
+        /*
         public void Update()
         {
             if (y > Stage.ROW - 1)
@@ -226,7 +215,7 @@ namespace Studio.Game
                 }
             }
         }
-        
+        */
         private void Refresh(GemType type)
         {
             _visualizer.SetAttribute(this, type);
@@ -247,6 +236,11 @@ namespace Studio.Game
         {
             var p = (Point)this;
             return p.IsFloor();
+        }
+
+        public bool IsFalling()
+        {
+            return _freeFall.keepWaiting;
         }
     }
 }

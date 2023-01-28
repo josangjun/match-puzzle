@@ -4,16 +4,16 @@ using UniRx;
 using UnityEngine;
 using Opencoding.CommandHandlerSystem;
 using Studio.Common;
+using UnityEngine.UI;
 
 namespace Studio.Game
 {
     public class StageCheat : MonoBehaviour
     {
+#if !FINAL_BUILD
         public void Start()
         {
-#if !FINAL_BUILD
-            Opencoding.CommandHandlerSystem.CommandHandlers.RegisterCommandHandlers(this);
-#endif
+            CommandHandlers.RegisterCommandHandlers(this);
         }
 
         private Gem GetFocusedGem()
@@ -85,5 +85,18 @@ namespace Studio.Game
         {
             Stage.Instance.simulator.enabled = tf;
         }
+
+        public void ToggleAuto()
+        {
+            var tf = !Stage.Instance.simulator.enabled;
+            Stage.Instance.simulator.enabled = tf;
+        }
+
+        [ConsoleCommand]
+        public void SetAutoFrequency(float interval)
+        {
+            Stage.Instance.simulator.interval = interval;
+        }
+#endif
     }
 }
