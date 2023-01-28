@@ -284,8 +284,6 @@ namespace Studio
         
         public static Sound Sound => Instance.sound;
         
-        public static Native Native => Instance.native;
-
         public static IAsyncMessageBroker AsyncMessage => Instance.asyncMessage;
 
         public static AddressCache Cache => Instance.cache;
@@ -296,7 +294,7 @@ namespace Studio
         private IMessageBroker message;
         private IAsyncMessageBroker asyncMessage;
         private Sound sound;
-        private Native native;
+        
         private AddressCache cache;
 
         protected void Awake()
@@ -316,7 +314,6 @@ namespace Studio
             uiManager = gameObject.GetOrNewComponent<UIManager>();
             imageCache = gameObject.GetOrNewComponent<ImageCache>();
             sound = gameObject.GetOrNewComponent<Sound>();
-            native = gameObject.GetOrNewComponent<Native>();
             cache = GetComponent<AddressCache>();
 
             message = new MessageBroker();
