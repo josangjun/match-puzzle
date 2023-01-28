@@ -101,6 +101,7 @@ namespace Studio.Game
         [ConsoleCommand]
         public void Fps(int frameRate)
         {
+            PlayerPrefs.SetInt("fps", frameRate);
             Application.targetFrameRate = frameRate;
         }
 #endif

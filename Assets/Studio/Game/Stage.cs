@@ -57,6 +57,8 @@ namespace Studio.Game
                 gems.Add(g);
             }
             ArrangePosition(gems);
+
+            Application.targetFrameRate = PlayerPrefs.GetInt("fps", 60);
         }
 
         private void ArrangePosition(List<Gem> gems)
