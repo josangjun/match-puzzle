@@ -93,9 +93,15 @@ namespace Studio.Game
         }
 
         [ConsoleCommand]
-        public void AutoFrequency(float interval)
+        public void AutoInterval(float interval)
         {
             Stage.Instance.simulator.interval = interval;
+        }
+
+        [ConsoleCommand]
+        public void Fps(int frameRate)
+        {
+            Application.targetFrameRate = frameRate;
         }
 #endif
     }
