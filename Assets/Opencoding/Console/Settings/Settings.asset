@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   DontDestroyOnLoad: 1
   AutoSetVersion: 1
-  GameVersion: 1.0.0
+  GameVersion: 0.1
   EnableIfDefined: 
   DisableIfDefined: FINAL_BUILD
   OnlyInDevBuilds: 0
@@ -26,8 +26,8 @@ MonoBehaviour:
   DisableUGUIWhenOpen: 1
   PauseGameWhenOpen: 0
   ShowRecentCommands: 1
-  DefaultToEmailAddress: dl_projectm_dev@linecorp.com
-  EditorScaleFactor: 2.5
+  DefaultToEmailAddress: josangjun@gmail.com
+  EditorScaleFactor: 2
   MobileScaleFactorPortrait: 0.8
   MobileScaleFactorLandscape: 1
   StandaloneScaleFactor: 1
