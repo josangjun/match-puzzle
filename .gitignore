@@ -18,6 +18,9 @@ MemoryCaptures/
 #*.unitypackage
 /.vs
 
+Assets/AddressableAssetsData/link.xml
+Assets/AddressableAssetsData/link.xml.meta
+
 Assets/Unity.VisualScripting.Generated/VisualScripting.Flow/UnitOptions.db
 Assets/Unity.VisualScripting.Generated/VisualScripting.Flow/UnitOptions.db.meta
 Assets/Unity.VisualScripting.Generated/VisualScripting.Core/Property Providers

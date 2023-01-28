@@ -93,7 +93,7 @@ namespace Studio.Game
         }
 
         [ConsoleCommand]
-        public void SetAutoFrequency(float interval)
+        public void AutoFrequency(float interval)
         {
             Stage.Instance.simulator.interval = interval;
         }
