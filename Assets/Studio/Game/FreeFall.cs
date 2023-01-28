@@ -54,23 +54,9 @@ namespace Studio.Game
 
         public void Start(System.Action action)
         {
-            lastFall = new Log
-            {
-                time = System.DateTime.Now.ToString(),
-                log = System.Environment.StackTrace
-            };
             handle = Tick_().RunCoroutineSingleton(handle, SingletonBehavior.Wait);
             if (action != null)
                 handle.OnDestroy(action);
-        }
-
-        public Log lastFall;
-
-        [System.Serializable]
-        public class Log
-        {
-            public string time;
-            public string log;
         }
 
         private IEnumerator<float> Tick_()
