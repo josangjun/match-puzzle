@@ -183,7 +183,7 @@ namespace Studio.Game
             var g = (Gem)src;
             var h = (Gem)dst;
 
-            if (g == null || h == null || g.IsLocked() || h.IsLocked())
+            if (g == null || h == null || g.IsLocked() || h.IsLocked() || g.type == h.type)
                 return 0;
 
             g.SetPosition(dst, false);
