@@ -1,0 +1,21 @@
+{
+    "name": "Opencoding.Editor",
+    "rootNamespace": "",
+    "references": [
+        "GUID:c8307ebee0dcc425582cd7b137a27bf0",
+        "GUID:3250f5356b7054b69a725ce9bb3792ac",
+        "GUID:e78ff2be8df0e4d159b9347582d248ee",
+        "GUID:b704694abf2314a13aa703a51b191d78"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

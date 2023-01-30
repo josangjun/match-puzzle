@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 2e0cd70abd936451799662ed355ae433
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - _imageFiles: {fileID: 11400000, guid: 08bd2dfe7239942379c9277d85b29705, type: 2}
+  - _emailTemplateFiles: {fileID: 11400000, guid: 0d33a9ead6b004cdf86ee888459b30a0, type: 2}
+  - _settings: {fileID: 11400000, guid: 138a5f5aba8bd4e90bdbe718b1863fd2, type: 2}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

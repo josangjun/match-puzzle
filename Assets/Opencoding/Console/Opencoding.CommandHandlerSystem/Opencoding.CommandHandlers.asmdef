@@ -1,0 +1,18 @@
+{
+    "name": "Opencoding.CommandHandlers",
+    "rootNamespace": "",
+    "references": [
+        "GUID:75469ad4d38634e559750d17036d5f7c",
+        "GUID:e78ff2be8df0e4d159b9347582d248ee",
+        "GUID:b704694abf2314a13aa703a51b191d78"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

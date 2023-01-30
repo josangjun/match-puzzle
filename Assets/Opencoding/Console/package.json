@@ -1,0 +1,16 @@
+
+{
+	"name": "opencoding.console",
+	"displayName": "Touch Console",
+	"version": "2.8.0",
+	"unity": "2018.1",
+	"description": "Touch Console for new Input System",
+	"keywords": ["console"],
+	"category": "LineStudio",
+	"dependencies": {
+	},
+	"author": {
+		"name": "LINE Studio",
+		"url": "https://git.linecorp.com/LINEStudio-Client"
+	}
+}

@@ -1,0 +1,16 @@
+{
+    "name": "Opencoding.LogHistory",
+    "rootNamespace": "",
+    "references": [
+        "GUID:b704694abf2314a13aa703a51b191d78"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

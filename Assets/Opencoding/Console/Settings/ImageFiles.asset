@@ -3,12 +3,13 @@
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 981961332, guid: 3a092d701c8054009a5ccc1b8caf500b, type: 3}
+  m_Script: {fileID: 11500000, guid: 915bf1c48600349f68118d88dbc8f549, type: 3}
   m_Name: ImageFiles
   m_EditorClassIdentifier: 
   _ActiveGradient: {fileID: 2800000, guid: 21574f873791a45e682a6ec6c29085b7, type: 3}
@@ -18,23 +19,18 @@ MonoBehaviour:
   _ClearIcon: {fileID: 2800000, guid: 6576c6b5e56b745cf9269abc86440a25, type: 3}
   _CloseButton: {fileID: 2800000, guid: 0e5752dfb788f48e0b4b569a0d22a47b, type: 3}
   _ConsoleInputIcon: {fileID: 2800000, guid: 0111d99cd34984f66a99294c70c19772, type: 3}
-  _SettingsPopupBackground: {fileID: 2800000, guid: 93cdb81db30154c9f9400c2a954a19b4,
-    type: 3}
+  _SettingsPopupBackground: {fileID: 2800000, guid: 93cdb81db30154c9f9400c2a954a19b4, type: 3}
   _HighlightGradient: {fileID: 2800000, guid: 30a5e63f6f67e41299d229063648bc60, type: 3}
   _MaximizeIcon: {fileID: 2800000, guid: d480bcd4f6623413a8a06d88b1f2947e, type: 3}
   _MinimizeTopIcon: {fileID: 2800000, guid: ee2a200f42bcd409e968dc75989d7ba5, type: 3}
-  _RedBackgroundGradient: {fileID: 2800000, guid: 49dfcaaebf7d24992a39549651c54631,
-    type: 3}
+  _RedBackgroundGradient: {fileID: 2800000, guid: 49dfcaaebf7d24992a39549651c54631, type: 3}
   _FilterActiveIcon: {fileID: 2800000, guid: 3f7fa34d537694caf8b5f7d909d1e774, type: 3}
   _SearchIcon: {fileID: 2800000, guid: eb447bbd68e2a44e99c9d9a61b4314a8, type: 3}
   _SettingsIcon: {fileID: 2800000, guid: 91c6d872562e8421899514775e11c915, type: 3}
-  _PreviousHistoryItemIcon: {fileID: 2800000, guid: 7f07f6d16257547a08b43a2803477049,
-    type: 3}
-  _NextHistoryItemIcon: {fileID: 2800000, guid: 59450289292034363a2c248d87b20075,
-    type: 3}
-  _CloseKeyboardIcon: {fileID: 2800000, guid: f9546b94d4af244ecb79bb83ba4379fe, type: 3}
-  _SuggestionButtonBackground: {fileID: 2800000, guid: 5072da6df44134914aacfc1b2b936b79,
-    type: 3}
+  _PreviousHistoryItemIcon: {fileID: 2800000, guid: 7f07f6d16257547a08b43a2803477049, type: 3}
+  _NextHistoryItemIcon: {fileID: 2800000, guid: 59450289292034363a2c248d87b20075, type: 3}
+  _CloseKeyboardIcon: {fileID: 2800000, guid: 0e5752dfb788f48e0b4b569a0d22a47b, type: 3}
+  _SuggestionButtonBackground: {fileID: 2800000, guid: 5072da6df44134914aacfc1b2b936b79, type: 3}
   _ScrollbarThumb: {fileID: 2800000, guid: 53df0f980eac044c094e41d68aadcf65, type: 3}
   _HelpIcon: {fileID: 2800000, guid: bdb1af276636648a7ac3bec61ecd1791, type: 3}
   _RunIcon: {fileID: 2800000, guid: e34029a8033c44faabab76b48b95044b, type: 3}
