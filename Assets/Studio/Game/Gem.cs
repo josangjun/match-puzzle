@@ -203,19 +203,7 @@ namespace Studio.Game
                 });
             return true;
         }
-        /*
-        public void Update()
-        {
-            if (y > Stage.ROW - 1)
-            {
-                if (GetNext(Direction.Down) == null)
-                {
-                    if (!_freeFall.keepWaiting)
-                        Fall();
-                }
-            }
-        }
-        */
+        
         private void Refresh(GemType type)
         {
             _visualizer.SetAttribute(this, type);

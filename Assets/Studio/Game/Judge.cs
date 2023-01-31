@@ -12,8 +12,8 @@ namespace Studio.Game
     public class Judge
     {
         public readonly List<Gem> buffer = new List<Gem>();
-        public readonly List<Gem> result = new List<Gem>();
         public readonly List<GemSet> sets = new List<GemSet>();
+
         public ObjectPool<GemSet> setPool = new ObjectPool<GemSet>(
             () => new GemSet(),
             null,

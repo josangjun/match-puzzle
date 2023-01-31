@@ -95,13 +95,6 @@ namespace Studio.Game
             }
         }
 
-        [ContextMenu("Match")]
-        private void Match()
-        {
-            var tf = judge.Match();
-            Debug.Log($"{tf}\n{judge.result.Select(arg => arg.ToString()).ToArray().ToJson()}");
-        }
-
         public class FocusedGem
         {
             private Gem _g;
