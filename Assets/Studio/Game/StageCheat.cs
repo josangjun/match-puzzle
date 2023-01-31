@@ -35,9 +35,9 @@ namespace Studio.Game
             return (Gem)(Point)localPt;
         }
 
-        public void SetGemType(string strType)
+        public void SetGemType(int typeInt)
         {
-            System.Enum.TryParse<GemType>(strType, out var type);
+            var type = (GemType)typeInt;
 
             var g = GetFocusedGem();
             if (g)

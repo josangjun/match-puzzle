@@ -22,6 +22,8 @@ namespace Studio.Game
 
         private Gem[,] _board = new Gem[COL, ROW];
 
+        public int GemTypeCount { get; set; } = (int)GemType.Max;
+
         public Gem this[int x, int y]
         {
             get
@@ -147,7 +149,7 @@ namespace Studio.Game
                 {
                     x = point.x,
                     y = -1 * c++,
-                    type = (GemType)Random.Range(1, (int)GemType.Max)
+                    type = (GemType)Random.Range(1, GemTypeCount)
                 });
             }
         }
@@ -181,7 +183,7 @@ namespace Studio.Game
             var lhs = focusedGem.val;
             var rhs = g;
             var tf = lhs.IsAdjacency(rhs);
-            focusedGem.val = null;
+            focusedGem.val = g;
 #if UNITY_EDITOR
             if (Input.GetKey(KeyCode.LeftShift))
                 return;
@@ -261,8 +263,9 @@ namespace Studio.Game
                 var cmd = commands.First.Value;
                 if (!cmd.IsRunning())
                     cmd.Run();
-                if (!cmd.IsRunning())
-                    commands.Remove(cmd);
+                if (cmd.IsRunning())
+                    break;
+                commands.Remove(cmd);
             }
             if (!job.IsProcessing && job.Count > 0)
                 StartCoroutine(job.Process());
@@ -327,7 +330,7 @@ namespace Studio.Game
                 {
                     if (g == null)
                         continue;
-                    g.type = (GemType)Random.Range(1, (int)GemType.Max);
+                    g.type = (GemType)Random.Range(1, GemTypeCount);
                 }
             }
             
@@ -336,7 +339,7 @@ namespace Studio.Game
                 do
                 {
                     foreach (var g in judge.result)
-                        g.type = (GemType)Random.Range(1, (int)GemType.Max);
+                        g.type = (GemType)Random.Range(1, GemTypeCount);
                 }
                 while (!judge.HasMove());
             }

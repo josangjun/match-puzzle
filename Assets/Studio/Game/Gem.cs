@@ -11,8 +11,8 @@ using UniRx;
 namespace Studio.Game
 {
     [System.Flags]
-    public enum Direction { None, Up, Right, Down, Left };
-    public enum GemType { None, Red, Orange, Yellow, Green, Blue, Purple, White, Max }
+    public enum Direction { None, Up, Right, Down, Left, Max };
+    public enum GemType { None, Red, Blue, Yellow, Green, Orange, Purple, White, Max }
     public enum Axis { Horizontal, Vetical };
 
     public class Gem : GoItem, IDragHandler, IPointerDownHandler
