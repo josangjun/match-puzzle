@@ -39,6 +39,7 @@ namespace Studio
         {
             if (Instance)
             {
+                ready = true;
                 yield break;
             }
             if (AlreadyExist() == false)

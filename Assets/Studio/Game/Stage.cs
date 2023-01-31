@@ -12,8 +12,8 @@ namespace Studio.Game
 {
     public class Stage : Singleton<Stage>
     {
-        public const int COL = 8;
-        public const int ROW = 8;
+        public const int COL = 9;
+        public const int ROW = 11;
         public const int MATCH = 3;
 
         [SerializeField]
@@ -231,7 +231,7 @@ namespace Studio.Game
             var exp = new Explosion();
             foreach (var s in sets)
             {
-                SLogger.LogEditor($"set:{s.type}, {s.gems.Select(arg => arg.ToString()).ToJson()}");
+                SLogger.Log($"{s.type}, {s.gems.Select(arg => arg.ToString()).ToJson()}");
                 foreach (var g in s.gems)
                 {
                     var p = (Point)g;
@@ -381,7 +381,7 @@ namespace Studio.Game
         {
             IEnumerator<float> M_()
             {
-                yield return MEC.Timing.WaitForSeconds(0.2f);
+                yield return 0f;
                 judge.MatchAndExplode();
             }
             hMatch = MEC.Timing.RunCoroutineSingleton(M_(), hMatch, MEC.SingletonBehavior.Overwrite);
