@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using UniRx;
 using UnityEngine;
+using UnityEngine.Pool;
 using UnityEngine.UI;
 
 namespace Studio.Game
@@ -12,28 +13,89 @@ namespace Studio.Game
     {
         public readonly List<Gem> buffer = new List<Gem>();
         public readonly List<Gem> result = new List<Gem>();
+        public readonly List<GemSet> sets = new List<GemSet>();
+        public ObjectPool<GemSet> setPool = new ObjectPool<GemSet>(
+            () => new GemSet(),
+            null,
+            arg => {
+                arg.gems.Clear();
+                arg.type = SetType.None;
+            });
+
+        public void Dispose()
+        {
+            buffer.Clear();
+            sets.Clear();
+            setPool.Dispose();
+        }
 
         public bool Match()
         {
-            result.Clear();
-            return Match_(buffer);
+            InitSets();
+            Match_(buffer);
+            SortSets();
+            return sets.Count > 0;
+        }
+
+        private void InitSets()
+        {
+            foreach (var s in sets)
+                setPool.Release(s);
+            sets.Clear();
+        }
+
+        private readonly List<GemSet> setbuffer = new List<GemSet>();
+        private void SortSets()
+        {
+            sets.Sort((x, y) => ((int)y.type).CompareTo((int)x.type));
+            setbuffer.Clear();
+            for (var i = 0; i < sets.Count; ++i)
+            {
+                var s = sets[i];
+                if (!s.IsSequence())
+                    continue;
+                setbuffer.Add(s);
+            }
+
+            for (var i = 0; i < setbuffer.Count; ++i)
+            {
+                var lhs = setbuffer[i];
+                for (var j = setbuffer.Count-1; j > i; --j)
+                {
+                    var rhs = setbuffer[j];
+                    if (lhs.IsCross(rhs))
+                    {
+                        setbuffer.RemoveAt(j);
+                        sets.Remove(rhs);
+                        foreach (var g in rhs.gems)
+                            if (!lhs.gems.Contains(g))
+                                lhs.gems.Add(g);
+                        lhs.type = SetType.Cross;
+                    }
+                }
+            }
         }
 
         public bool Match(Point p)
         {
-            result.Clear();
+            InitSets();
+            MatchSquare(p, p.Move(1, 1));
+            MatchSquare(p, p.Move(1, -1));
+            MatchSquare(p, p.Move(-1, 1));
+            MatchSquare(p, p.Move(-1, -1));
             Match(p, Axis.Horizontal, buffer);
             Match(p, Axis.Vetical, buffer);
-            return result.Count >= Stage.MATCH;
+            SortSets();
+            return sets.Count > 0;
         }
 
         public bool MatchAndExplode()
         {
             if (Match())
             {
-                if (result.Count >= Stage.MATCH)
+                if (sets.Count > 0)
                 {
-                    Stage.Instance.Explode(result);
+                    Stage.Instance.Explode(sets);
                     return true;
                 }
             }
@@ -42,8 +104,8 @@ namespace Studio.Game
 
         private bool Match_(List<Gem> buffer)
         {
-            result.Clear();
             buffer.Clear();
+            var c = sets.Count;
             for (var i = 0; i < Stage.COL; ++i)
             {
                 var type = GemType.None;
@@ -59,16 +121,23 @@ namespace Studio.Game
                 for (var j = 0; j < Stage.COL; ++j)
                 {
                     Match_(j, i, ref type, buffer);
+                    var p = new Point(i, j);
+                    MatchSquare(p, p.Move(1, 1));
                 }
                 FlushBuffer(buffer);
             }
-            return result.Count > 0;
+            return sets.Count > c;
         }
 
         private void FlushBuffer(List<Gem> buffer)
         {
             if (buffer.Count >= Stage.MATCH)
-                result.AddRange(buffer);
+            {
+                var set = setPool.Get();
+                set.gems.AddRange(buffer);
+                set.type = GetSequenceType(buffer.Count);
+                sets.Add(set);
+            }
             buffer.Clear();
         }
 
@@ -93,7 +162,7 @@ namespace Studio.Game
 
         public bool MatchSquare(Gem p, Gem q)
         {
-            if (p.type != q.type)
+            if (p == null || q == null || p.type != q.type)
                 return false;
             var type = p.type;
             var xmin = Math.Min(p.x, q.x);
@@ -101,19 +170,26 @@ namespace Studio.Game
             var xmax = Math.Max(p.x, q.x);
             var ymax = Math.Max(p.y, q.y);
 
+            var set = setPool.Get();
             for (var x = xmin; x <= xmax; ++x)
             {
                 for (var y = ymin; y <= ymax; ++y)
                 {
                     var c = Stage.Instance[x, y];
                     if (c == null || c.type != type)
+                    {
+                        setPool.Release(set);
                         return false;
+                    }
+                    set.gems.Add(c);
                 }
             }
+            set.type = SetType.Square2x2;
+            sets.Add(set);
             return true;
         }
 
-        public bool Match(Point p, Axis axis, List<Gem> buffer)
+        private bool Match(Point p, Axis axis, List<Gem> buffer)
         {
             var g = (Gem)p;
             buffer.Clear();
@@ -129,8 +205,23 @@ namespace Studio.Game
                 Match_(p, buffer, Direction.Down);
             }
             if (buffer.Count >= Stage.MATCH)
-                result.AddRange(buffer);
+            {
+                var set = setPool.Get();
+                set.gems.AddRange(buffer);
+                set.type = GetSequenceType(buffer.Count);
+                sets.Add(set);
+            }
             return buffer.Count >= Stage.MATCH;
+        }
+
+        private SetType GetSequenceType(int count)
+        {
+            return count switch
+            {
+                3 => SetType.Sequence3,
+                4 => SetType.Sequence4,
+                _ => SetType.Sequence4
+            };
         }
 
         private void Match_(Gem g, List<Gem> list, Direction dir)
@@ -147,6 +238,7 @@ namespace Studio.Game
 
         public bool HasMove()
         {
+            InitSets();
             for (var i = 0; i < Stage.COL-1; ++i)
             {
                 for (var j = 0; j < Stage.ROW-1; ++j)
@@ -212,9 +304,9 @@ namespace Studio.Game
             h.SetPosition(src, false);
 
             Match(src);
-            var countS = result.Count;
+            var countS = sets.Count;
             Match(dst);
-            var countD = result.Count;
+            var countD = sets.Count;
             var count = countS + countD;
 
             g.SetPosition(src, false);

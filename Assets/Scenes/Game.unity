@@ -339,7 +339,7 @@ MonoBehaviour:
       m_SubObjectName: 
       m_SubObjectType: 
       m_EditorAssetChanged: 0
-    localPosition: {x: -292.00702, y: 621.8, z: 0}
+    localPosition: {x: -291.95172, y: 621.8, z: 0}
     localRotation: {x: -0, y: 0, z: 0}
     localScale: {x: 1, y: 1, z: 1}
     rectTransform: {fileID: 2044327809}
@@ -981,6 +981,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _gemFactory: {fileID: 20891333}
+  _config: {fileID: 11400000, guid: 6b6f2d1cb4c8747fb855bf4c27b5b71b, type: 2}
   simulator:
     _enabled: 0
     _interval: 1

@@ -19,7 +19,7 @@ namespace Studio.Game
         [SerializeField]
         private GemFactory _gemFactory;
         public GemFactory gemFactory => _gemFactory;
-
+        [SerializeField]
         private AppConfig _config;
         public AppConfig config => _config;
 
@@ -51,7 +51,6 @@ namespace Studio.Game
             if (!Service.ready)
                 yield return Service.Init();
 
-            _config = Service.GetAsset<AppConfig>();
             gemFactory.onInit.Subscribe(OnInit).AddTo(this);
             yield return gemFactory.Prepare().ToObservable().ToYieldInstruction();
 
@@ -232,6 +231,28 @@ namespace Studio.Game
             commands.AddLast(cmd);
         }
 
+        public void Explode(List<GemSet> sets)
+        {
+            if (sets.Count == 0)
+                return;
+            var exp = new Explosion();
+            foreach (var s in sets)
+            {
+                SLogger.LogEditor($"set:{s.type}, {s.gems.Select(arg => arg.ToString()).ToJson()}");
+                foreach (var g in s.gems)
+                {
+                    var p = (Point)g;
+                    if (exp.points.Contains(p))
+                    {
+                        continue;
+                    }
+                    exp.points.Add(p);
+                }
+            }
+            exp.onComplete.Take(1).Subscribe(OnExplosion);
+            commands.AddLast(exp);
+        }
+
         public void Explode(List<Gem> gems)
         {
             if (gems.Count == 0)
@@ -337,15 +358,27 @@ namespace Studio.Game
                     g.type = (GemType)Random.Range(1, GemTypeCount);
                 }
             }
-            
+
+            var t = Time.realtimeSinceStartup;
             while (judge.Match())
             {
+
                 do
                 {
-                    foreach (var g in judge.result)
-                        g.type = (GemType)Random.Range(1, GemTypeCount);
+                    foreach (var s in judge.sets)
+                    {
+                        foreach (var g in s.gems)
+                            g.type = (GemType)Random.Range(1, GemTypeCount);
+                    }
+                    var elapsed = Time.realtimeSinceStartup - t;
+                    if (elapsed > 5f)
+                    {
+                        SLogger.LogError("shuffle timeout");
+                        break;
+                    }
                 }
                 while (!judge.HasMove());
+                
             }
         }
     }

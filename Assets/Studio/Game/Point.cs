@@ -88,12 +88,35 @@ namespace Studio.Game
         public int match;
     }
 
-    public enum SetType { None, Sequence3, Sequence4, Square2x2, Cross3x3 }
+    public enum SetType { None, Sequence3, Sequence4, Square2x2, Cross }
 
     [System.Serializable]
-    public class PointSet
+    public class GemSet
     {
         public SetType type;
-        public List<Point> points = new List<Point>(5);
+        public List<Gem> gems = new List<Gem>(5);
+
+        public bool IsSequence()
+        {
+            return type is SetType.Sequence3 or SetType.Sequence4;
+        }
+
+        public bool IsCross(GemSet other)
+        {
+            if (!IsSequence() || !other.IsSequence())
+                return false;
+            
+            for (var i = 0; i < gems.Count; ++i)
+            {
+                for (var j = 0; j < other.gems.Count; ++j)
+                {
+                    var lhs = gems[i];
+                    var rhs = other.gems[j];
+                    if (lhs.x == rhs.x && lhs.y == rhs.y)
+                        return true;
+                }
+            }
+            return false;
+        }
     }
 }
