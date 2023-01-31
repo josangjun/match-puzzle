@@ -59,7 +59,7 @@ namespace Studio.Game.Commands
 
         public void Run()
         {
-            SLogger.LogEditor("explode:"+points.Select(arg => (Gem)arg).Where(arg => arg).Select(arg => arg.ToString()).ToArray().ToJson());
+            //SLogger.LogEditor("explode:"+points.Select(arg => (Gem)arg).Where(arg => arg).Select(arg => arg.ToString()).ToArray().ToJson());
 
             foreach (var p in points)
             {

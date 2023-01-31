@@ -374,5 +374,17 @@ namespace Studio.Game
                 
             }
         }
+
+        private MEC.CoroutineHandle hMatch;
+
+        public void MatchAndExplode()
+        {
+            IEnumerator<float> M_()
+            {
+                yield return MEC.Timing.WaitForSeconds(0.2f);
+                judge.MatchAndExplode();
+            }
+            hMatch = MEC.Timing.RunCoroutineSingleton(M_(), hMatch, MEC.SingletonBehavior.Overwrite);
+        }
     }
 }

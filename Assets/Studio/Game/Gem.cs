@@ -198,8 +198,7 @@ namespace Studio.Game
             _freeFall.Start(() =>
                 {
                     h.Dispose();
-                    MEC.Timing.CallDelayed(0.2f, () =>
-                        Stage.Instance.judge.MatchAndExplode());
+                    Stage.Instance.MatchAndExplode();
                 });
             return true;
         }
