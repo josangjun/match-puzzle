@@ -77,6 +77,7 @@ namespace Studio
             var loading = Instance.LoadUpdateContents();
             yield return CoroutineBridge.WaitInflation(Instance.gameObject.scene);
             yield return loading;
+            ready = true;
         }
 
         public Coroutine LoadUpdateContents()
@@ -304,7 +305,6 @@ namespace Studio
                 Destroy(gameObject);
                 return;
             }
-            ready = true;
             Instance = this;
 
             Davinci.SetFilePath(FileTool.GetResourceDir() + "/images/");
@@ -373,6 +373,11 @@ namespace Studio
         public void OnApplicationQuit()
         {
             _applicationIsQuitting = true;
+        }
+
+        public void OnDisable()
+        {
+            ready = false;
         }
     }
 }

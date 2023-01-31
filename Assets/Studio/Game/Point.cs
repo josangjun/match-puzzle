@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Studio.Game
@@ -28,6 +29,11 @@ namespace Studio.Game
                 default:
                     return new Point(-1, -1);
             }
+        }
+
+        public Point Move(int x, int y)
+        {
+            return new Point(this.x + x, this.y + y);
         }
 
         public static implicit operator Gem(Point p)
@@ -75,10 +81,19 @@ namespace Studio.Game
     }
 
     [System.Serializable]
-    public struct Move
+    public class Move
     {
         public Point point;
         public Direction dir;
         public int match;
+    }
+
+    public enum SetType { None, Sequence3, Sequence4, Square2x2, Cross3x3 }
+
+    [System.Serializable]
+    public class PointSet
+    {
+        public SetType type;
+        public List<Point> points = new List<Point>(5);
     }
 }

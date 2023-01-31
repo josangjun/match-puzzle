@@ -20,9 +20,12 @@ namespace Studio.Game
         private GemFactory _gemFactory;
         public GemFactory gemFactory => _gemFactory;
 
+        private AppConfig _config;
+        public AppConfig config => _config;
+
         private Gem[,] _board = new Gem[COL, ROW];
 
-        public int GemTypeCount { get; set; } = (int)GemType.Max;
+        public int GemTypeCount => _config.GemTypeCount;
 
         public Gem this[int x, int y]
         {
@@ -48,6 +51,7 @@ namespace Studio.Game
             if (!Service.ready)
                 yield return Service.Init();
 
+            _config = Service.GetAsset<AppConfig>();
             gemFactory.onInit.Subscribe(OnInit).AddTo(this);
             yield return gemFactory.Prepare().ToObservable().ToYieldInstruction();
 

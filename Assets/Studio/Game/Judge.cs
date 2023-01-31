@@ -91,6 +91,28 @@ namespace Studio.Game
                 buffer.Add(g);
         }
 
+        public bool MatchSquare(Gem p, Gem q)
+        {
+            if (p.type != q.type)
+                return false;
+            var type = p.type;
+            var xmin = Math.Min(p.x, q.x);
+            var ymin = Math.Min(p.y, q.y);
+            var xmax = Math.Max(p.x, q.x);
+            var ymax = Math.Max(p.y, q.y);
+
+            for (var x = xmin; x <= xmax; ++x)
+            {
+                for (var y = ymin; y <= ymax; ++y)
+                {
+                    var c = Stage.Instance[x, y];
+                    if (c == null || c.type != type)
+                        return false;
+                }
+            }
+            return true;
+        }
+
         public bool Match(Point p, Axis axis, List<Gem> buffer)
         {
             var g = (Gem)p;
