@@ -13,19 +13,51 @@ MonoBehaviour:
   m_Name: GemVisualizer
   m_EditorClassIdentifier: 
   typeInfos:
-  - type: 0
+  - tag: None
+    type: 0
+    sprite: {fileID: 0}
     color: {r: 0, g: 0, b: 0, a: 1}
-  - type: 1
+  - tag: Red
+    type: 1
+    sprite: {fileID: 0}
     color: {r: 0.8113208, g: 0, b: 0, a: 1}
-  - type: 2
+  - tag: Blue
+    type: 2
+    sprite: {fileID: 0}
     color: {r: 0, g: 0.106034815, b: 0.9150943, a: 1}
-  - type: 3
+  - tag: Yellow
+    type: 3
+    sprite: {fileID: 0}
     color: {r: 0.9056604, g: 0.8171477, b: 0.022783838, a: 1}
-  - type: 4
+  - tag: Green
+    type: 4
+    sprite: {fileID: 0}
     color: {r: 0, g: 0.8207547, b: 0.083656706, a: 1}
-  - type: 5
+  - tag: Orange
+    type: 5
+    sprite: {fileID: 0}
     color: {r: 1, g: 0.6626363, b: 0, a: 1}
-  - type: 6
+  - tag: Purple
+    type: 6
+    sprite: {fileID: 0}
     color: {r: 0.764151, g: 0, b: 0.6581184, a: 1}
-  - type: 7
+  - tag: White
+    type: 7
+    sprite: {fileID: 0}
+    color: {r: 1, g: 1, b: 1, a: 1}
+  - tag: RocketV
+    type: 9
+    sprite: {fileID: 21300000, guid: b2e6c93b988801b49bf9b1f4d55cda51, type: 3}
+    color: {r: 1, g: 1, b: 1, a: 1}
+  - tag: RocketH
+    type: 10
+    sprite: {fileID: 21300000, guid: c250c573825de1640822368899292c8f, type: 3}
+    color: {r: 1, g: 1, b: 1, a: 1}
+  - tag: TNT
+    type: 11
+    sprite: {fileID: 21300000, guid: b6148fe8938752646b5063ab6fd834de, type: 3}
+    color: {r: 1, g: 1, b: 1, a: 1}
+  - tag: LightBall
+    type: 13
+    sprite: {fileID: 21300000, guid: 2f59dc25766b7b34a906379ee47b4bcb, type: 3}
     color: {r: 1, g: 1, b: 1, a: 1}

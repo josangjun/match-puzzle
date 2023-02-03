@@ -14,13 +14,13 @@ namespace Studio.Game
         // Start is called before the first frame update
         void Start()
         {
-            Stage.Instance.simulator.onAuto.Subscribe(tf =>
+            Stage.Instance.automator.onAuto.Subscribe(tf =>
                 toggle.SetIsOnWithoutNotify(tf)).AddTo(this);
         }
 
         public void OnValueChanged()
         {
-            Stage.Instance.simulator.enabled = toggle.isOn;
+            Stage.Instance.automator.enabled = toggle.isOn;
         }
     }
 }

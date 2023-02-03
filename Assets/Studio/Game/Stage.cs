@@ -7,6 +7,7 @@ using Studio.Common;
 using UnityEngine.EventSystems;
 using System.Linq;
 using Studio.Game.Commands;
+using UnityEngine.Pool;
 
 namespace Studio.Game
 {
@@ -22,7 +23,7 @@ namespace Studio.Game
         [SerializeField]
         private AppConfig _config;
         public AppConfig config => _config;
-
+        
         private Gem[,] _board = new Gem[COL, ROW];
 
         public int GemTypeCount => _config.GemTypeCount;
@@ -119,6 +120,7 @@ namespace Studio.Game
         {
             g.onPress.TakeUntilDisable(g).Subscribe(OnPress).AddTo(this);
             g.onDrag.TakeUntilDisable(g).Subscribe(OnDrag).AddTo(this);
+            g.onClick.TakeUntilDisable(g).Subscribe(OnClick).AddTo(this);
         }
 
         public void OnExplosion(List<Point> points)
@@ -154,7 +156,7 @@ namespace Studio.Game
         {
             var diff = eventData.position - eventData.pressPosition;
             
-            if (diff.sqrMagnitude < 300)
+            if (diff.sqrMagnitude < 600)
                 return;
 
             focusedGem.val = null;
@@ -191,11 +193,20 @@ namespace Studio.Game
             SLogger.Log($"adjacency:{lhs}, {rhs}, {tf}");
         }
 
+        private void OnClick(Gem g)
+        {
+            if (g.type < GemType.Max)
+                return;
+
+            Explode(g);
+        }
+
         public void Swap(Gem lhs, Gem rhs)
         {
             if (lhs == null || rhs == null || lhs.IsLocked() || rhs.IsLocked())
                 return;
 
+            lhs.touchTime = rhs.touchTime = Time.time;
             var cmd = new SwapGem
             {
                 lhs = lhs,
@@ -203,6 +214,10 @@ namespace Studio.Game
             };
             cmd.onComplete.Take(1).Subscribe(_ =>
             {
+                if (lhs.type > GemType.Max)
+                    Explode(lhs);
+                if (rhs.type > GemType.Max)
+                    Explode(rhs);
                 if (!judge.MatchAndExplode())
                 {
                     var ret = new SwapGem
@@ -224,34 +239,31 @@ namespace Studio.Game
             commands.AddLast(cmd);
         }
 
-        public void Explode(List<GemSet> sets)
+        public void Explode(Gem gem)
         {
-            if (sets.Count == 0)
-                return;
-            // immediately
-            foreach (var s in sets)
-            {
-                SLogger.Log($"{s.type}, {s.gems.Select(arg => arg.ToString()).ToJson()}");
-                Explode(s.gems);
-            }
+            var list = ListPool<Gem>.Get();
+            list.Add(gem);
+            Explode(list);
+            ListPool<Gem>.Release(list);
         }
 
         public void Explode(List<Gem> gems)
         {
             if (gems.Count == 0)
                 return;
-            var list = new List<Point>();
+
+            var list = ListPool<Point>.Get();
             var count = 0;
             foreach (var g in gems)
             {
                 var p = (Point)g;
+                
                 if (!list.Contains(p))
-                {
                     list.Add(p);
-                }
                 
                 if (!g.Explode())
                     continue;
+
                 ++count;
                 var h = g.onExplosion.Take(1).
                     Subscribe(_ =>
@@ -259,6 +271,7 @@ namespace Studio.Game
                         if (0 == --count)
                         {
                             OnExplosion(list);
+                            ListPool<Point>.Release(list);
                         }
                     });
             }
@@ -271,11 +284,11 @@ namespace Studio.Game
         public readonly Judge judge = new Judge();
 
         [SerializeField]
-        public Simulator simulator = new Simulator();
+        public Automator automator = new Automator();
 
         public void Update()
         {
-            simulator.Update();
+            automator.Update();
         }
 
         // Update is called once per frame
@@ -355,7 +368,6 @@ namespace Studio.Game
             var t = Time.realtimeSinceStartup;
             while (judge.Match())
             {
-
                 do
                 {
                     foreach (var s in judge.sets)

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace Studio.Game
 {
     [System.Serializable]
-    public class Simulator 
+    public class Automator 
     {
         Judge judge => Stage.Instance.judge;
 

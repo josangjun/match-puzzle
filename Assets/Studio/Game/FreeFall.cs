@@ -68,6 +68,7 @@ namespace Studio.Game
             while (Tick())
                 yield return 0f;
             elapsed = 0f;
+            target.touchTime = Time.time;
             if (target.y < 0)
             {
                 SLogger.LogWarning($"invalid position:{target}");

@@ -27,7 +27,7 @@ namespace Studio.Game.Commands
     {
         public Point lhs, rhs;
 
-        public UniRx.Subject<UniRx.Unit> onComplete = new UniRx.Subject<UniRx.Unit>();
+        public Subject<UniRx.Unit> onComplete = new Subject<UniRx.Unit>();
 
         public async void Run()
         {
@@ -53,7 +53,7 @@ namespace Studio.Game.Commands
     {
         public List<Point> points = new List<Point>();
 
-        public UniRx.Subject<List<Point>> onComplete = new UniRx.Subject<List<Point>>();
+        public Subject<List<Point>> onComplete = new Subject<List<Point>>();
 
         public int count;
 

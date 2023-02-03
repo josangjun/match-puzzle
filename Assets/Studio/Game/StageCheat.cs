@@ -44,11 +44,18 @@ namespace Studio.Game
                 g.type = type;
         }
 
+        public void SetGemType(string typeStr)
+        {
+            if (!System.Enum.TryParse<GemType>(typeStr, out var type))
+                return;
+            SetGemType((int)type);
+        }
+
         public void Explode()
         {
             var g = GetFocusedGem();
             if (g)
-                Stage.Instance.Explode(new List<Gem> { g });
+                Stage.Instance.Explode(g);
         }
 
         public void Fall()
@@ -83,19 +90,19 @@ namespace Studio.Game
         [ConsoleCommand]
         public void Auto(bool tf)
         {
-            Stage.Instance.simulator.enabled = tf;
+            Stage.Instance.automator.enabled = tf;
         }
 
         public void ToggleAuto()
         {
-            var tf = !Stage.Instance.simulator.enabled;
-            Stage.Instance.simulator.enabled = tf;
+            var tf = !Stage.Instance.automator.enabled;
+            Stage.Instance.automator.enabled = tf;
         }
 
         [ConsoleCommand]
         public void AutoInterval(float interval)
         {
-            Stage.Instance.simulator.interval = interval;
+            Stage.Instance.automator.interval = interval;
         }
 
         [ConsoleCommand]

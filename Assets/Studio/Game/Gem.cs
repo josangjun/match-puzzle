@@ -12,17 +12,22 @@ namespace Studio.Game
 {
     [System.Flags]
     public enum Direction { None, Up, Right, Down, Left, Max };
-    public enum GemType { None, Red, Blue, Yellow, Green, Orange, Purple, White, Max }
+
+    public enum GemType {
+        None, Red, Blue, Yellow, Green, Orange, Purple, White, Max,
+        RocketV, RocketH, TNT, Propeller, LightBall }
+    [System.Flags]
+    public enum GemEquipment { None };
     public enum Axis { Horizontal, Vetical };
 
-    public class Gem : GoItem, IDragHandler, IPointerDownHandler
+    public class Gem : GoItem, IDragHandler, IPointerDownHandler, IPointerUpHandler, System.IEquatable<Gem>
     {
         public static implicit operator Point(Gem gem)
         {
             return new Point { x = gem.x, y = gem.y };
         }
 
-        public readonly UniRx.Subject<Gem> onPress = new UniRx.Subject<Gem>();
+        public readonly Subject<Gem> onPress = new Subject<Gem>();
 
         [System.NonSerialized, NaughtyAttributes.ShowNonSerializedField]
         public int x, y;
@@ -38,6 +43,9 @@ namespace Studio.Game
 
         public RectTransform rectTransform => _rectTransform;
 
+        [System.NonSerialized]
+        public float touchTime;
+
         [SerializeField]
         private GemType _type = GemType.None;
         public GemType type
@@ -48,6 +56,12 @@ namespace Studio.Game
                 _type = value;
                 Refresh(_type);
             }
+        }
+        [SerializeField]
+        private GemEquipment _equipment;
+        public GemEquipment equipment
+        {
+            get => _equipment;
         }
 
         public override string ToString()
@@ -70,7 +84,9 @@ namespace Studio.Game
             image.transform.localScale = new Vector2(1, 1);
         }
 
-        public readonly UniRx.Subject<PointerEventData> onDrag = new UniRx.Subject<PointerEventData>();
+        public readonly Subject<Gem> onClick = new Subject<Gem>();
+
+        public readonly Subject<PointerEventData> onDrag = new Subject<PointerEventData>();
         
         public void OnDrag(PointerEventData eventData)
         {
@@ -79,7 +95,17 @@ namespace Studio.Game
 
         public void OnPointerDown(PointerEventData eventData)
         {
+            touchTime = Time.frameCount;
             onPress.OnNext(this);
+        }
+
+        public void OnPointerUp(PointerEventData eventData)
+        {
+            var diff = Time.time - touchTime;
+            if (diff < 0.2f)
+            {
+                onClick.OnNext(this);
+            }
         }
 
         public bool IsAdjacency(Gem other)
@@ -163,7 +189,7 @@ namespace Studio.Game
         [SerializeField]
         private CountingLock _lock = new CountingLock();
 
-        public UniRx.Subject<Point> onExplosion = new Subject<Point>();
+        public Subject<Point> onExplosion = new Subject<Point>();
 
         public float kExplosionTime = 0.3f;
 
@@ -171,6 +197,7 @@ namespace Studio.Game
         {
             if (IsLocked())
                 return false;
+
             var h = Lock();
             image.transform.DOScale(0, kExplosionTime).OnComplete(() =>
             {
@@ -221,7 +248,7 @@ namespace Studio.Game
 
         private void Refresh(GemType type)
         {
-            _visualizer.SetAttribute(this, type);
+            _visualizer.SetType(this, type);
         }
 
         protected void OnValidate()
@@ -249,6 +276,11 @@ namespace Studio.Game
         public bool IsFalling()
         {
             return _freeFall.keepWaiting;
+        }
+
+        public bool Equals(Gem other)
+        {
+            return GetInstanceID() == other.GetInstanceID();
         }
     }
 }

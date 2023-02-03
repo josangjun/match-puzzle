@@ -159,7 +159,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 704, y: 869}
+  m_SizeDelta: {x: 720, y: 869}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &20891333
 MonoBehaviour:
@@ -339,7 +339,7 @@ MonoBehaviour:
       m_SubObjectName: 
       m_SubObjectType: 
       m_EditorAssetChanged: 0
-    localPosition: {x: -291.95172, y: 621.8, z: 0}
+    localPosition: {x: -291.7286, y: 621.8, z: 0}
     localRotation: {x: -0, y: 0, z: 0}
     localScale: {x: 1, y: 1, z: 1}
     rectTransform: {fileID: 2044327809}
@@ -556,7 +556,51 @@ MonoBehaviour:
             m_BoolArgument: 0
           m_CallState: 2
     ordinal: 0
-  - name: 7.Alpha0, Explode()
+  - name: 7.W, SetGemType(9)
+    key: 119
+    modifiers:
+      alt: 0
+      control: 0
+      shift: 0
+    evt:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 1058663903}
+          m_TargetAssemblyTypeName: Studio.Game.StageCheat, Studio.Game
+          m_MethodName: SetGemType
+          m_Mode: 5
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 9
+            m_FloatArgument: 0
+            m_StringArgument: Arrow
+            m_BoolArgument: 0
+          m_CallState: 2
+    ordinal: 0
+  - name: 8.E, SetGemType(10)
+    key: 101
+    modifiers:
+      alt: 0
+      control: 0
+      shift: 0
+    evt:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 1058663903}
+          m_TargetAssemblyTypeName: Studio.Game.StageCheat, Studio.Game
+          m_MethodName: SetGemType
+          m_Mode: 5
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 10
+            m_FloatArgument: 0
+            m_StringArgument: Bomb
+            m_BoolArgument: 0
+          m_CallState: 2
+    ordinal: 0
+  - name: 9.Alpha0, Explode()
     key: 48
     modifiers:
       alt: 0
@@ -578,7 +622,7 @@ MonoBehaviour:
             m_BoolArgument: 0
           m_CallState: 2
     ordinal: 0
-  - name: 8.F, Fall()
+  - name: 10.F, Fall()
     key: 102
     modifiers:
       alt: 0
@@ -600,7 +644,7 @@ MonoBehaviour:
             m_BoolArgument: 0
           m_CallState: 2
     ordinal: 0
-  - name: 9.Tab, DumpBoard()
+  - name: 11.Tab, DumpBoard()
     key: 9
     modifiers:
       alt: 0
@@ -622,7 +666,7 @@ MonoBehaviour:
             m_BoolArgument: 0
           m_CallState: 2
     ordinal: 0
-  - name: 10.S, Shuffle()
+  - name: 12.S, Shuffle()
     key: 115
     modifiers:
       alt: 0
@@ -644,7 +688,7 @@ MonoBehaviour:
             m_BoolArgument: 0
           m_CallState: 2
     ordinal: 0
-  - name: 11.Q, HasMove()
+  - name: 13.Q, HasMove()
     key: 113
     modifiers:
       alt: 0
@@ -666,7 +710,7 @@ MonoBehaviour:
             m_BoolArgument: 0
           m_CallState: 2
     ordinal: 0
-  - name: 12.A, ToggleAuto()
+  - name: 14.A, ToggleAuto()
     key: 97
     modifiers:
       alt: 0
@@ -982,7 +1026,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _gemFactory: {fileID: 20891333}
   _config: {fileID: 11400000, guid: 6b6f2d1cb4c8747fb855bf4c27b5b71b, type: 2}
-  simulator:
+  automator:
     _enabled: 0
     _interval: 1
 --- !u!1 &1814590357

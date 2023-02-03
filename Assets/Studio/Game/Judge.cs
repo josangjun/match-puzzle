@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using UnityEngine;
 using UnityEngine.Pool;
 
 namespace Studio.Game
@@ -20,6 +22,7 @@ namespace Studio.Game
 
         public void Dispose()
         {
+            setbuffer.Clear();
             buffer.Clear();
             sets.Clear();
             setPool.Dispose();
@@ -72,6 +75,25 @@ namespace Studio.Game
             }
         }
 
+        public void Explode(List<GemSet> sets)
+        {
+            if (sets.Count == 0)
+                return;
+
+            var alive = ListPool<Gem>.Get();
+
+            foreach (var s in sets)
+            {
+                SLogger.Log($"{s.type}, {s.gems.Select(arg => arg.ToString()).ToJson()}");
+                
+                s.Transform(alive);
+
+                Stage.Instance.Explode(s.gems);
+            }
+
+            ListPool<Gem>.Release(alive);
+        }
+
         public bool Match(Point p)
         {
             InitSets();
@@ -91,7 +113,7 @@ namespace Studio.Game
             {
                 if (sets.Count > 0)
                 {
-                    Stage.Instance.Explode(sets);
+                    Explode(sets);
                     return true;
                 }
             }
