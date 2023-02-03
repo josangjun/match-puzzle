@@ -141,11 +141,11 @@ namespace Studio.Game
                         continue;
                     g.Fall();
                 }
-                commands.AddLast(new Commands.ProduceGem
+                commands.AddLast(new ProduceGem
                 {
                     x = point.x,
                     y = -1 * c++,
-                    type = (GemType)Random.Range(1, GemTypeCount)
+                    type = gemFactory.NewRandomGemType()
                 });
             }
         }
@@ -196,7 +196,7 @@ namespace Studio.Game
             if (lhs == null || rhs == null || lhs.IsLocked() || rhs.IsLocked())
                 return;
 
-            var cmd = new Commands.SwapGem
+            var cmd = new SwapGem
             {
                 lhs = lhs,
                 rhs = rhs
@@ -205,7 +205,7 @@ namespace Studio.Game
             {
                 if (!judge.MatchAndExplode())
                 {
-                    var ret = new Commands.SwapGem
+                    var ret = new SwapGem
                     {
                         lhs = rhs,
                         rhs = lhs
@@ -228,40 +228,40 @@ namespace Studio.Game
         {
             if (sets.Count == 0)
                 return;
-            var exp = new Explosion();
+            // immediately
             foreach (var s in sets)
             {
                 SLogger.Log($"{s.type}, {s.gems.Select(arg => arg.ToString()).ToJson()}");
-                foreach (var g in s.gems)
-                {
-                    var p = (Point)g;
-                    if (exp.points.Contains(p))
-                    {
-                        continue;
-                    }
-                    exp.points.Add(p);
-                }
+                Explode(s.gems);
             }
-            exp.onComplete.Take(1).Subscribe(OnExplosion);
-            commands.AddLast(exp);
         }
 
         public void Explode(List<Gem> gems)
         {
             if (gems.Count == 0)
                 return;
-            var exp = new Explosion();
+            var list = new List<Point>();
+            var count = 0;
             foreach (var g in gems)
             {
                 var p = (Point)g;
-                if (exp.points.Contains(p))
+                if (!list.Contains(p))
                 {
-                    continue;
+                    list.Add(p);
                 }
-                exp.points.Add(p);
+                
+                if (!g.Explode())
+                    continue;
+                ++count;
+                var h = g.onExplosion.Take(1).
+                    Subscribe(_ =>
+                    {
+                        if (0 == --count)
+                        {
+                            OnExplosion(list);
+                        }
+                    });
             }
-            exp.onComplete.Take(1).Subscribe(OnExplosion);
-            commands.AddLast(exp);
         }
 
         public readonly LinkedList<ICommand> commands = new LinkedList<ICommand>();
@@ -273,8 +273,13 @@ namespace Studio.Game
         [SerializeField]
         public Simulator simulator = new Simulator();
 
-        // Update is called once per frame
         public void Update()
+        {
+            simulator.Update();
+        }
+
+        // Update is called once per frame
+        public void LateUpdate()
         {
             while (commands.Count > 0)
             {
@@ -287,11 +292,6 @@ namespace Studio.Game
             }
             if (!job.IsProcessing && job.Count > 0)
                 StartCoroutine(job.Process());
-        }
-
-        public void LateUpdate()
-        {
-            simulator.Update();
         }
 
         private void SortGems(List<Gem> gems)
@@ -348,7 +348,7 @@ namespace Studio.Game
                 {
                     if (g == null)
                         continue;
-                    g.type = (GemType)Random.Range(1, GemTypeCount);
+                    g.type = gemFactory.NewRandomGemType();
                 }
             }
 
@@ -361,7 +361,7 @@ namespace Studio.Game
                     foreach (var s in judge.sets)
                     {
                         foreach (var g in s.gems)
-                            g.type = (GemType)Random.Range(1, GemTypeCount);
+                            g.type = gemFactory.NewRandomGemType();
                     }
                     var elapsed = Time.realtimeSinceStartup - t;
                     if (elapsed > 5f)
@@ -381,7 +381,7 @@ namespace Studio.Game
         {
             IEnumerator<float> M_()
             {
-                yield return 0f;
+                yield return MEC.Timing.WaitForOneFrame;
                 judge.MatchAndExplode();
             }
             hMatch = MEC.Timing.RunCoroutineSingleton(M_(), hMatch, MEC.SingletonBehavior.Overwrite);

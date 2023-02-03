@@ -24,7 +24,7 @@ namespace Studio.Game
 
         public readonly UniRx.Subject<Gem> onPress = new UniRx.Subject<Gem>();
 
-        //[System.NonSerialized, NaughtyAttributes.ShowNonSerializedField]
+        [System.NonSerialized, NaughtyAttributes.ShowNonSerializedField]
         public int x, y;
 
         [SerializeField]
@@ -159,6 +159,7 @@ namespace Studio.Game
         public bool IsLocked() => _lock.count > 0;
 
         public System.IDisposable Lock() => _lock.Lock();
+
         [SerializeField]
         private CountingLock _lock = new CountingLock();
 
@@ -166,10 +167,10 @@ namespace Studio.Game
 
         public float kExplosionTime = 0.3f;
 
-        public void Explode()
+        public bool Explode()
         {
             if (IsLocked())
-                return;
+                return false;
             var h = Lock();
             image.transform.DOScale(0, kExplosionTime).OnComplete(() =>
             {
@@ -178,6 +179,7 @@ namespace Studio.Game
                 h.Dispose();
                 Return();
             });
+            return true;
         }
 
         [SerializeField]
@@ -200,9 +202,23 @@ namespace Studio.Game
                     h.Dispose();
                     Stage.Instance.MatchAndExplode();
                 });
+            //NotifyUpwards();
+            
             return true;
         }
-        
+
+        public void NotifyUpwards()
+        {
+            var pt = (Point)this;
+            for (var i = y - 1; i >= 0; --i)
+            {
+                pt.y = i;
+                var g = (Gem)pt;
+                if (g != null)
+                    g.Fall();
+            }
+        }
+
         private void Refresh(GemType type)
         {
             _visualizer.SetAttribute(this, type);
@@ -211,6 +227,11 @@ namespace Studio.Game
         protected void OnValidate()
         {
             Refresh(_type);
+        }
+
+        protected void OnDisable()
+        {
+            _freeFall.Stop();
         }
 
         public Gem GetNext(Direction dir)

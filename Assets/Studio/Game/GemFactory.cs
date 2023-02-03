@@ -17,8 +17,6 @@ namespace Studio.Game
 
         }
 
-        private CountingLock _lock = new CountingLock();
-
         private const string assetPath = "Assets/Prefabs/Base/Gem.prefab";
 
         public async Task Prepare()
@@ -29,21 +27,23 @@ namespace Studio.Game
 
         public readonly UniRx.Subject<Gem> onInit = new UniRx.Subject<Gem>();
 
+        public GemType NewRandomGemType()
+        {
+            return (GemType)Random.Range(0, Stage.Instance.GemTypeCount) + 1;
+        }
+
         public Gem Produce()
         {
-            var t = (GemType)Random.Range(1, (int)GemType.White + 1);
+            var t = NewRandomGemType();
             return Produce(t);
         }
 
         public Gem Produce(GemType type)
         {
-            using var h = _lock.Lock();
             var g = Service.GoPool.Rent<Gem>(assetPath, transform);
             g.type = type;
             onInit.OnNext(g);
             return g;
         }
-
-        public bool IsProcessing => _lock.count > 0;
     }
 }

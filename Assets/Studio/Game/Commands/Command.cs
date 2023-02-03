@@ -31,16 +31,16 @@ namespace Studio.Game.Commands
 
         public async void Run()
         {
-            var gx = (Gem)lhs;
-            var gy = (Gem)rhs;
-            if (!gx || !gy || !gx.CanMove() || !gy.CanMove())
+            var g = (Gem)lhs;
+            var q = (Gem)rhs;
+            if (!g || !q || !g.CanMove() || !q.CanMove())
                 return;
             {
-                using var h1 = gx.Lock();
-                using var h2 = gy.Lock();
+                using var h1 = g.Lock();
+                using var h2 = q.Lock();
 
-                var s = gx.MovePosition(rhs.x, rhs.y);
-                var t = gy.MovePosition(lhs.x, lhs.y);
+                var s = g.MovePosition(rhs.x, rhs.y);
+                var t = q.MovePosition(lhs.x, lhs.y);
                 while (s.IsActive() || t.IsActive())
                     await Task.Yield();
             }

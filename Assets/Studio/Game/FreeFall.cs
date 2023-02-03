@@ -8,13 +8,8 @@ using UnityEngine;
 
 namespace Studio.Game
 {
-    public interface ITickable
-    {
-        bool Tick();
-    }
-
     [System.Serializable]
-    public class FreeFall : ITickable
+    public class FreeFall
     {
         private const float Gravity = -9.81f * 100;
         public Vector2 start;
@@ -47,39 +42,43 @@ namespace Studio.Game
             return endPoint;
         }
 
-        public bool _keepWaiting = false;
-        public bool keepWaiting => _keepWaiting;
+        public bool keepWaiting => handle.IsRunning;
 
         private MEC.CoroutineHandle handle;
 
         public void Start(System.Action action)
         {
-            handle = Tick_().RunCoroutineSingleton(handle, SingletonBehavior.Wait);
+            handle = Tick_().RunCoroutineSingleton(handle, SingletonBehavior.Abort);
             if (action != null)
                 handle.OnDestroy(action);
         }
 
+        public void Stop()
+        {
+            elapsed = 0f;
+            handle.IsRunning = false;
+        }
+
         private IEnumerator<float> Tick_()
         {
-        //    while (keepWaiting)
-        //        yield return 0f;
-            
             start = target.rectTransform.anchoredPosition;
             elapsed = 0f;
             EndPoint();
 
             while (Tick())
                 yield return 0f;
-
+            elapsed = 0f;
             if (target.y < 0)
+            {
+                SLogger.LogWarning($"invalid position:{target}");
                 target.Return();
+            }
         }
 
         public bool Tick()
         {
             if (!target || !target.isActiveAndEnabled)
             {
-                _keepWaiting = false;
                 return false;
             }
             
@@ -94,12 +93,18 @@ namespace Studio.Game
             if (endPos.y >= p.y)
             {
                 target.rectTransform.anchoredPosition = endPos;
-                _keepWaiting = !IsFloor();
-                if (_keepWaiting)
-                    EndPoint();
-                else
+                
+                if (IsFloor())
+                {
+                    elapsed = 0f;
                     target.SetPosition(endPoint);
-                return _keepWaiting;
+                    return false;
+                }
+                else
+                {
+                    EndPoint();
+                    return true;
+                }
             }
             else
             {
@@ -111,34 +116,36 @@ namespace Studio.Game
                     {
                         target.rectTransform.SetAnchordPositionY(limit);
                         elapsed -= Time.deltaTime;
-                        _keepWaiting = true;
-                        return _keepWaiting;
+                        return true;
                     }
                 }
             }
             target.rectTransform.anchoredPosition = p;
-            _keepWaiting = true;
             return true;
         }
 
         public bool IsFloor()
         {
-            Gem lastGem = null;
             var pt = (Point)target;
-            for (var i = pt.y + 1; i < Stage.ROW; ++i)
+            var ret = true;
+            for (var i = Stage.ROW-1; i > target.y; --i)
             {
                 pt.y = i;
                 var g = (Gem)pt;
                 if (g == null)
                 {
-                    if (lastGem && !lastGem.IsFalling())
-                        lastGem.Fall();
-                    //TODO: enforce falling
+                    for (var j = i - 1; j > target.y; --j)
+                    {
+                        var q = Stage.Instance[pt.x, j];
+                        if (q && !q.IsFalling())
+                            q.Fall();
+                    }
                     return false;
                 }
-                lastGem = g;
+                else if (g.IsFalling())
+                    ret = false;
             }
-            return true;
+            return ret;
         }
 
         public void Reset()
