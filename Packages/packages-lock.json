@@ -1,5 +1,11 @@
 {
   "dependencies": {
+    "com.coffee.ui-particle": {
+      "version": "file:com.coffee.ui-particle",
+      "depth": 0,
+      "source": "embedded",
+      "dependencies": {}
+    },
     "com.linestudio.foundation": {
       "version": "file:com.linestudio.foundation",
       "depth": 0,
