@@ -9,6 +9,7 @@ Assets/SuperScrollView/Demo/
 Assets/SuperScrollView/Demo.meta
 Logs/IncrementalCompiler/
 MemoryCaptures/
+Build/
 .vscode/
 .idea/
 *.csproj
