@@ -921,6 +921,7 @@ GameObject:
   - component: {fileID: 1362193640}
   - component: {fileID: 1362193639}
   - component: {fileID: 1362193643}
+  - component: {fileID: 1362193644}
   m_Layer: 5
   m_Name: Canvas
   m_TagString: GameController
@@ -1029,6 +1030,20 @@ MonoBehaviour:
   automator:
     _enabled: 0
     _interval: 1
+--- !u!114 &1362193644
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1362193638}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cd3e9c928dbf62c4dadc79bfbb95cdc3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sheetId: 11eHK5Qcqx1b3L-k9MkkuAdfaLMvNhXfz-MINSL_eEmA
+  sheetName: sheet1
 --- !u!1 &1814590357
 GameObject:
   m_ObjectHideFlags: 0

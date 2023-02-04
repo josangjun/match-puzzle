@@ -8,6 +8,7 @@ using UnityEngine.EventSystems;
 using System.Linq;
 using Studio.Game.Commands;
 using UnityEngine.Pool;
+using GoogleSheetsToUnity;
 
 namespace Studio.Game
 {
@@ -26,7 +27,7 @@ namespace Studio.Game
         
         private Gem[,] _board = new Gem[COL, ROW];
 
-        public int GemTypeCount => _config.GemTypeCount;
+        public int GemTypeCount => _config.gemTypeCount;
 
         public Gem this[int x, int y]
         {
@@ -52,6 +53,8 @@ namespace Studio.Game
             if (!Service.ready)
                 yield return Service.Init();
 
+            yield return GoogleSheetBridge.UpdateGSTU(gameObject);
+
             gemFactory.onInit.Subscribe(OnInit).AddTo(this);
             yield return gemFactory.Prepare().ToObservable().ToYieldInstruction();
 
@@ -66,7 +69,7 @@ namespace Studio.Game
 
             Application.targetFrameRate = PlayerPrefs.GetInt("fps", 60);
         }
-
+               
         private void ArrangePosition(List<Gem> gems)
         {
             var g = gems[0];

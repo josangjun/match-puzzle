@@ -6,11 +6,11 @@ namespace Studio.Game
     public class AppConfig : ScriptableObject
     {
         public float fallSpeed = 100;
-        public int GemTypeCount = (int)GemType.Max-1;
+        public int gemTypeCount = (int)GemType.Max-1;
 
         public void OnValidate()
         {
-            GemTypeCount = Mathf.Min((int)GemType.Max-1, GemTypeCount);
+            gemTypeCount = Mathf.Min((int)GemType.Max-1, gemTypeCount);
         }
     }
 }
