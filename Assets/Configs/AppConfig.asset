@@ -12,5 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 098be95e3282145258c4856a105bbe35, type: 3}
   m_Name: AppConfig
   m_EditorClassIdentifier: 
-  fallSpeed: 100
-  GemTypeCount: 7
+  gemTypeCount: 5
+  speedScale: 100
+  speedLimit: 940

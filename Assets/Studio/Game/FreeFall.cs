@@ -11,7 +11,7 @@ namespace Studio.Game
     [System.Serializable]
     public class FreeFall
     {
-        private const float Gravity = -9.81f * 100;
+        private const float Gravity = -9.81f;
         public Vector2 start;
         
         public float elapsed = 0f;
@@ -86,8 +86,8 @@ namespace Studio.Game
             elapsed += Time.deltaTime;
 
             var p = target.rectTransform.anchoredPosition;
-
-            p.y = Gravity * elapsed * elapsed + start.y;
+            var dy = Stage.config.speedScale * Gravity * elapsed * elapsed + start.y;
+            p.y = Mathf.Max(dy, p.y - Stage.config.speedLimit * Time.deltaTime);
 
             var endPos = (Vector2)endPoint;
 

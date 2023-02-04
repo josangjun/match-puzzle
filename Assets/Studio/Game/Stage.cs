@@ -23,7 +23,7 @@ namespace Studio.Game
         public GemFactory gemFactory => _gemFactory;
         [SerializeField]
         private AppConfig _config;
-        public AppConfig config => _config;
+        public static AppConfig config { get; private set; }
         
         private Gem[,] _board = new Gem[COL, ROW];
 
@@ -45,6 +45,12 @@ namespace Studio.Game
                     return;
                 _board[x, y] = value;
             }
+        }
+
+        protected override void Awake()
+        {
+            base.Awake();
+            config = _config;
         }
 
         // Start is called before the first frame update

@@ -63,13 +63,41 @@ namespace Studio.Game
         }
 
         const string kValue = "Value";
+        private readonly System.Type[] types = new[] { typeof(string) }; 
+        private readonly object[] args = new object[1];
 
         private void ReadFromWorksheet(GstuSpreadSheet sheet)
         {
-            var config = Stage.Instance.config;
+            var config = Stage.config;
 
-            config.fallSpeed = float.Parse(sheet["fallSpeed", kValue].value);
-            config.gemTypeCount = int.Parse(sheet["gemTypeCount", kValue].value);
+            var bindings = System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static;
+
+            foreach (var key in sheet.columns["A"])
+            {
+                try
+                {
+                    var val = sheet[key.value, kValue];
+                    
+                    var field = config.GetType().GetField(key.value);
+                    if (field == null)
+                        continue;
+
+                    if (field.FieldType.IsPrimitive)
+                    {
+                        args[0] = val.value;
+                        var ret = field.FieldType.GetMethod("Parse", bindings, null, types, null).Invoke(null, args);
+                        field.SetValue(config, ret);
+                    }
+                    else if (field.FieldType == typeof(string))
+                    {
+                        field.SetValue(config, val.value);
+                    }
+                }
+                catch (System.Exception e)
+                {
+                    Debug.LogError($"{e.Message}\n{e.StackTrace}");
+                }
+            }
         }
     }
 }
