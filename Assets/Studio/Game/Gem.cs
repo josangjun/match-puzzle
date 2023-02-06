@@ -64,6 +64,11 @@ namespace Studio.Game
             get => _equipment;
         }
 
+        [SerializeField]
+        private FreeFall _freeFall = new FreeFall();
+        [SerializeField]
+        private ExplosionFlow _explosion = new ExplosionFlow();
+
         public override string ToString()
         {
             return $"Gem[{x},{y},{type}]";
@@ -73,7 +78,8 @@ namespace Studio.Game
         private void Awake()
         {
             _rectTransform = (RectTransform)transform;
-            _freeFall.target = this;
+            _freeFall.SetOwner(this);
+            _explosion.SetOwner(this);
         }
 
         public override void OnRent()
@@ -193,12 +199,16 @@ namespace Studio.Game
 
         public float kExplosionTime = 0.3f;
 
+        public void SetExpInfo(ExpInfo info) =>
+            _explosion.SetInfo(info);
+
         public bool Explode()
         {
             if (IsLocked())
                 return false;
 
             var h = Lock();
+            _explosion.Explode();
             image.transform.DOScale(0, kExplosionTime).OnComplete(() =>
             {
                 Stage.Instance[x, y] = null;
@@ -208,9 +218,6 @@ namespace Studio.Game
             });
             return true;
         }
-
-        [SerializeField]
-        private FreeFall _freeFall = new FreeFall();
 
         [ContextMenu("Fall")]
         public bool Fall()

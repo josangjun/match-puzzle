@@ -16,7 +16,12 @@ namespace Studio.Game
         
         public float elapsed = 0f;
 
-        public Gem target;
+        private Gem owner;
+
+        public void SetOwner(Gem owner)
+        {
+            this.owner = owner;
+        }
         
         const int BottomY = Stage.ROW - 1;
 
@@ -25,7 +30,7 @@ namespace Studio.Game
 
         public Point EndPoint()
         {
-            endPoint = (Point)target.rectTransform.anchoredPosition;
+            endPoint = (Point)owner.rectTransform.anchoredPosition;
             bottom = null;
             
             while (true)
@@ -37,7 +42,7 @@ namespace Studio.Game
                 endPoint = next;
             }
 
-            target.SetPosition(endPoint, false);
+            owner.SetPosition(endPoint, false);
             
             return endPoint;
         }
@@ -55,37 +60,35 @@ namespace Studio.Game
 
         public void Stop()
         {
-            elapsed = 0f;
             handle.IsRunning = false;
         }
 
         private IEnumerator<float> Tick_()
         {
-            start = target.rectTransform.anchoredPosition;
+            start = owner.rectTransform.anchoredPosition;
             elapsed = 0f;
             EndPoint();
 
             while (Tick())
                 yield return 0f;
-            elapsed = 0f;
-            target.touchTime = Time.time;
-            if (target.y < 0)
+            owner.touchTime = Time.time;
+            if (owner.y < 0)
             {
-                SLogger.LogWarning($"invalid position:{target}");
-                target.Return();
+                SLogger.LogWarning($"invalid position:{owner}");
+                owner.Return();
             }
         }
 
         public bool Tick()
         {
-            if (!target || !target.isActiveAndEnabled)
+            if (!owner || !owner.isActiveAndEnabled)
             {
                 return false;
             }
             
             elapsed += Time.deltaTime;
 
-            var p = target.rectTransform.anchoredPosition;
+            var p = owner.rectTransform.anchoredPosition;
             var dy = Stage.config.speedScale * Gravity * elapsed * elapsed + start.y;
             p.y = Mathf.Max(dy, p.y - Stage.config.speedLimit * Time.deltaTime);
 
@@ -93,12 +96,12 @@ namespace Studio.Game
 
             if (endPos.y >= p.y)
             {
-                target.rectTransform.anchoredPosition = endPos;
+                owner.rectTransform.anchoredPosition = endPos;
                 
                 if (IsFloor())
                 {
-                    elapsed = 0f;
-                    target.SetPosition(endPoint);
+                    //elapsed = 0f;
+                    owner.SetPosition(endPoint);
                     return false;
                 }
                 else
@@ -109,33 +112,33 @@ namespace Studio.Game
             }
             else
             {
-                bottom = target.GetNext(Direction.Down);
+                bottom = owner.GetNext(Direction.Down);
                 if (bottom)
                 {
                     var limit = bottom.rectTransform.anchoredPosition.y + Gem.Size.y;
                     if (limit > p.y)
                     {
-                        target.rectTransform.SetAnchordPositionY(limit);
+                        owner.rectTransform.SetAnchordPositionY(limit);
                         elapsed -= Time.deltaTime;
                         return true;
                     }
                 }
             }
-            target.rectTransform.anchoredPosition = p;
+            owner.rectTransform.anchoredPosition = p;
             return true;
         }
 
         public bool IsFloor()
         {
-            var pt = (Point)target;
+            var pt = (Point)owner;
             var ret = true;
-            for (var i = Stage.ROW-1; i > target.y; --i)
+            for (var i = Stage.ROW-1; i > owner.y; --i)
             {
                 pt.y = i;
                 var g = (Gem)pt;
                 if (g == null)
                 {
-                    for (var j = i - 1; j > target.y; --j)
+                    for (var j = i - 1; j > owner.y; --j)
                     {
                         var q = Stage.Instance[pt.x, j];
                         if (q && !q.IsFalling())

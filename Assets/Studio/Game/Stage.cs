@@ -229,10 +229,9 @@ namespace Studio.Game
             };
             cmd.onComplete.Take(1).Subscribe(_ =>
             {
-                if (lhs.type > GemType.Max)
-                    Explode(lhs);
-                if (rhs.type > GemType.Max)
-                    Explode(rhs);
+                if (Explode(lhs, rhs) || Explode(rhs, lhs))
+                    return;
+
                 if (!judge.MatchAndExplode())
                 {
                     var ret = new SwapGem
@@ -254,8 +253,19 @@ namespace Studio.Game
             commands.AddLast(cmd);
         }
 
+        public bool Explode(Gem master, Gem slave)
+        {
+            if (master.type <= GemType.Max)
+                return false;
+            master.SetExpInfo(slave);
+            Explode(master);
+            return true;
+        }
+
         public void Explode(Gem gem)
         {
+            if (gem == null)
+                return;
             var list = ListPool<Gem>.Get();
             list.Add(gem);
             Explode(list);
