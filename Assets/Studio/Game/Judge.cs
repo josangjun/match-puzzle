@@ -46,7 +46,6 @@ namespace Studio.Game
         private readonly List<GemSet> setbuffer = new List<GemSet>();
         private void SortSets()
         {
-            sets.Sort((x, y) => ((int)y.type).CompareTo((int)x.type));
             setbuffer.Clear();
             for (var i = 0; i < sets.Count; ++i)
             {
@@ -73,6 +72,7 @@ namespace Studio.Game
                     }
                 }
             }
+            sets.Sort((x, y) => ((int)y.type).CompareTo((int)x.type));
         }
 
         public void Explode(List<GemSet> sets)
@@ -238,6 +238,7 @@ namespace Studio.Game
             {
                 3 => SetType.Sequence3,
                 4 => SetType.Sequence4,
+                5 => SetType.Sequence5,
                 _ => SetType.Sequence4
             };
         }

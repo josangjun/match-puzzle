@@ -118,7 +118,13 @@ namespace Studio.Game
                         _g.image.SetAlpha(1f);
                     _g = value;
                     if (_g)
+                    {
                         _g.image.SetAlpha(0.7f);
+                        _g.onExplosion.TakeUntilDisable(_g).Take(1).Subscribe(_ =>
+                        {
+                            this.val = null;
+                        });
+                    }
                 }
             }
         }

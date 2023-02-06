@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Studio.Game
 {
-    public enum SetType { None, Sequence3, Sequence4, Square2x2, Cross }
+    public enum SetType { None, Sequence3, Sequence4, Square2x2, Cross, Sequence5 }
 
     [System.Serializable]
     public class GemSet
@@ -45,7 +45,7 @@ namespace Studio.Game
             if (type == SetType.Sequence3)
                 return;
 
-            if (type == SetType.Square2x2)
+            if (type == SetType.Square2x2 || type == SetType.Cross)
             {
                 var g = TransformGem(gems, GemType.TNT);
                 alive.Add(g);
@@ -56,7 +56,7 @@ namespace Studio.Game
                 var g = TransformGem(gems, type);
                 alive.Add(g);
             }
-            else if (type == SetType.Cross)
+            else if (type == SetType.Sequence5)
             {
                 var g = TransformGem(gems, GemType.LightBall);
                 alive.Add(g);
