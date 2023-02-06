@@ -1,8 +1,8 @@
-using DG.DemiEditor;
 using MEC;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Pool;
+using Studio.Framework;
 
 namespace Studio.Game
 {
@@ -133,7 +133,7 @@ namespace Studio.Game
                     break;
                 Stage.Instance.Explode(up);
                 Stage.Instance.Explode(down);
-                yield return Timing.WaitForSeconds(0.1f);
+                yield return Timing.WaitForSeconds(0.025f);
             }
         }
 
@@ -148,7 +148,7 @@ namespace Studio.Game
                     break;
                 Stage.Instance.Explode(left);
                 Stage.Instance.Explode(right);
-                yield return Timing.WaitForSeconds(0.1f);
+                yield return Timing.WaitForSeconds(0.025f);
             }
         }
 
