@@ -54,6 +54,8 @@ namespace Studio.Game
                     continue;
                 setbuffer.Add(s);
             }
+            Comparison<GemSet> pred = (x, y) => ((int)y.type).CompareTo((int)x.type);
+            setbuffer.Sort(pred);
 
             for (var i = 0; i < setbuffer.Count; ++i)
             {
@@ -72,7 +74,7 @@ namespace Studio.Game
                     }
                 }
             }
-            sets.Sort((x, y) => ((int)y.type).CompareTo((int)x.type));
+            sets.Sort(pred);
         }
 
         public void Explode(List<GemSet> sets)
