@@ -556,7 +556,7 @@ MonoBehaviour:
             m_BoolArgument: 0
           m_CallState: 2
     ordinal: 0
-  - name: 7.W, SetGemType(9)
+  - name: 7.W, SetGemType(Arrow)
     key: 119
     modifiers:
       alt: 0
@@ -578,7 +578,7 @@ MonoBehaviour:
             m_BoolArgument: 0
           m_CallState: 2
     ordinal: 0
-  - name: 8.E, SetGemType(10)
+  - name: 8.E, SetGemType(Bomb)
     key: 101
     modifiers:
       alt: 0

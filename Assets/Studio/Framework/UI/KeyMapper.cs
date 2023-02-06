@@ -187,6 +187,8 @@ namespace Studio.Framework
             }
         }
 
+        public enum CallMode { Void = 1, Object =2, Int = 3, Float, String = 5, Bool }
+
         private void OnValidate()
         {
             var existings = new Dictionary<string, int>();
@@ -216,12 +218,18 @@ namespace Studio.Framework
                 {
                     var propPath = string.Format("bindings.Array.data[{0}].evt.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments", i);
                     var prop = serializedObject.FindProperty(propPath);
+                    var modePath = string.Format("bindings.Array.data[{0}].evt.m_PersistentCalls.m_Calls.Array.data[0].m_Mode", i);
+                    var modeProp = serializedObject.FindProperty(modePath);
+                    var mode = (CallMode)modeProp.intValue;
                     foreach (var methodInfo in methodList)
                     {
                         var parameters = methodInfo.GetParameters();
                         if (parameters.Length == 0)
                             continue;
                         var parameter = parameters[0].ParameterType;
+                        if (mode == CallMode.String)
+                            parameter = typeof(string);
+                        
                         var first = FindArgument(prop, parameter);
                         if (first != null)
                         {
