@@ -148,20 +148,16 @@ namespace Studio.Game
                 return cmp;
             });
 
-            int c = 1;
-            foreach (var point in points)
+            int c = 0, x = -1;
+            for (var i = 0; i < points.Count; ++i)
             {
-                for (var i = point.y - 1; i >= 0; --i)
-                {
-                    var g = this[point.x, i];
-                    if (g == null)
-                        continue;
-                    g.Fall();
-                }
+                var point = points[i];
+                if (x != point.x)
+                    c = 1;
+                else ++c;
                 commands.AddLast(new ProduceGem
                 {
-                    x = point.x,
-                    y = -1 * c++,
+                    point = new Point(point.x, -1 * c++),
                     type = gemFactory.NewRandomGemType()
                 });
             }

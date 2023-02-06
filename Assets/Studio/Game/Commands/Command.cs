@@ -11,14 +11,24 @@ namespace Studio.Game.Commands
     public class ProduceGem : ICommand
     {
         public GemType type;
-        public int x, y;
+        public Point point;
         
         public void Run()
         {
-            var g = Stage.Instance.gemFactory.Produce(type);
-            g.SetPosition(x, y);
-            if (y < 0)
+            for (var i = point.y - 1; i >= 0; --i)
+            {
+                var g = Stage.Instance[point.x, i];
+                if (g == null)
+                    continue;
                 g.Fall();
+            }
+
+            {
+                var g = Stage.Instance.gemFactory.Produce(type);
+                g.SetPosition(point);
+                if (point.y < 0)
+                    g.Fall();
+            }
         }
     }
 
