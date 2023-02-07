@@ -36,6 +36,9 @@ namespace Studio.Game
 
         public void Transform(List<Gem> alive)
         {
+            if (!Stage.config.powerUp)
+                return;
+
             if (alive.Count > 0)
             {
                 foreach (var g in alive)
@@ -45,7 +48,12 @@ namespace Studio.Game
             if (type == SetType.Sequence3)
                 return;
 
-            if (type == SetType.Square2x2 || type == SetType.Cross)
+            if (type == SetType.Square2x2)
+            {
+                var g = TransformGem(gems, GemType.Propeller);
+                alive.Add(g);
+            }
+            else if (type == SetType.Cross)
             {
                 var g = TransformGem(gems, GemType.TNT);
                 alive.Add(g);

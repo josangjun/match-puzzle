@@ -32,7 +32,7 @@ namespace Studio.Game
             this.owner = owner;
         }
 
-        public void SetInfo(ExpInfo info)
+        public void Join(ExpInfo info)
         {
             this.info = info;
         }
@@ -62,6 +62,12 @@ namespace Studio.Game
                     }
                     break;
 
+                case GemType.Propeller:
+                    {
+                        handle = ExplodePropeller().RunCoroutine();
+                    }
+                    break;
+
                 case GemType.TNT:
                     {
                         handle = ExplodeTNT().RunCoroutine();
@@ -74,6 +80,19 @@ namespace Studio.Game
                     }
                     break;
             }
+        }
+
+        private IEnumerator<float> ExplodePropeller()
+        {
+            var offset = (Point)owner;
+            
+            for (var i = Direction.None + 1; i < Direction.Max; ++i)
+            {
+                var g = owner.GetNext((Direction)i);
+                if (g) Stage.Instance.Explode(g);
+            }
+
+            yield break;
         }
 
         private IEnumerator<float> ExplodeLightBall()

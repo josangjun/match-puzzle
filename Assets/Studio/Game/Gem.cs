@@ -199,8 +199,8 @@ namespace Studio.Game
 
         public float kExplosionTime = 0.3f;
 
-        public void SetExpInfo(ExpInfo info) =>
-            _explosion.SetInfo(info);
+        public void Join(ExpInfo info) =>
+            _explosion.Join(info);
 
         public bool Explode()
         {

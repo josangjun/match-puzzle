@@ -253,7 +253,7 @@ namespace Studio.Game
         {
             if (master.type <= GemType.Max)
                 return false;
-            master.SetExpInfo(slave);
+            master.Join(slave);
             Explode(master);
             return true;
         }
