@@ -339,7 +339,7 @@ MonoBehaviour:
       m_SubObjectName: 
       m_SubObjectType: 
       m_EditorAssetChanged: 0
-    localPosition: {x: -291.7286, y: 621.8, z: 0}
+    localPosition: {x: -291.7731, y: 621.8, z: 0}
     localRotation: {x: -0, y: 0, z: 0}
     localScale: {x: 1, y: 1, z: 1}
     rectTransform: {fileID: 2044327809}
@@ -556,7 +556,7 @@ MonoBehaviour:
             m_BoolArgument: 0
           m_CallState: 2
     ordinal: 0
-  - name: 7.W, SetGemType(Arrow)
+  - name: 7.W, SetGemType(TNT)
     key: 119
     modifiers:
       alt: 0
@@ -574,11 +574,11 @@ MonoBehaviour:
             m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
             m_IntArgument: 9
             m_FloatArgument: 0
-            m_StringArgument: Arrow
+            m_StringArgument: TNT
             m_BoolArgument: 0
           m_CallState: 2
     ordinal: 0
-  - name: 8.E, SetGemType(Bomb)
+  - name: 8.E, SetGemType(LightBall)
     key: 101
     modifiers:
       alt: 0
@@ -596,7 +596,7 @@ MonoBehaviour:
             m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
             m_IntArgument: 10
             m_FloatArgument: 0
-            m_StringArgument: Bomb
+            m_StringArgument: LightBall
             m_BoolArgument: 0
           m_CallState: 2
     ordinal: 0
