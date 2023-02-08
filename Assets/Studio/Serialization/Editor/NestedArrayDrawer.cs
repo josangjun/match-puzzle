@@ -6,10 +6,10 @@ namespace NaughtyAttributes.Editor
 	[CustomPropertyDrawer(typeof(NestedArrayAttribute))]
 	public class NestedArrayDrawer : PropertyDrawer
 	{
-		public override void OnGUI(Rect _, SerializedProperty property, GUIContent __)
+		public override void OnGUI(Rect _, SerializedProperty property, GUIContent label)
 		{
 			var childDepth = property.depth + 1;
-			EditorGUILayout.PropertyField(property, includeChildren: false);
+			EditorGUILayout.PropertyField(property, label, includeChildren: false);
 			if (!property.isExpanded)
 			{
 				return;
