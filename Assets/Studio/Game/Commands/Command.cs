@@ -49,9 +49,9 @@ namespace Studio.Game.Commands
             {
                 using var h1 = g.Lock();
                 using var h2 = q.Lock();
-
-                var s = g.MovePosition(rhs.x, rhs.y);
-                var t = q.MovePosition(lhs.x, lhs.y);
+                var time = Stage.config.swapTime;
+                var s = g.MovePosition(rhs.x, rhs.y, time);
+                var t = q.MovePosition(lhs.x, lhs.y, time);
                 while (s.IsActive() || t.IsActive())
                     await Task.Yield();
             }

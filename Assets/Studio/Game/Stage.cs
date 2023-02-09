@@ -82,6 +82,7 @@ namespace Studio.Game
             {
                 yield return GoogleSheetBridge.UpdateGSTU(gameObject);
 
+                config.OnValidate();
                 for (var i = 0; i < gemFactory.visualizer.typeInfos.Count; ++i)
                 {
                     var info = gemFactory.visualizer.typeInfos[i];

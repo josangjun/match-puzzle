@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   gemTypeCount: 5
   gravityScale: 100
+  swapTime: 0.2
   speedLimit: 850
   powerUp: 1
   gem1: '#CF0000'
