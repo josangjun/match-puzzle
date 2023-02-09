@@ -14,5 +14,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   gemTypeCount: 5
   speedScale: 100
-  speedLimit: 1000
+  speedLimit: 850
   powerUp: 1
+  gem1: '#CF0000'
+  gem2: '#001BE9'
+  gem3: '#E7D006'
+  gem4: '#00D115'
+  gem5: '#FFA900'
+  gem6: '#C300A8'
+  gem7: '#FFFFFF'

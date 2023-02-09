@@ -59,9 +59,10 @@ namespace Studio.Game
             if (!Service.ready)
                 yield return Service.Init();
 
-            yield return GoogleSheetBridge.UpdateGSTU(gameObject);
-
             gemFactory.onInit.Subscribe(OnInit).AddTo(this);
+            yield return GoogleSheetBridge.UpdateGSTU(gameObject);
+            yield return SyncConfig();
+
             yield return gemFactory.Prepare().ToObservable().ToYieldInstruction();
 
             var gems = new List<Gem>();
@@ -74,6 +75,24 @@ namespace Studio.Game
             ArrangePosition(gems);
 
             Application.targetFrameRate = PlayerPrefs.GetInt("fps", 60);
+        }
+
+        private IEnumerator SyncConfig()
+        {
+            for (var i = 0; i < gemFactory.visualizer.typeInfos.Count; ++i)
+            {
+                var info = gemFactory.visualizer.typeInfos[i];
+                var index = (int)info.type;
+                var fieldInfo = config.GetType().GetField($"gem{index}");
+                if (fieldInfo == null)
+                    continue;
+                var strColor = (string)fieldInfo.GetValue(config);
+                if (ColorUtility.TryParseHtmlString(strColor, out var color))
+                {
+                    info.color = color;
+                }
+            }
+            yield break;
         }
                
         private void ArrangePosition(List<Gem> gems)

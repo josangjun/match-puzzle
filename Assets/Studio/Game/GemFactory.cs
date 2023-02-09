@@ -10,6 +10,9 @@ namespace Studio.Game
     {
         [SerializeField]
         private Stage _stage;
+        [SerializeField]
+        private GemVisualizer _gemVisualizer;
+        public GemVisualizer visualizer => _gemVisualizer;
 
         // Start is called before the first frame update
         void Start()
@@ -41,6 +44,7 @@ namespace Studio.Game
         public Gem Produce(GemType type)
         {
             var g = Service.GoPool.Rent<Gem>(assetPath, transform);
+            g.SetVisualizer(_gemVisualizer);
             g.type = type;
             onInit.OnNext(g);
             return g;

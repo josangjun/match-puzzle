@@ -37,8 +37,12 @@ namespace Studio.Game
         private Image _image;
         public Image image => _image;
 
-        [SerializeField]
-        private GemVisualizer _visualizer;
+        private IGemVisualizer _visualizer;
+
+        public void SetVisualizer(IGemVisualizer visualizer)
+        {
+            _visualizer = visualizer;
+        }
 
         private RectTransform _rectTransform;
 
@@ -266,7 +270,8 @@ namespace Studio.Game
 
         private void Refresh(GemType type)
         {
-            _visualizer.SetType(this, type);
+            if (_visualizer != null)
+                _visualizer.SetType(this, type);
         }
 
         protected void OnValidate()
