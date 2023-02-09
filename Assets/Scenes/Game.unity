@@ -623,7 +623,29 @@ MonoBehaviour:
             m_BoolArgument: 0
           m_CallState: 2
     ordinal: 0
-  - name: 10.Alpha0, Explode()
+  - name: 10.R, SetGemType(Propeller)
+    key: 114
+    modifiers:
+      alt: 0
+      control: 0
+      shift: 0
+    evt:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 1058663903}
+          m_TargetAssemblyTypeName: Studio.Game.StageCheat, Studio.Game
+          m_MethodName: SetGemType
+          m_Mode: 5
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 10
+            m_FloatArgument: 0
+            m_StringArgument: Propeller
+            m_BoolArgument: 0
+          m_CallState: 2
+    ordinal: 0
+  - name: 11.Alpha0, Explode()
     key: 48
     modifiers:
       alt: 0
@@ -645,7 +667,7 @@ MonoBehaviour:
             m_BoolArgument: 0
           m_CallState: 2
     ordinal: 0
-  - name: 11.F, Fall()
+  - name: 12.F, Fall()
     key: 102
     modifiers:
       alt: 0
@@ -667,7 +689,7 @@ MonoBehaviour:
             m_BoolArgument: 0
           m_CallState: 2
     ordinal: 0
-  - name: 12.Tab, DumpBoard()
+  - name: 13.Tab, DumpBoard()
     key: 9
     modifiers:
       alt: 0
@@ -689,7 +711,7 @@ MonoBehaviour:
             m_BoolArgument: 0
           m_CallState: 2
     ordinal: 0
-  - name: 13.S, Shuffle()
+  - name: 14.S, Shuffle()
     key: 115
     modifiers:
       alt: 0
@@ -711,7 +733,7 @@ MonoBehaviour:
             m_BoolArgument: 0
           m_CallState: 2
     ordinal: 0
-  - name: 14.Q, HasMove()
+  - name: 15.Q, HasMove()
     key: 113
     modifiers:
       alt: 0
@@ -733,7 +755,7 @@ MonoBehaviour:
             m_BoolArgument: 0
           m_CallState: 2
     ordinal: 0
-  - name: 15.A, ToggleAuto()
+  - name: 16.A, ToggleAuto()
     key: 97
     modifiers:
       alt: 0

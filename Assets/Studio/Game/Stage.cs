@@ -60,8 +60,7 @@ namespace Studio.Game
                 yield return Service.Init();
 
             gemFactory.onInit.Subscribe(OnInit).AddTo(this);
-            yield return GoogleSheetBridge.UpdateGSTU(gameObject);
-            yield return StartCoroutine(SyncConfig());
+            yield return LoadFromWeb();
 
             yield return gemFactory.Prepare().ToObservable().ToYieldInstruction();
 
@@ -77,24 +76,29 @@ namespace Studio.Game
             Application.targetFrameRate = PlayerPrefs.GetInt("fps", 60);
         }
 
-        private IEnumerator SyncConfig()
+        public Coroutine LoadFromWeb()
         {
-            for (var i = 0; i < gemFactory.visualizer.typeInfos.Count; ++i)
+            IEnumerator Batch_()
             {
-                var info = gemFactory.visualizer.typeInfos[i];
-                var index = (int)info.type;
-                var fieldInfo = config.GetType().GetField($"gem{index}");
-                if (fieldInfo == null)
-                    continue;
-                var strColor = (string)fieldInfo.GetValue(config);
-                if (ColorUtility.TryParseHtmlString(strColor, out var color))
+                yield return GoogleSheetBridge.UpdateGSTU(gameObject);
+
+                for (var i = 0; i < gemFactory.visualizer.typeInfos.Count; ++i)
                 {
-                    info.color = color;
+                    var info = gemFactory.visualizer.typeInfos[i];
+                    var index = (int)info.type;
+                    var fieldInfo = config.GetType().GetField($"gem{index}");
+                    if (fieldInfo == null)
+                        continue;
+                    var strColor = (string)fieldInfo.GetValue(config);
+                    if (ColorUtility.TryParseHtmlString(strColor, out var color))
+                    {
+                        info.color = color;
+                    }
                 }
             }
-            yield break;
+            return StartCoroutine(Batch_());
         }
-               
+        
         private void ArrangePosition(List<Gem> gems)
         {
             var g = gems[0];

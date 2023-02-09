@@ -74,6 +74,12 @@ namespace Studio.Game
             }
         }
 
+        [ConsoleCommand]
+        public void LoadFromWeb()
+        {
+            Stage.Instance.LoadFromWeb();
+        }
+
         public void Explode()
         {
             var g = GetFocusedGem();

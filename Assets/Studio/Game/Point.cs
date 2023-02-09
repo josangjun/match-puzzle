@@ -31,6 +31,16 @@ namespace Studio.Game
             }
         }
 
+        public static Point Random(int xMin = 0, int xMax = Stage.COL, int yMin = 0, int yMax = Stage.ROW)
+        {
+            return new Point(UnityEngine.Random.Range(xMin, xMax), UnityEngine.Random.Range(yMin, yMax));
+        }
+
+        public static Point Random(Point min, Point max)
+        {
+            return new Point(UnityEngine.Random.Range(min.x, max.x), UnityEngine.Random.Range(min.y, max.y));
+        }
+
         public Point Move(int x, int y)
         {
             return new Point(this.x + x, this.y + y);
@@ -44,6 +54,12 @@ namespace Studio.Game
         public static implicit operator Vector2(Point p)
         {
             return Gem.GetAnchoredPosition(p.x, p.y);
+        }
+
+        public static implicit operator Vector3(Point p)
+        {
+            var p2 = Gem.GetAnchoredPosition(p.x, p.y);
+            return p2;
         }
 
         public static implicit operator Point(Vector3 p)

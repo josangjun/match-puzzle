@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Pool;
 using Studio.Framework;
+using DG.Tweening;
 
 namespace Studio.Game
 {
@@ -84,15 +85,39 @@ namespace Studio.Game
 
         private IEnumerator<float> ExplodePropeller()
         {
-            var offset = (Point)owner;
-            
             for (var i = Direction.None + 1; i < Direction.Max; ++i)
             {
                 var g = owner.GetNext(i);
                 if (g) Stage.Instance.Explode(g);
             }
 
-            yield break;
+            var parent = Stage.Instance.transform;
+            var image = Object.Instantiate(owner.image, parent, true);
+            
+            do
+            {
+                var p1 = Point.Random();
+                var xmax = System.Math.Max(p1.x, owner.x);
+                var xmin = System.Math.Min(p1.x, owner.x);
+                var ymax = System.Math.Max(p1.y, owner.y);
+                var ymin = System.Math.Min(p1.y, owner.y);
+                var p2 = Point.Random(xmin, xmax, ymin, ymax);
+                
+                var tween = image.rectTransform.DOPath(new Vector3[]
+                {
+                    parent.TransformPoint(p2), parent.TransformPoint(p1)
+                }, 0.5f, PathType.CatmullRom, PathMode.Sidescroller2D);
+                tween.SetEase(Ease.InOutQuad);
+                while (tween.IsActive())
+                    yield return 0f;
+                var g = (Gem)p1;
+                if (g)
+                {
+                    Stage.Instance.Explode(g);
+                    break;
+                }
+            } while (true);
+            Object.Destroy(image.gameObject);
         }
 
         private IEnumerator<float> ExplodeLightBall()
