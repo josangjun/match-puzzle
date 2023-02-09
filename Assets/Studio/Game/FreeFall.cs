@@ -106,7 +106,7 @@ namespace Studio.Game
                             yield break;
                     }
                 }
-                if (count == 0)
+                if (count == 0 && owner.IsFloor())
                     break;
                 yield return 0f;
             }

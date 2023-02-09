@@ -356,7 +356,7 @@ namespace Studio.Game
                     continue;
                 gems[i].transform.SetSiblingIndex(j++);
             }
-            UnityEngine.Assertions.Assert.IsTrue(gemFactory.transform.childCount == gems.Count);
+            UnityEngine.Assertions.Assert.IsTrue(gemFactory.transform.childCount == COL * ROW);
         }
 
         [ContextMenu("Dump")]
