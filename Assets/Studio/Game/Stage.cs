@@ -61,7 +61,7 @@ namespace Studio.Game
 
             gemFactory.onInit.Subscribe(OnInit).AddTo(this);
             yield return GoogleSheetBridge.UpdateGSTU(gameObject);
-            yield return SyncConfig();
+            yield return StartCoroutine(SyncConfig());
 
             yield return gemFactory.Prepare().ToObservable().ToYieldInstruction();
 

@@ -4,7 +4,7 @@ using UniRx;
 using UnityEngine;
 using Opencoding.CommandHandlerSystem;
 using Studio.Common;
-using UnityEngine.UI;
+using System.Linq;
 
 namespace Studio.Game
 {
@@ -49,6 +49,29 @@ namespace Studio.Game
             if (!System.Enum.TryParse<GemType>(typeStr, out var type))
                 return;
             SetGemType((int)type);
+        }
+
+        public static IEnumerable<string> _AutoGemType() => 
+            ((GemType[])System.Enum.GetValues(typeof(GemType)))
+            .Where(arg => arg > GemType.None && arg < GemType.Max).Select(arg => arg.ToString()).ToArray();
+
+        [ConsoleCommand]
+        public void SetGemColor([Autocomplete(typeof(StageCheat), "_AutoGemType")] string type, string colorCode)
+        {
+            System.Enum.TryParse<GemType>(type, out var t);
+            if (t == GemType.None)
+                return;
+            if (!ColorUtility.TryParseHtmlString(colorCode, out var color))
+            {
+                SLogger.LogError($"invalid colorCode:{colorCode}");
+                return;
+            }
+            var info = Stage.Instance.gemFactory.visualizer.typeInfos.FirstOrDefault(arg => arg.type == t);
+            if (info != null)
+            {
+                info.color = color;
+                SLogger.Log($"type:{t}, colorCode:{colorCode}");
+            }
         }
 
         public void Explode()
