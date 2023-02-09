@@ -7,6 +7,7 @@ using UnityEngine.Events;
 using UnityEngine.EventSystems;
 using DG.Tweening;
 using UniRx;
+using MEC;
 
 namespace Studio.Game
 {
@@ -174,11 +175,13 @@ namespace Studio.Game
 
         public Tween MovePosition(int x, int y, float time = 0.3f)
         {
+            ++Stage.moveCount;
             var h = Lock();
             var dest = GetAnchoredPosition(x, y);
 
             var tween = rectTransform.DOAnchorPos(dest, time).OnComplete(() =>
             {
+                --Stage.moveCount;
                 h.Dispose();
                 SetPosition(x, y);
             });
@@ -187,7 +190,6 @@ namespace Studio.Game
 
         public bool CanMove() => _lock.count == 0 && IsFloor();
 
-        public bool IsIdle() => _lock.count == 0;
         public bool IsLocked() => _lock.count > 0;
 
         public System.IDisposable Lock() => _lock.Lock();
@@ -199,7 +201,7 @@ namespace Studio.Game
 
         public float kExplosionTime = 0.3f;
 
-        public void Join(ExpInfo info) =>
+        public void Join(GemInfo info) =>
             _explosion.Join(info);
 
         public bool Explode()
@@ -209,14 +211,23 @@ namespace Studio.Game
 
             var h = Lock();
             _explosion.Explode();
-            image.transform.DOScale(0, kExplosionTime).OnComplete(() =>
-            {
-                Stage.Instance[x, y] = null;
-                onExplosion.OnNext(this);
-                h.Dispose();
-                Return();
-            });
+            var c = Explode_().RunCoroutine();
+            c.OnDestroy(() => h.Dispose());
+            
             return true;
+        }
+
+        private IEnumerator<float> Explode_()
+        {
+            var tween = image.transform.DOScale(0, kExplosionTime);
+            while (tween.IsActive())
+                yield return 0f;
+            while (_explosion.IsRunning())
+                yield return 0f;
+            if (Equals(Stage.Instance[x, y]))
+                Stage.Instance[x, y] = null;
+            onExplosion.OnNext(this);
+            Return();
         }
 
         [ContextMenu("Fall")]
@@ -287,7 +298,7 @@ namespace Studio.Game
 
         public bool Equals(Gem other)
         {
-            return GetInstanceID() == other.GetInstanceID();
+            return other != null && GetInstanceID() == other.GetInstanceID();
         }
     }
 }

@@ -129,6 +129,14 @@ namespace Studio.Game
             }
         }
 
+        public static int moveCount
+        {
+            get => Instance._moveCount.Value;
+            set => Instance._moveCount.Value = value;
+        }
+
+        public ReactiveProperty<int> _moveCount = new ReactiveProperty<int>();
+
         public readonly FocusedGem focusedGem = new FocusedGem();
 
         private void OnInit(Gem g)
@@ -201,7 +209,7 @@ namespace Studio.Game
             {
                 Swap(lhs, rhs);
             }
-            SLogger.Log($"adjacency:{lhs}, {rhs}, {tf}");
+            //SLogger.Log($"adjacency:{lhs}, {rhs}, {tf}");
         }
 
         private void OnClick(Gem g)
@@ -260,7 +268,7 @@ namespace Studio.Game
 
         public void Explode(Gem gem)
         {
-            if (gem == null)
+            if (gem == null || gem.IsLocked())
                 return;
             var list = ListPool<Gem>.Get();
             list.Add(gem);
@@ -278,7 +286,10 @@ namespace Studio.Game
             foreach (var g in gems)
             {
                 var p = (Point)g;
-                
+
+                if (g.IsLocked())
+                    continue;
+
                 if (!list.Contains(p))
                     list.Add(p);
                 
@@ -345,6 +356,7 @@ namespace Studio.Game
                     continue;
                 gems[i].transform.SetSiblingIndex(j++);
             }
+            UnityEngine.Assertions.Assert.IsTrue(gemFactory.transform.childCount == gems.Count);
         }
 
         [ContextMenu("Dump")]

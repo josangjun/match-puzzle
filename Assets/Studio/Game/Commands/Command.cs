@@ -37,14 +37,15 @@ namespace Studio.Game.Commands
     {
         public Point lhs, rhs;
 
-        public Subject<UniRx.Unit> onComplete = new Subject<UniRx.Unit>();
+        public Subject<Unit> onComplete = new Subject<Unit>();
 
         public async void Run()
         {
             var g = (Gem)lhs;
             var q = (Gem)rhs;
-            if (!g || !q || !g.CanMove() || !q.CanMove())
+            if (!g || !q || !g.CanMove() || !q.CanMove() || !g.IsAdjacency(q))
                 return;
+
             {
                 using var h1 = g.Lock();
                 using var h2 = q.Lock();
@@ -54,7 +55,7 @@ namespace Studio.Game.Commands
                 while (s.IsActive() || t.IsActive())
                     await Task.Yield();
             }
-            onComplete.OnNext(UniRx.Unit.Default);
+            onComplete.OnNext(Unit.Default);
         }
     }
 

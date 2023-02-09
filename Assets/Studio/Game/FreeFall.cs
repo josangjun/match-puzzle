@@ -11,6 +11,12 @@ namespace Studio.Game
     [System.Serializable]
     public class FreeFall
     {
+        private static int count
+        {
+            get => Stage.moveCount;
+            set => Stage.moveCount = value;
+        }
+
         private const float Gravity = -9.81f;
         public Vector2 start;
         
@@ -53,9 +59,16 @@ namespace Studio.Game
 
         public void Start(System.Action action)
         {
-            handle = Tick_().RunCoroutineSingleton(handle, SingletonBehavior.Abort);
-            if (action != null)
-                handle.OnDestroy(action);
+            if (handle.IsRunning)
+                return;
+            ++count;
+            handle = Tick_().RunCoroutine();
+            handle.OnDestroy(() =>
+            {
+                --count;
+                if (action != null)
+                    action();
+            });
         }
 
         public void Stop()
@@ -72,11 +85,32 @@ namespace Studio.Game
             while (Tick())
                 yield return 0f;
             owner.touchTime = Time.time;
+
             if (owner.y < 0)
             {
-                SLogger.LogWarning($"invalid position:{owner}");
-                owner.Return();
+                SLogger.LogWarning($"invalid position:{owner}", owner);
+                WatchVacancy().RunCoroutine();
             }
+        }
+
+        private IEnumerator<float> WatchVacancy()
+        {
+            while (count > 0 && owner.isActiveAndEnabled)
+            {
+                for (var i = 0; i < Stage.COL; ++i)
+                {
+                    if (Stage.Instance[i, 0] == null)
+                    {
+                        owner.SetPosition(i, -1);
+                        if (owner.Fall())
+                            yield break;
+                    }
+                }
+                if (count == 0)
+                    break;
+                yield return 0f;
+            }
+            owner.Return();
         }
 
         public bool Tick()

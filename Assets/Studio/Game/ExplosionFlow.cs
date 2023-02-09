@@ -6,14 +6,14 @@ using Studio.Framework;
 
 namespace Studio.Game
 {
-    public struct ExpInfo
+    public struct GemInfo
     {
         public Point point;
         public GemType type;
 
-        public static implicit operator ExpInfo(Gem gem)
+        public static implicit operator GemInfo(Gem gem)
         {
-            return new ExpInfo
+            return new GemInfo
             {
                 point = gem,
                 type = gem.type
@@ -25,14 +25,14 @@ namespace Studio.Game
     {
         private Gem owner;
 
-        private ExpInfo info;
+        private GemInfo info;
 
         public void SetOwner(Gem owner)
         {
             this.owner = owner;
         }
 
-        public void Join(ExpInfo info)
+        public void Join(GemInfo info)
         {
             this.info = info;
         }
@@ -88,7 +88,7 @@ namespace Studio.Game
             
             for (var i = Direction.None + 1; i < Direction.Max; ++i)
             {
-                var g = owner.GetNext((Direction)i);
+                var g = owner.GetNext(i);
                 if (g) Stage.Instance.Explode(g);
             }
 
@@ -123,9 +123,10 @@ namespace Studio.Game
         private IEnumerator<float> ExplodeTNT()
         {
             var offset = (Point)owner;
-            for (var i = -2; i <=2; ++i)
+            var dist = 2;
+            for (var i = -dist; i <= dist; ++i)
             {
-                for (var j = -2; j <= 2; ++j)
+                for (var j = -dist; j <= dist; ++j)
                 {
                     if (i == 0 && j == 0)
                         continue;
