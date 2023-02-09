@@ -123,7 +123,7 @@ namespace Studio.Game
             elapsed += Time.deltaTime;
 
             var p = owner.rectTransform.anchoredPosition;
-            var dy = Stage.config.speedScale * Gravity * elapsed * elapsed + start.y;
+            var dy = Stage.config.gravityScale * Gravity * elapsed * elapsed + start.y;
             p.y = Mathf.Max(dy, p.y - Stage.config.speedLimit * Time.deltaTime);
 
             var endPos = (Vector2)endPoint;

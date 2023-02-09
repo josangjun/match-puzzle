@@ -6,7 +6,7 @@ namespace Studio.Game
     public class AppConfig : ScriptableObject
     {
         public int gemTypeCount = (int)GemType.Max-1;
-        public float speedScale = 100;
+        public float gravityScale = 100;
         public float speedLimit = 940; // units per tick
         public bool powerUp = true;
 

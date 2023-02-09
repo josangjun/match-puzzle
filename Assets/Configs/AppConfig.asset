@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: AppConfig
   m_EditorClassIdentifier: 
   gemTypeCount: 5
-  speedScale: 100
+  gravityScale: 100
   speedLimit: 850
   powerUp: 1
   gem1: '#CF0000'
