@@ -41,8 +41,11 @@ namespace Studio.Game
 
             if (alive.Count > 0)
             {
+                var c = gems.Count;
                 foreach (var g in alive)
                     gems.Remove(g);
+                if (c > gems.Count)
+                    return;
             }
 
             if (type == SetType.Sequence3)
@@ -50,30 +53,26 @@ namespace Studio.Game
 
             if (type == SetType.Square2x2)
             {
-                var g = TransformGem(gems, GemType.Propeller);
-                alive.Add(g);
+                TransformGem(gems, GemType.Propeller, alive);
             }
             else if (type == SetType.Cross)
             {
-                var g = TransformGem(gems, GemType.TNT);
-                alive.Add(g);
+                TransformGem(gems, GemType.TNT, alive);
             }
             else if (type == SetType.Sequence4)
             {
                 var type = gems[0].x == gems[1].x ? GemType.RocketH : GemType.RocketV;
-                var g = TransformGem(gems, type);
-                alive.Add(g);
+                TransformGem(gems, type, alive);
             }
             else if (type == SetType.Sequence5)
             {
-                var g = TransformGem(gems, GemType.LightBall);
-                alive.Add(g);
+                TransformGem(gems, GemType.LightBall, alive);
             }
         }
 
-        private Gem TransformGem(List<Gem> gems, GemType newType)
+        private Gem TransformGem(List<Gem> gems, GemType newType, List<Gem> alive)
         {
-            if (gems.Count == 0)
+            if (gems.Count == 0 || gems.Count < 4)
                 return null;
             var cursor = 0;
             for (var i = 1; i < gems.Count; ++i)
@@ -88,6 +87,7 @@ namespace Studio.Game
             {
                 ret.type = newType;
                 gems.RemoveAt(cursor);
+                alive.Add(ret);
             }
             return ret;
         }
