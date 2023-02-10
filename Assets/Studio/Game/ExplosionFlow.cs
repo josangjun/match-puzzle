@@ -119,7 +119,7 @@ namespace Studio.Game
                 while (tween.IsActive())
                     yield return 0f;
                 var g = (Gem)pt1;
-                if (g)
+                if (g && !g.IsLocked())
                 {
                     Stage.Instance.Explode(g);
                     break;
