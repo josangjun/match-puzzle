@@ -93,24 +93,32 @@ namespace Studio.Game
 
             var parent = Stage.Instance.transform;
             var image = Object.Instantiate(owner.image, parent, true);
-            
+            image.SetAlpha(1f);
             do
             {
-                var p1 = Point.Random();
-                var xmax = System.Math.Max(p1.x, owner.x);
-                var xmin = System.Math.Min(p1.x, owner.x);
-                var ymax = System.Math.Max(p1.y, owner.y);
-                var ymin = System.Math.Min(p1.y, owner.y);
-                var p2 = Point.Random(xmin, xmax, ymin, ymax);
-                
+                Point pt1;
+                while (true)
+                {
+                    pt1 = Point.Random();
+                    var diff = ((Vector2)pt1 - (Vector2)(Point)owner).magnitude;
+                    if (diff > Gem.Size.x * 4)
+                        break;
+                }
+                var pt2 = Point.Random(pt1, owner);
+                var midPoint = parent.TransformPoint(pt2);
+                var destPoint = parent.TransformPoint(pt1);
+                var dist = 
+                    (midPoint - image.transform.position).magnitude +
+                    (destPoint - midPoint).magnitude;
+                SLogger.LogEditor($"propeller, {(Point)owner}-{pt2}-{pt1}, dist:{dist}");
                 var tween = image.rectTransform.DOPath(new Vector3[]
                 {
-                    parent.TransformPoint(p2), parent.TransformPoint(p1)
-                }, 0.5f, PathType.CatmullRom, PathMode.Sidescroller2D);
+                    midPoint, destPoint
+                }, dist * 0.1f, PathType.CatmullRom, PathMode.Sidescroller2D);
                 tween.SetEase(Ease.InOutQuad);
                 while (tween.IsActive())
                     yield return 0f;
-                var g = (Gem)p1;
+                var g = (Gem)pt1;
                 if (g)
                 {
                     Stage.Instance.Explode(g);

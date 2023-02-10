@@ -36,9 +36,13 @@ namespace Studio.Game
             return new Point(UnityEngine.Random.Range(xMin, xMax), UnityEngine.Random.Range(yMin, yMax));
         }
 
-        public static Point Random(Point min, Point max)
+        public static Point Random(Point pt1, Point pt2)
         {
-            return new Point(UnityEngine.Random.Range(min.x, max.x), UnityEngine.Random.Range(min.y, max.y));
+            var xmax = System.Math.Max(pt1.x, pt2.x);
+            var xmin = System.Math.Min(pt1.x, pt2.x);
+            var ymax = System.Math.Max(pt1.y, pt2.y);
+            var ymin = System.Math.Min(pt1.y, pt2.y);
+            return Random(xmin, xmax, ymin, ymax);
         }
 
         public Point Move(int x, int y)
