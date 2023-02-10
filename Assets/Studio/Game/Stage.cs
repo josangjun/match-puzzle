@@ -24,6 +24,8 @@ namespace Studio.Game
         [SerializeField]
         private AppConfig _config;
         public static AppConfig config { get; private set; }
+
+        private List<Gem>[] lanes = new List<Gem>[COL];
         
         private Gem[,] _board = new Gem[COL, ROW];
 
@@ -51,6 +53,8 @@ namespace Studio.Game
         {
             base.Awake();
             config = _config;
+            for (var i =0; i < lanes.Length; ++i)
+                lanes[i] = new List<Gem>();
         }
 
         // Start is called before the first frame update
@@ -127,6 +131,11 @@ namespace Studio.Game
             {
                 Shuffle(true);
             }
+        }
+
+        public void AddLane(int index, Gem gem)
+        {
+            lanes[index].Add(gem);
         }
 
         public class FocusedGem
@@ -349,6 +358,30 @@ namespace Studio.Game
         public void Update()
         {
             automator.Update();
+            LaneTick();
+        }
+
+        private void LaneTick()
+        {
+            for (var i = 0; i < lanes.Length; ++i)
+            {
+                var lane = lanes[i];
+
+                if (lane.Count == 0)
+                    continue;
+
+                var y = -1;
+                lane[0].SetPosition(i, -1);
+                if (lane[0].GetNext(Direction.Down))
+                    continue;
+                for (var j = 0; j < lane.Count; ++j)
+                {
+                    var g = lane[j];
+                    g.SetPosition(i, y--);
+                    g.Fall();
+                }
+                lane.Clear();
+            }
         }
 
         // Update is called once per frame

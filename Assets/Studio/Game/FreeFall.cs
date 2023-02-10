@@ -150,7 +150,7 @@ namespace Studio.Game
                 bottom = owner.GetNext(Direction.Down);
                 if (bottom)
                 {
-                    var limit = bottom.rectTransform.anchoredPosition.y + Gem.Size.y;
+                    var limit = bottom.rectTransform.anchoredPosition.y + Gem.Size.y * 0.7f;
                     if (limit > p.y)
                     {
                         owner.rectTransform.SetAnchordPositionY(limit);

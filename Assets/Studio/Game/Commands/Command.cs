@@ -25,19 +25,18 @@ namespace Studio.Game.Commands
                 var info = infoList[index];
                 var point = info.point;
                 var type = info.type;
-                for (var i = point.y - 1; i >= 0; --i)
+                for (var i = Stage.ROW - 2; i >= 0; --i)
                 {
                     var g = Stage.Instance[point.x, i];
-                    if (g == null)
+                    if (g == null || g.IsFloor())
                         continue;
                     g.Fall();
                 }
 
                 {
                     var g = Stage.Instance.gemFactory.Produce(type);
-                    g.SetPosition(point);
-                    if (point.y < 0)
-                        g.Fall();
+                    g.SetPosition(point.x, - 1);
+                    Stage.Instance.AddLane(point.x, g);
                 }
             }
             ListPool<GemInfo>.Release(infoList);
