@@ -83,6 +83,23 @@ namespace Studio.Game
             }
         }
 
+        private Gem GetAvailableGem()
+        {
+            var list = ListPool<Gem>.Get();
+            for (var i = 0; i < Stage.COL; ++i)
+            {
+                for (var j = 0; j < Stage.ROW; ++j)
+                {
+                    var g = Stage.Instance[i, j];
+                    if (g && !g.IsLocked())
+                        list.Add(g);
+                }
+            }
+            var destGem = list[Random.Range(0, list.Count)];
+            ListPool<Gem>.Release(list);
+            return destGem;
+        }
+
         private IEnumerator<float> ExplodePropeller()
         {
             for (var i = Direction.None + 1; i < Direction.Max; ++i)
@@ -99,10 +116,11 @@ namespace Studio.Game
                 Point pt1;
                 while (true)
                 {
-                    pt1 = Point.Random();
+                    pt1 = GetAvailableGem();
                     var diff = ((Vector2)pt1 - (Vector2)(Point)owner).magnitude;
                     if (diff > Gem.Size.x * 4)
                         break;
+                    yield return 0f;
                 }
                 var pt2 = Point.Random(pt1, owner);
                 var midPoint = parent.TransformPoint(pt2);

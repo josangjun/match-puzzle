@@ -4,31 +4,43 @@ using System.Linq;
 using System.Threading.Tasks;
 using UniRx;
 using UnityEngine;
+using UnityEngine.Pool;
 
 namespace Studio.Game.Commands
 {
     [System.Serializable]
     public class ProduceGem : ICommand
     {
-        public GemType type;
-        public Point point;
+        public List<GemInfo> infoList;
+
+        public ProduceGem()
+        {
+            infoList = ListPool<GemInfo>.Get();
+        }
         
         public void Run()
         {
-            for (var i = point.y - 1; i >= 0; --i)
+            for (var index = 0; index < infoList.Count; ++index)
             {
-                var g = Stage.Instance[point.x, i];
-                if (g == null)
-                    continue;
-                g.Fall();
-            }
-
-            {
-                var g = Stage.Instance.gemFactory.Produce(type);
-                g.SetPosition(point);
-                if (point.y < 0)
+                var info = infoList[index];
+                var point = info.point;
+                var type = info.type;
+                for (var i = point.y - 1; i >= 0; --i)
+                {
+                    var g = Stage.Instance[point.x, i];
+                    if (g == null)
+                        continue;
                     g.Fall();
+                }
+
+                {
+                    var g = Stage.Instance.gemFactory.Produce(type);
+                    g.SetPosition(point);
+                    if (point.y < 0)
+                        g.Fall();
+                }
             }
+            ListPool<GemInfo>.Release(infoList);
         }
     }
 

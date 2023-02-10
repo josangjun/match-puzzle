@@ -180,6 +180,7 @@ namespace Studio.Game
                 return cmp;
             });
 
+            var cmd = new ProduceGem();
             int c = 0, x = -1;
             for (var i = 0; i < points.Count; ++i)
             {
@@ -187,12 +188,13 @@ namespace Studio.Game
                 if (x != point.x)
                     c = 1;
                 else ++c;
-                commands.AddLast(new ProduceGem
+                cmd.infoList.Add(new GemInfo
                 {
                     point = new Point(point.x, -1 * c++),
                     type = gemFactory.NewRandomGemType()
                 });
             }
+            commands.AddLast(cmd);
         }
 
         private void OnDrag(PointerEventData eventData)
