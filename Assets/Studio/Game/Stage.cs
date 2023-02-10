@@ -257,7 +257,9 @@ namespace Studio.Game
             };
             cmd.onComplete.Take(1).Subscribe(_ =>
             {
-                if (Explode(lhs, rhs) || Explode(rhs, lhs))
+                var e1 = Explode(lhs, rhs);
+                var e2 = Explode(rhs, lhs);
+                if (e1 || e2)
                     return;
 
                 if (!judge.MatchAndExplode())
