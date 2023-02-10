@@ -23,7 +23,7 @@ namespace Studio.Game
 
         public void OnValidate()
         {
-            gemTypeCount = Mathf.Min((int)GemType.Max-1, gemTypeCount);
+            gemTypeCount = Mathf.Clamp(gemTypeCount, 2, (int)GemType.Max-1);
         }
     }
 }

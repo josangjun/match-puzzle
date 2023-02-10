@@ -140,6 +140,18 @@ namespace Studio.Game
             PlayerPrefs.SetInt("fps", frameRate);
             Application.targetFrameRate = frameRate;
         }
+
+        [ConsoleCommand]
+        public void GravityScale(float scale)
+        {
+            Stage.config.gravityScale = scale;
+        }
+
+        [ConsoleCommand]
+        public void TerminalVelocity(float velocity)
+        {
+            Stage.config.terminalVelocity = velocity;
+        }
 #endif
     }
 }
