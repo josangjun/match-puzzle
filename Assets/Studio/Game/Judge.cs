@@ -141,7 +141,7 @@ namespace Studio.Game
                 for (var j = 0; j < Stage.COL; ++j)
                 {
                     Match_(j, i, ref type, buffer);
-                    var p = new Point(i, j);
+                    var p = new Point(j, i);
                     MatchSquare(p, p.Move(1, 1));
                 }
                 FlushBuffer(buffer);
