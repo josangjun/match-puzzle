@@ -134,12 +134,13 @@ namespace Studio.Game
                 
                 if (IsFloor())
                 {
-                    //elapsed = 0f;
+                    elapsed = 0f;
                     owner.SetPosition(endPoint);
                     return false;
                 }
                 else
                 {
+                    elapsed -= Time.deltaTime;
                     EndPoint();
                     return true;
                 }
