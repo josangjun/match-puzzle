@@ -64,7 +64,8 @@ namespace Studio.Game
                 yield return Service.Init();
 
             gemFactory.onInit.Subscribe(OnInit).AddTo(this);
-            yield return LoadFromWeb();
+            if (config.syncSheet)
+                yield return LoadFromWeb();
 
             yield return gemFactory.Prepare().ToObservable().ToYieldInstruction();
 

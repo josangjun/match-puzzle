@@ -5,6 +5,7 @@ namespace Studio.Game
     [CreateAssetMenu(fileName = "AppConfig", menuName = "Game/AppConfig", order = 0)]
     public class AppConfig : ScriptableObject
     {
+        public bool syncSheet = true;
         public int gemTypeCount = (int)GemType.Max-1;
         
         public float gravityScale = 100;
