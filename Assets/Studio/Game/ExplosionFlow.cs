@@ -95,6 +95,10 @@ namespace Studio.Game
                         list.Add(g);
                 }
             }
+            if (list.Count == 0)
+            {
+                return Point.Random();
+            }
             var destGem = list[Random.Range(0, list.Count)];
             ListPool<Gem>.Release(list);
             return destGem;
