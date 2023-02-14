@@ -90,15 +90,16 @@ namespace Studio.Game
             if (owner.y < 0)
             {
                 SLogger.LogWarning($"invalid position:{owner}", owner);
-                Stage.OnMoveCountObservable().Where(c => c == 0).Take(1).Subscribe(_ =>
-                {
-                    WatchVacancy().RunCoroutine();
-                });
+                WatchVacancy().RunCoroutine();
             }
         }
 
         private IEnumerator<float> WatchVacancy()
         {
+            do
+                yield return 0f;
+            while (count > 0);
+            SLogger.LogWarning($"move count: zero");
             while (owner.isActiveAndEnabled)
             {
                 for (var i = 0; i < Stage.COL; ++i)

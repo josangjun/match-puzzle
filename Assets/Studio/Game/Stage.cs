@@ -169,8 +169,7 @@ namespace Studio.Game
             set => Instance._moveCount.Value = value;
         }
 
-        public static System.IObservable<int> OnMoveCountObservable() => Instance._moveCount;
-
+        [SerializeField]
         private ReactiveProperty<int> _moveCount = new ReactiveProperty<int>();
 
         public readonly FocusedGem focusedGem = new FocusedGem();
