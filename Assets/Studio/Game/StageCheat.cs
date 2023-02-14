@@ -2,9 +2,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UniRx;
 using UnityEngine;
-using Opencoding.CommandHandlerSystem;
 using Studio.Common;
 using System.Linq;
+#if !FINAL_BUILD
+using Opencoding.CommandHandlerSystem;
+using Opencoding.Console;
+#endif
 
 namespace Studio.Game
 {
@@ -14,8 +17,8 @@ namespace Studio.Game
         public void Start()
         {
             CommandHandlers.RegisterCommandHandlers(this);
-
-            BuildInfo();
+            if (!Application.isEditor)
+                BuildInfo();
         }
 
         private Gem GetFocusedGem()
@@ -158,15 +161,19 @@ namespace Studio.Game
         [ConsoleCommand]
         public void BuildInfo()
         {
-            var sb = new System.Text.StringBuilder();
             var info = Resources.Load<BuildInfo>("BuildInfo");
             if (info)
             {
-                sb.Append("[BuildInfo]").AppendLine();
-                sb.Append("AppCommit:").Append(info.commitId).AppendLine();
-                sb.Append("AppDate:").Append(info.buildDate).AppendLine();
-                Debug.Log(sb);
+                var str = info.GetString();
+                Debug.Log(str);
             }
+        }
+
+        [ConsoleCommand]
+        public void Mail()
+        {
+            BuildInfo();
+            DebugConsole.Instance.EmailLog();
         }
 #endif
     }
