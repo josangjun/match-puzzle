@@ -12,11 +12,15 @@ using System.Threading.Tasks;
 using Studio.Framework;
 using Studio.Framework.Audio;
 using System.IO.Compression;
+using UnityEditor.Build;
+using UnityEditor.Build.Reporting;
 
 namespace Studio
 {
-    public class EditorTool
+    public class EditorTool : IPreprocessBuildWithReport
     {
+        public int callbackOrder => 0;
+
         [InitializeOnLoadMethod]
         public static void OnInitialize()
         {
@@ -373,7 +377,27 @@ namespace Studio
                 EditorUtility.SetDirty(obj);
             }
         }
+
         
+        [MenuItem("Tools/Game/SyncCommit")]
+        public static void SyncAppCommit()
+        {
+            var cfg = LoadAssetAtPath<BuildInfo>("t:BuildInfo BuildInfo");
+            if (cfg == null)
+                return;
+            cfg.buildDate = System.DateTime.Now.ToString();
+            cfg.commitId = ReadCommitID();
+            EditorUtility.SetDirty(cfg);
+        }
+        
+        public static string ReadCommitID()
+        {
+            ExecuteCommand("git", "log -1 --pretty=format:%h",
+                Encoding.UTF8,
+                out var stdout, out var stderr,
+                $"{Application.dataPath}/..");
+            return stdout;
+        }
 
         /// <summary>
         /// Executes a shell command synchronously.
@@ -438,31 +462,6 @@ namespace Studio
             reader.Close();
             return str;
         }
-        /*
-        [MenuItem("Tools/MigrateTransparentMasked")]
-        public static async void MigrateTransparentMasked()
-        {
-            var pathList = AssetDatabase.FindAssets("t:Material", new [] { "Assets" }).Select(AssetDatabase.GUIDToAssetPath).ToList();
-            var sb = new System.Text.StringBuilder();
-            foreach (var path in pathList)
-            {
-                var mat = AssetDatabase.LoadAssetAtPath<Material>(path);
-                if (!mat) continue;
-
-                var shader = mat.shader;
-                if (!shader || shader.name != "Unlit/Transparent Masked") continue;
-                
-                var tint = mat.GetColor("_TintColor");
-                mat.SetColor("_Color", tint);
-                mat.SetColor("_TintColor", Color.black);
-                EditorUtility.SetDirty(mat);
-                sb.Append(path).AppendLine();
-                await Task.Yield();
-            }
-            AssetDatabase.SaveAssets();
-            Debug.Log($"Finished:\n{sb}");
-        }
-        */
 
         [MenuItem("GameObject/Effects/Add Order In Layer")]
         public static void AddOrderInLayer()
@@ -473,6 +472,11 @@ namespace Studio
                 p.sortingOrder++;
                 EditorUtility.SetDirty(p);
             }
+        }
+
+        public void OnPreprocessBuild(BuildReport report)
+        {
+            SyncAppCommit();
         }
     }
 }

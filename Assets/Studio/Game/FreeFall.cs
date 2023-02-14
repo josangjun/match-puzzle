@@ -99,7 +99,7 @@ namespace Studio.Game
             do
                 yield return 0f;
             while (count > 0);
-            SLogger.LogWarning($"move count: zero");
+            
             while (owner.isActiveAndEnabled)
             {
                 for (var i = 0; i < Stage.COL; ++i)

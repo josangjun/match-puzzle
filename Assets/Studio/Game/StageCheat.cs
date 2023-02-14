@@ -14,6 +14,8 @@ namespace Studio.Game
         public void Start()
         {
             CommandHandlers.RegisterCommandHandlers(this);
+
+            BuildInfo();
         }
 
         private Gem GetFocusedGem()
@@ -151,6 +153,20 @@ namespace Studio.Game
         public void TerminalVelocity(float velocity)
         {
             Stage.config.terminalVelocity = velocity;
+        }
+
+        [ConsoleCommand]
+        public void BuildInfo()
+        {
+            var sb = new System.Text.StringBuilder();
+            var info = Resources.Load<BuildInfo>("BuildInfo");
+            if (info)
+            {
+                sb.Append("[BuildInfo]").AppendLine();
+                sb.Append("AppCommit:").Append(info.commitId).AppendLine();
+                sb.Append("AppDate:").Append(info.buildDate).AppendLine();
+                Debug.Log(sb);
+            }
         }
 #endif
     }
