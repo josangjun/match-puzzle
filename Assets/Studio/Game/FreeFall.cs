@@ -5,6 +5,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.InteropServices.WindowsRuntime;
 using UnityEngine;
+using UniRx;
 
 namespace Studio.Game
 {
@@ -89,13 +90,16 @@ namespace Studio.Game
             if (owner.y < 0)
             {
                 SLogger.LogWarning($"invalid position:{owner}", owner);
-                WatchVacancy().RunCoroutine();
+                Stage.OnMoveCountObservable().Where(c => c == 0).Take(1).Subscribe(_ =>
+                {
+                    WatchVacancy().RunCoroutine();
+                });
             }
         }
 
         private IEnumerator<float> WatchVacancy()
         {
-            while (count > 0 && owner.isActiveAndEnabled)
+            while (owner.isActiveAndEnabled)
             {
                 for (var i = 0; i < Stage.COL; ++i)
                 {
@@ -103,7 +107,10 @@ namespace Studio.Game
                     {
                         owner.SetPosition(i, -1);
                         if (owner.Fall())
+                        {
+                            SLogger.Log($"Vacancy fixed:{owner}");
                             yield break;
+                        }
                     }
                 }
                 if (count == 0 && owner.IsFloor())
