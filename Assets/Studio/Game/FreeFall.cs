@@ -33,9 +33,9 @@ namespace Studio.Game
         const int BottomY = Stage.ROW - 1;
 
         private Gem bottom;
-        private Point endPoint;
+        public Point endPoint;
 
-        public Point EndPoint()
+        public Point FindEndPoint()
         {
             endPoint = (Point)owner.rectTransform.anchoredPosition;
             bottom = null;
@@ -81,7 +81,7 @@ namespace Studio.Game
         {
             start = owner.rectTransform.anchoredPosition;
             elapsed = 0f;
-            EndPoint();
+            FindEndPoint();
 
             while (Tick())
                 yield return 0f;
@@ -149,7 +149,7 @@ namespace Studio.Game
                 else
                 {
                     elapsed -= Time.deltaTime;
-                    EndPoint();
+                    FindEndPoint();
                     return true;
                 }
             }
