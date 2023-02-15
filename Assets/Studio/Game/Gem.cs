@@ -194,6 +194,19 @@ namespace Studio.Game
 
         public bool CanMove() => _lock.count == 0 && IsFloor();
 
+        public bool CanExplode()
+        {
+            if (IsLocked())
+                return false;
+            if (IsFalling())
+            {
+                var pt = (Point)rectTransform.anchoredPosition;
+                var diff = _freeFall.endPoint.y - pt.y;
+                return diff == 0;
+            }
+            return true;
+        }
+
         public bool IsLocked() => _lock.count > 0;
 
         public System.IDisposable Lock() => _lock.Lock();
@@ -210,7 +223,7 @@ namespace Studio.Game
 
         public bool Explode()
         {
-            if (IsLocked())
+            if (!CanExplode())
                 return false;
 
             var h = Lock();
@@ -244,11 +257,8 @@ namespace Studio.Game
             if (IsLocked())
                 return false;
 
-            var h = Lock();
-            
             _freeFall.Start(() =>
                 {
-                    h.Dispose();
                     Stage.Instance.MatchAndExplode();
                 });
             //NotifyUpwards();

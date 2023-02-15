@@ -63,12 +63,10 @@ namespace Studio.Game
             if (handle.IsRunning)
                 return;
             ++count;
-            handle = Tick_().RunCoroutine();
+            handle = Tick_().Append(action).RunCoroutine();
             handle.OnDestroy(() =>
             {
                 --count;
-                if (action != null)
-                    action();
             });
         }
 

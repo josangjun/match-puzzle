@@ -509,7 +509,7 @@ namespace Studio.Game
                 yield return MEC.Timing.WaitForOneFrame;
                 judge.MatchAndExplode();
             }
-            hMatch = MEC.Timing.RunCoroutineSingleton(M_(), hMatch, MEC.SingletonBehavior.Overwrite);
+            hMatch = MEC.Timing.RunCoroutineSingleton(M_(), hMatch, MEC.SingletonBehavior.Abort);
         }
     }
 }
