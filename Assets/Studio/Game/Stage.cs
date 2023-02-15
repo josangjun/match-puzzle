@@ -420,6 +420,23 @@ namespace Studio.Game
                 gems[i].transform.SetSiblingIndex(j++);
             }
             UnityEngine.Assertions.Assert.IsTrue(gemFactory.transform.childCount == COL * ROW);
+            var parent = gemFactory.transform;
+            for (var i = 0; i < parent.childCount; ++i)
+            {
+                var child = parent.GetChild(i);
+                var g = child.GetComponent<Gem>();
+                var q = this[g.x, g.y];
+                if (g == null)
+                    continue;
+                if (g.y < 0)
+                {
+                    SLogger.LogError($"stuck : {g}", g);
+                }
+                else if (!g.Equals(q))
+                {
+                    SLogger.LogError($"mismatch : {g}, {q}", g);
+                }
+            }
         }
 
         [ContextMenu("Dump")]
