@@ -219,16 +219,19 @@ namespace Studio.Game
         {
             if (guest.type == GemType.RocketH)
                 Stage.Instance.Explode(guest.point);
-            
+            var lanes = guest.type == GemType.TNT ? 1 : 0;
             var offset = (Point)owner;
             for (var i = 0; i < Stage.ROW; ++i)
             {
-                var up = Stage.Instance[offset.x, offset.y - i];
-                var down = Stage.Instance[offset.x, offset.y + i];
-                if (up == null && down == null)
-                    break;
-                Stage.Instance.Explode(up);
-                Stage.Instance.Explode(down);
+                for (var j = -lanes; j <= lanes; ++j)
+                {
+                    var up = Stage.Instance[offset.x + j, offset.y - i];
+                    var down = Stage.Instance[offset.x + j, offset.y + i];
+                    if (up == null && down == null)
+                        break;
+                    Stage.Instance.Explode(up);
+                    Stage.Instance.Explode(down);
+                }
                 yield return Timing.WaitForSeconds(0.025f);
             }
         }
@@ -237,16 +240,19 @@ namespace Studio.Game
         {
             if (guest.type == GemType.RocketV)
                 Stage.Instance.Explode(guest.point);
-
+            var lanes = guest.type == GemType.TNT ? 1 : 0;
             var offset = (Point)owner;
             for (var i = 0; i < Stage.COL; ++i)
             {
-                var left = Stage.Instance[offset.x - i, offset.y];
-                var right = Stage.Instance[offset.x + i, offset.y];
-                if (left == null && right == null)
-                    break;
-                Stage.Instance.Explode(left);
-                Stage.Instance.Explode(right);
+                for (var j = -lanes; j <= lanes; ++j)
+                {
+                    var left = Stage.Instance[offset.x - i, offset.y + j];
+                    var right = Stage.Instance[offset.x + i, offset.y + j];
+                    if (left == null && right == null)
+                        break;
+                    Stage.Instance.Explode(left);
+                    Stage.Instance.Explode(right);
+                }
                 yield return Timing.WaitForSeconds(0.025f);
             }
         }

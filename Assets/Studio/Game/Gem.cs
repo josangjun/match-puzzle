@@ -16,7 +16,7 @@ namespace Studio.Game
 
     public enum GemType {
         None, Red, Blue, Yellow, Green, Orange, Purple, White, Max,
-        RocketV, RocketH, TNT, Propeller, LightBall }
+        TNT, RocketV, RocketH, Propeller, LightBall }
     [System.Flags]
     public enum GemEquipment { None };
     public enum Axis { Horizontal, Vetical };
