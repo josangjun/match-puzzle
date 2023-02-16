@@ -109,6 +109,16 @@ namespace Studio.Game
             return sets.Count > 0;
         }
 
+        public bool MatchAndExplode(Point p)
+        {
+            if (Match(p))
+            {
+                Explode(sets);
+                return true;
+            }
+            return false;
+        }
+
         public bool MatchAndExplode()
         {
             if (Match())

@@ -268,57 +268,24 @@ namespace Studio.Game
                 lhs = lhs,
                 rhs = rhs
             };
-            cmd.onComplete.Take(1).Subscribe(_ =>
-            {
-                var e1 = Explode(lhs, rhs);
-                var e2 = Explode(rhs, lhs);
-                if (e1 || e2)
-                    return;
-
-                if (!judge.MatchAndExplode())
-                {
-                    var ret = new SwapGem
-                    {
-                        lhs = rhs,
-                        rhs = lhs
-                    };
-                    commands.AddLast(ret);
-                    ret.onComplete.Take(1).Subscribe(_ =>
-                    {
-                        judge.MatchAndExplode();
-                        if (!lhs.IsFloor())
-                            lhs.Fall(); 
-                        if (!rhs.IsFloor())
-                            rhs.Fall();
-                    });
-                }
-            });
             commands.AddLast(cmd);
         }
 
-        public bool Explode(Gem master, Gem slave)
-        {
-            if (master.type <= GemType.Max)
-                return false;
-            master.Join(slave);
-            Explode(master);
-            return true;
-        }
-
-        public void Explode(Gem gem)
+        public bool Explode(Gem gem)
         {
             if (gem == null || gem.IsLocked())
-                return;
+                return false;
             var list = ListPool<Gem>.Get();
             list.Add(gem);
-            Explode(list);
+            var ret = Explode(list);
             ListPool<Gem>.Release(list);
+            return ret > 0;
         }
 
-        public void Explode(List<Gem> gems)
+        public int Explode(List<Gem> gems)
         {
             if (gems.Count == 0)
-                return;
+                return 0;
 
             var list = ListPool<Point>.Get();
             var count = 0;
@@ -346,6 +313,7 @@ namespace Studio.Game
                         }
                     });
             }
+            return count;
         }
 
         public readonly LinkedList<ICommand> commands = new LinkedList<ICommand>();

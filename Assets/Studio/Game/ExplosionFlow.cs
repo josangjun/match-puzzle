@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.Pool;
 using Studio.Framework;
 using DG.Tweening;
+using UniRx;
 
 namespace Studio.Game
 {
@@ -26,16 +27,20 @@ namespace Studio.Game
     {
         private Gem owner;
 
-        private GemInfo info;
+        private GemInfo guest;
 
         public void SetOwner(Gem owner)
         {
             this.owner = owner;
+            owner.onExplosion.Subscribe(_ =>
+            {
+                guest = default;
+            });
         }
 
-        public void Join(GemInfo info)
+        public void Join(GemInfo guest)
         {
-            this.info = info;
+            this.guest = guest;
         }
 
         MEC.CoroutineHandle handle;
@@ -63,15 +68,15 @@ namespace Studio.Game
                     }
                     break;
 
-                case GemType.Propeller:
-                    {
-                        handle = ExplodePropeller().RunCoroutine();
-                    }
-                    break;
-
                 case GemType.TNT:
                     {
                         handle = ExplodeTNT().RunCoroutine();
+                    }
+                    break;
+
+                case GemType.Propeller:
+                    {
+                        handle = ExplodePropeller().RunCoroutine();
                     }
                     break;
 
@@ -80,10 +85,17 @@ namespace Studio.Game
                         handle = ExplodeLightBall().RunCoroutine();
                     }
                     break;
+
+                default:
+                    {
+                        var g = (Gem)guest.point;
+                        Stage.Instance.Explode(g);
+                    }
+                    break;
             }
         }
 
-        private Gem GetAvailableGem()
+        private  Point GetAvailableGem()
         {
             var list = ListPool<Gem>.Get();
             for (var i = 0; i < Stage.COL; ++i)
@@ -115,7 +127,7 @@ namespace Studio.Game
             var parent = Stage.Instance.transform;
             var image = Object.Instantiate(owner.image, parent, true);
             image.SetAlpha(1f);
-            do
+            for (var i = 0; i < 20; ++i)
             {
                 Point pt1;
                 while (true)
@@ -143,16 +155,21 @@ namespace Studio.Game
                 var g = (Gem)pt1;
                 if (g && !g.IsLocked())
                 {
+                    if (guest.type != GemType.None)
+                        g.type = guest.type;
                     Stage.Instance.Explode(g);
                     break;
                 }
-            } while (true);
+            }
             Object.Destroy(image.gameObject);
         }
 
         private IEnumerator<float> ExplodeLightBall()
         {
-            var type = info.type == GemType.None ? (GemType)(Random.Range(0, Stage.config.gemTypeCount) + 1) : info.type;
+            var targetType = (guest.type > GemType.Max || guest.type == GemType.None) ?
+                (GemType)(Random.Range(0, Stage.config.gemTypeCount) + 1) : guest.type;
+            var transformType = (guest.type < GemType.Max) ? targetType : guest.type;
+            var type = targetType;
             var list = ListPool<Gem>.Get();
             for (var i = 0; i < Stage.COL; ++i)
             {
@@ -162,6 +179,7 @@ namespace Studio.Game
                     if (!g || g.type != type)
                         continue;
                     list.Add(g);
+                    g.type = transformType;
                 }
             }
             list.Shuffle();
@@ -199,6 +217,9 @@ namespace Studio.Game
 
         private IEnumerator<float> ExplodeRocketV()
         {
+            if (guest.type == GemType.RocketH)
+                Stage.Instance.Explode(guest.point);
+            
             var offset = (Point)owner;
             for (var i = 0; i < Stage.ROW; ++i)
             {
@@ -214,6 +235,9 @@ namespace Studio.Game
 
         private IEnumerator<float> ExplodeRocketH()
         {
+            if (guest.type == GemType.RocketV)
+                Stage.Instance.Explode(guest.point);
+
             var offset = (Point)owner;
             for (var i = 0; i < Stage.COL; ++i)
             {

@@ -44,29 +44,83 @@ namespace Studio.Game.Commands
     }
 
     [System.Serializable]
+    public class SwapGemRestore : SwapGem
+    {
+        protected override void OnComplete()
+        {
+            judge.MatchAndExplode();
+            if (!lhs.IsFloor())
+                lhs.Fall();
+            if (!rhs.IsFloor())
+                rhs.Fall();
+        }
+    }
+
+    [System.Serializable]
     public class SwapGem : ICommand
     {
-        public Point lhs, rhs;
+        public Gem lhs, rhs;
 
-        public Subject<Unit> onComplete = new Subject<Unit>();
+        public Judge judge => Stage.Instance.judge;
 
         public async void Run()
         {
-            var g = (Gem)lhs;
-            var q = (Gem)rhs;
-            if (!g || !q || !g.CanMove() || !q.CanMove() || !g.IsAdjacency(q))
+            if (!lhs || !rhs || !lhs.CanMove() || !rhs.CanMove() || !lhs.IsAdjacency(rhs))
                 return;
 
+            if (!Explode(lhs, rhs))
             {
-                using var h1 = g.Lock();
-                using var h2 = q.Lock();
                 var time = Stage.config.swapTime;
-                var s = g.MovePosition(rhs.x, rhs.y, time);
-                var t = q.MovePosition(lhs.x, lhs.y, time);
+                var s = lhs.MovePosition(rhs.x, rhs.y, time);
+                var t = rhs.MovePosition(lhs.x, lhs.y, time);
                 while (s.IsActive() || t.IsActive())
                     await Task.Yield();
             }
-            onComplete.OnNext(Unit.Default);
+            OnComplete();
+        }
+
+        protected virtual void OnComplete()
+        {
+            var ret = false;
+            if (lhs.type > GemType.Max)
+                ret = Stage.Instance.Explode(lhs);
+            if (rhs.type > GemType.Max)
+                ret = Stage.Instance.Explode(rhs) || ret;
+
+            var judge = Stage.Instance.judge;
+            if (!judge.MatchAndExplode() && !ret)
+            {
+                var cmd = new SwapGemRestore
+                {
+                    lhs = rhs,
+                    rhs = lhs
+                };
+                Stage.Instance.commands.AddLast(cmd);
+            }
+        }
+
+        public bool Explode(Gem lhs, Gem rhs)
+        {
+            if (lhs.type > GemType.Max && rhs.type > GemType.Max)
+            {
+                var max = lhs.type > rhs.type ? lhs : rhs;
+                var min = lhs.type <= rhs.type ? lhs : rhs;
+                max.Join(min);
+                min.MovePosition(max).onComplete += () => {
+                    Stage.Instance.Explode(max);
+                };
+                return true;
+            }
+
+            var judge = Stage.Instance.judge;
+            var ret = false;
+            if (lhs.type < GemType.Max)
+                ret = judge.MatchAndExplode(lhs);
+
+            if (rhs.type < GemType.Max)
+                ret = judge.MatchAndExplode(rhs) || ret;
+
+            return ret;
         }
     }
 

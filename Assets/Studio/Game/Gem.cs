@@ -177,6 +177,11 @@ namespace Studio.Game
             return new Point { x = x, y = y };
         }
 
+        public Tween MovePosition(Point p, float time = 0.3f)
+        {
+            return MovePosition(p.x, p.y, time);
+        }
+
         public Tween MovePosition(int x, int y, float time = 0.3f)
         {
             ++Stage.moveCount;
@@ -205,8 +210,8 @@ namespace Studio.Game
 
         public float kExplosionTime = 0.3f;
 
-        public void Join(GemInfo info) =>
-            _explosion.Join(info);
+        public void Join(GemInfo guest) =>
+            _explosion.Join(guest);
 
         public bool Explode()
         {
