@@ -16,7 +16,7 @@ namespace Studio.Game
 
     public enum GemType {
         None, Red, Blue, Yellow, Green, Orange, Purple, White, Max,
-        RocketV, RocketH, TNT, Propeller, LightBall }
+        TNT, RocketV, RocketH, Propeller, LightBall }
     [System.Flags]
     public enum GemEquipment { None };
     public enum Axis { Horizontal, Vetical };
@@ -62,6 +62,19 @@ namespace Studio.Game
                 Refresh(_type);
             }
         }
+
+        public void SetTypeSilently(GemType type)
+        {
+            if (!IsLocked())
+            {
+                _type = type;
+            }
+            else
+            {
+                SLogger.LogWarning($"{this} is locked.");
+            }
+        }
+
         [SerializeField]
         private GemEquipment _equipment;
         public GemEquipment equipment
@@ -177,16 +190,23 @@ namespace Studio.Game
             return new Point { x = x, y = y };
         }
 
-        public Tween MovePosition(int x, int y, float time = 0.3f)
+        public Tween MovePosition(Point p, System.Action action, float time = 0.3f)
+        {
+            return MovePosition(p.x, p.y, action, time);
+        }
+
+        public Tween MovePosition(int x, int y, System.Action action = null, float time = 0.3f)
         {
             ++Stage.moveCount;
             var h = Lock();
             var dest = GetAnchoredPosition(x, y);
 
-            var tween = rectTransform.DOAnchorPos(dest, time).OnComplete(() =>
+            var tween = rectTransform.DOAnchorPos(dest, time).OnKill(() =>
             {
                 --Stage.moveCount;
                 h.Dispose();
+                if (action != null)
+                    action();
                 SetPosition(x, y);
             });
             return tween;
@@ -205,8 +225,8 @@ namespace Studio.Game
 
         public float kExplosionTime = 0.3f;
 
-        public void Join(GemInfo info) =>
-            _explosion.Join(info);
+        public void Join(GemInfo guest) =>
+            _explosion.Join(guest);
 
         public bool Explode()
         {

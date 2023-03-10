@@ -20,42 +20,42 @@ MonoBehaviour:
   - tag: Red
     type: 1
     sprite: {fileID: 0}
-    color: {r: 0.8113208, g: 0, b: 0, a: 1}
+    color: {r: 0.8117647, g: 0, b: 0, a: 1}
   - tag: Blue
     type: 2
     sprite: {fileID: 0}
-    color: {r: 0, g: 0.106034815, b: 0.9150943, a: 1}
+    color: {r: 0, g: 0.105882354, b: 0.9137255, a: 1}
   - tag: Yellow
     type: 3
     sprite: {fileID: 0}
-    color: {r: 0.9056604, g: 0.8171477, b: 0.022783838, a: 1}
+    color: {r: 0.90588236, g: 0.8156863, b: 0.023529412, a: 1}
   - tag: Green
     type: 4
     sprite: {fileID: 0}
-    color: {r: 0, g: 0.8207547, b: 0.083656706, a: 1}
+    color: {r: 0, g: 0.81960785, b: 0.08235294, a: 1}
   - tag: Orange
     type: 5
     sprite: {fileID: 0}
-    color: {r: 1, g: 0.6626363, b: 0, a: 1}
+    color: {r: 1, g: 0.6627451, b: 0, a: 1}
   - tag: Purple
     type: 6
     sprite: {fileID: 0}
-    color: {r: 0.764151, g: 0, b: 0.6581184, a: 1}
+    color: {r: 0.7647059, g: 0, b: 0.65882355, a: 1}
   - tag: White
     type: 7
     sprite: {fileID: 0}
     color: {r: 1, g: 1, b: 1, a: 1}
-  - tag: RocketV
+  - tag: TNT
     type: 9
+    sprite: {fileID: 21300000, guid: b6148fe8938752646b5063ab6fd834de, type: 3}
+    color: {r: 1, g: 1, b: 1, a: 1}
+  - tag: RocketV
+    type: 10
     sprite: {fileID: 21300000, guid: b2e6c93b988801b49bf9b1f4d55cda51, type: 3}
     color: {r: 1, g: 1, b: 1, a: 1}
   - tag: RocketH
-    type: 10
-    sprite: {fileID: 21300000, guid: c250c573825de1640822368899292c8f, type: 3}
-    color: {r: 1, g: 1, b: 1, a: 1}
-  - tag: TNT
     type: 11
-    sprite: {fileID: 21300000, guid: b6148fe8938752646b5063ab6fd834de, type: 3}
+    sprite: {fileID: 21300000, guid: c250c573825de1640822368899292c8f, type: 3}
     color: {r: 1, g: 1, b: 1, a: 1}
   - tag: Propeller
     type: 12
