@@ -11,6 +11,7 @@ namespace Studio.Game
     public struct GemInfo
     {
         public Point point;
+        public Gem gem;
         public GemType type;
 
         public static implicit operator GemInfo(Gem gem)
@@ -18,16 +19,21 @@ namespace Studio.Game
             return new GemInfo
             {
                 point = gem,
-                type = gem.type
+                type = gem.type,
+                gem = gem
             };
+        }
+
+        public static implicit operator Gem(GemInfo info)
+        {
+            return info.gem;
         }
 
         public void SetTypeSilently(GemType type)
         {
-            var g = (Gem)point;
-            if (g)
+            if (gem)
             {
-                g.SetTypeSilently(type);
+                gem.SetTypeSilently(type);
             }
         }
     }
@@ -54,31 +60,37 @@ namespace Studio.Game
 
         MEC.CoroutineHandle handle;
 
-        public bool IsRunning() => handle.IsRunning;
+        private bool _isRunning;
 
-        public void Explode()
+        public bool IsRunning() => _isRunning;
+
+        public async void Explode()
         {
             if (owner.type <= GemType.Max)
                 return;
 
             Stage.Instance.commands.AddLast(this);
+            var h = Stage.Instance.Pause();
 
             switch (owner.type)
             {
                 case GemType.RocketH:
                     {
+                        await Stage.Instance.OnMoveCountZeroAsObservable();
                         handle = ExplodeRocketH().RunCoroutine();
                     }
                     break;
 
                 case GemType.RocketV:
                     {
+                        await Stage.Instance.OnMoveCountZeroAsObservable();
                         handle = ExplodeRocketV().RunCoroutine();
                     }
                     break;
 
                 case GemType.TNT:
                     {
+                        await Stage.Instance.OnMoveCountZeroAsObservable();
                         handle = ExplodeTNT().RunCoroutine();
                     }
                     break;
@@ -91,16 +103,32 @@ namespace Studio.Game
 
                 case GemType.LightBall:
                     {
+                        await Stage.Instance.OnMoveCountZeroAsObservable();
                         handle = ExplodeLightBall().RunCoroutine();
                     }
                     break;
 
                 default:
                     {
-                        var g = (Gem)guest.point;
-                        Stage.Instance.Explode(g);
+                        await Stage.Instance.OnMoveCountZeroAsObservable();
+                        Stage.Instance.Explode(guest);
                     }
                     break;
+            }
+
+            if (handle.IsValid)
+            {
+                _isRunning = true;
+                
+                handle.OnDestroy(() =>
+                {
+                    _isRunning = false;
+                    h.Dispose();
+                });
+            }
+            else
+            {
+                h.Dispose();
             }
         }
 
@@ -127,27 +155,27 @@ namespace Studio.Game
 
         private IEnumerator<float> ExplodePropeller()
         {
-
-            MEC.CoroutineHandle h1, h2 = default;
+            CoroutineHandle h1, h2 = default, h3 = default;
 
             h1 = ExplodePropeller_().RunCoroutine();
             if (guest.type == GemType.Propeller)
             {
                 guest.type = GemType.None;
-                h2 = ExplodePropeller_().RunCoroutine();
-            }
-            else
-            {
                 guest.SetTypeSilently(GemType.None);
+                Stage.Instance.Explode(guest.gem);
+                h2 = ExplodePropeller_().RunCoroutine();
+                h3 = ExplodePropeller_().RunCoroutine();
             }
+            yield return Stage.Instance.OnMoveCountZeroAsObservable().WaitUntilDone();
 
             for (var i = Direction.None + 1; i < Direction.Max; ++i)
             {
                 var g = owner.GetNext(i);
                 if (g) Stage.Instance.Explode(g);
             }
-
-            while (h1.IsRunning || h2.IsRunning)
+            while (h1.IsRunning)
+                yield return 0f;
+            while (h2.IsRunning && h3.IsRunning)
                 yield return 0f;
         }
 
@@ -155,6 +183,7 @@ namespace Studio.Game
         {
             var parent = Stage.Instance.transform;
             var image = Object.Instantiate(owner.image, parent, true);
+            image.transform.localScale = Vector3.one;
             image.SetAlpha(1f);
             for (var i = 0; i < 5; ++i)
             {
@@ -205,7 +234,7 @@ namespace Studio.Game
                 for (var j = 0; j < Stage.ROW; ++j)
                 {
                     var g = Stage.Instance[i, j];
-                    if (!g || g.type != type)
+                    if (!g || g.type != type || g.IsLocked())
                         continue;
                     list.Add(g);
                     g.type = transformType;
@@ -269,12 +298,15 @@ namespace Studio.Game
             var offset = (Point)owner;
             if (guest.type == GemType.RocketH ||
                 guest.type == GemType.RocketV)
-                Stage.Instance.Explode(guest.point);
+            {
+                guest.gem.SetPosition(owner);
+                Stage.Instance.Explode(guest);
+            }
             else if (guest.type == GemType.TNT)
             {
                 lanes = 1;
                 guest.SetTypeSilently(GemType.None);
-                Stage.Instance.Explode(guest.point);
+                Stage.Instance.Explode(guest);
             }
                 
             for (var j = -lanes; j <= lanes; ++j)
@@ -303,12 +335,15 @@ namespace Studio.Game
             var lanes = 0;
             if (guest.type == GemType.RocketV ||
                 guest.type == GemType.RocketH)
-                Stage.Instance.Explode(guest.point);
+            {
+                guest.gem.SetPosition(owner);
+                Stage.Instance.Explode(guest);
+            }
             else if (guest.type == GemType.TNT)
             {
                 lanes = 1;
                 guest.SetTypeSilently(GemType.None);
-                Stage.Instance.Explode(guest.point);
+                Stage.Instance.Explode(guest);
             }
             var offset = (Point)owner;
             for (var j = -lanes; j <= lanes; ++j)

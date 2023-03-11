@@ -6,8 +6,6 @@ namespace Studio.Game
     [System.Serializable]
     public class Automator 
     {
-        Judge judge => Stage.Instance.judge;
-
         private List<Move> moves = new List<Move>();
 
         [SerializeField]
@@ -56,7 +54,7 @@ namespace Studio.Game
 
             elapsed = 0f;
             
-            judge.CollectMove(moves);
+            Stage.judge.CollectMove(moves);
             if (moves.Count == 0)
             {
                 if (!AllFree())

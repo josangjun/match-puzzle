@@ -24,9 +24,11 @@ namespace Studio.Game
         [SerializeField]
         private AppConfig _config;
         public static AppConfig config { get; private set; }
+        [SerializeField]
+        private Lanes lanes = new Lanes();
 
-        private List<Gem>[] lanes = new List<Gem>[COL];
-        
+        public static Lanes Lanes => Instance.lanes;
+
         private Gem[,] _board = new Gem[COL, ROW];
 
         public int GemTypeCount => _config.gemTypeCount;
@@ -53,8 +55,6 @@ namespace Studio.Game
         {
             base.Awake();
             config = _config;
-            for (var i =0; i < lanes.Length; ++i)
-                lanes[i] = new List<Gem>();
         }
 
         // Start is called before the first frame update
@@ -77,6 +77,12 @@ namespace Studio.Game
                 gems.Add(g);
             }
             ArrangePosition(gems);
+
+            _paused.Subscribe(tf => FreeFall.Pause(tf)).AddTo(this);
+            _pauseLock.AsObservable().Subscribe(l =>
+            {
+                _paused.Value = l.count > 0;
+            }).AddTo(this);
 
             Application.targetFrameRate = PlayerPrefs.GetInt("fps", 60);
         }
@@ -163,14 +169,36 @@ namespace Studio.Game
             }
         }
 
-        public static int moveCount
+        public int moveCount
         {
-            get => Instance._moveCount.Value;
-            set => Instance._moveCount.Value = value;
+            get => _moveCount.Value;
+            set => _moveCount.Value = value;
         }
 
         [SerializeField]
         private ReactiveProperty<int> _moveCount = new ReactiveProperty<int>();
+        [SerializeField]
+        private ReactiveProperty<bool> _paused = new ReactiveProperty<bool>();
+
+        public bool paused
+        {
+            get => _paused.Value;
+            set => _paused.Value = value;
+        }
+
+        private CountingLock _pauseLock = new();
+
+        public System.IDisposable Pause()
+        {
+            return _pauseLock.Lock();
+        }
+
+        public System.IObservable<int> OnMoveCountAsObservable() => _moveCount;
+
+        public System.IObservable<int> OnMoveCountZeroAsObservable()
+        {
+            return _moveCount.Where(c => c == 0).Take(1);
+        }
 
         public readonly FocusedGem focusedGem = new FocusedGem();
 
@@ -181,30 +209,10 @@ namespace Studio.Game
             g.onClick.TakeUntilDisable(g).Subscribe(OnClick).AddTo(this);
         }
 
-        public void OnExplosion(List<Point> points)
+        public void OnExplosion()
         {
-            points.Sort((lhs, rhs) =>
-            {
-                var cmp = lhs.x.CompareTo(rhs.x);
-                if (cmp == 0)
-                    cmp = rhs.y.CompareTo(lhs.y);
-                return cmp;
-            });
-
             var cmd = new ProduceGem();
-            int c = 0, x = -1;
-            for (var i = 0; i < points.Count; ++i)
-            {
-                var point = points[i];
-                if (x != point.x)
-                    c = 1;
-                else ++c;
-                cmd.infoList.Add(new GemInfo
-                {
-                    point = new Point(point.x, -1 * c++),
-                    type = gemFactory.NewRandomGemType()
-                });
-            }
+            
             commands.AddLast(cmd);
         }
 
@@ -227,7 +235,7 @@ namespace Studio.Game
 
         private void OnPress(Gem g)
         {
-            SLogger.Log(g);
+            SLogger.Log($"{g}", g);
             if (focusedGem.val == null)
             {
                 focusedGem.val = g;
@@ -287,7 +295,6 @@ namespace Studio.Game
             if (gems.Count == 0)
                 return 0;
 
-            var list = ListPool<Point>.Get();
             var count = 0;
             foreach (var g in gems)
             {
@@ -296,9 +303,6 @@ namespace Studio.Game
                 if (g.IsLocked())
                     continue;
 
-                if (!list.Contains(p))
-                    list.Add(p);
-                
                 if (!g.Explode())
                     continue;
 
@@ -308,8 +312,7 @@ namespace Studio.Game
                     {
                         if (0 == --count)
                         {
-                            OnExplosion(list);
-                            ListPool<Point>.Release(list);
+                            OnExplosion();
                         }
                     });
             }
@@ -318,40 +321,25 @@ namespace Studio.Game
 
         public readonly LinkedList<ICommand> commands = new LinkedList<ICommand>();
 
-        public readonly BatchJob job = new BatchJob();
+        private readonly BatchJob _job = new BatchJob();
 
-        public readonly Judge judge = new Judge();
+        public static BatchJob job => Instance._job;
+
+        private readonly Judge _judge = new Judge();
+
+        public static Judge judge => Instance._judge;
 
         [SerializeField]
         public Automator automator = new Automator();
 
         public void Update()
         {
-            automator.Update();
-            LaneTick();
-        }
-
-        private void LaneTick()
-        {
-            for (var i = 0; i < lanes.Length; ++i)
+            if (!_paused.Value)
             {
-                var lane = lanes[i];
-
-                if (lane.Count == 0)
-                    continue;
-
-                var y = -1;
-                lane[0].SetPosition(i, -1);
-                if (lane[0].GetNext(Direction.Down))
-                    continue;
-                for (var j = 0; j < lane.Count; ++j)
-                {
-                    var g = lane[j];
-                    g.SetPosition(i, y--);
-                    g.Fall();
-                }
-                lane.Clear();
+                automator.Update();
+                lanes.Update();
             }
+            FreeFall.Update();
         }
 
         // Update is called once per frame
@@ -410,7 +398,7 @@ namespace Studio.Game
         [ContextMenu("Dump")]
         public string Dump()
         {
-            var gems = new List<Gem>();
+            var gems = ListPool<Gem>.Get();
             var sb = new System.Text.StringBuilder();
             for (var i = 0; i < ROW; ++i)
             {
@@ -430,6 +418,7 @@ namespace Studio.Game
                 sb.AppendLine();
             }
             SortGems(gems);
+            ListPool<Gem>.Release(gems);
             var txt = sb.ToString();
             return txt;
         }
@@ -468,6 +457,11 @@ namespace Studio.Game
             }
         }
 
+        private void OnDisable()
+        {
+            hMatch.IsRunning = false;
+        }
+
         private MEC.CoroutineHandle hMatch;
 
         public void MatchAndExplode()
@@ -477,6 +471,10 @@ namespace Studio.Game
                 yield return MEC.Timing.WaitForOneFrame;
                 judge.MatchAndExplode();
             }
+#if UNITY_EDITOR
+            if (!this)
+                return;
+#endif
             hMatch = MEC.Timing.RunCoroutineSingleton(M_(), hMatch, MEC.SingletonBehavior.Overwrite);
         }
     }

@@ -11,31 +11,46 @@ namespace Studio.Game.Commands
     [System.Serializable]
     public class ProduceGem : ICommand
     {
-        public List<GemInfo> infoList;
-
-        public ProduceGem()
-        {
-            infoList = ListPool<GemInfo>.Get();
-        }
-        
         public void Run()
         {
+            var infoList = ListPool<GemInfo>.Get();
+            var gemFactory = Stage.Instance.gemFactory;
+            for (var i = 0; i < Stage.COL; ++i)
+            {
+                int vacancy = -Stage.Lanes[i].Count;
+                for (var j = 0; j < Stage.ROW; ++j)
+                {
+                    if (Stage.Instance[i, j])
+                        continue;
+                    ++vacancy;
+                }
+                int m = 1;
+                for (var j = 0; j < vacancy; ++j)
+                {
+                    infoList.Add(new GemInfo
+                    {
+                        point = new Point(i, -1 * m++),
+                        type = gemFactory.NewRandomGemType()
+                    });
+                }
+            }
+
             for (var index = 0; index < infoList.Count; ++index)
             {
                 var info = infoList[index];
                 var point = info.point;
                 var type = info.type;
-                for (var i = Stage.ROW - 2; i >= 0; --i)
-                {
-                    var g = Stage.Instance[point.x, i];
-                    if (g == null || g.IsFloor())
-                        continue;
-                    g.Fall();
-                }
+                //for (var i = Stage.ROW - 2; i >= 0; --i)
+                //{
+                //    var g = Stage.Instance[point.x, i];
+                //    if (g == null || g.IsFloor() || g.IsFalling())
+                //        continue;
+                //    g.Fall();
+                //}
 
                 {
-                    var g = Stage.Instance.gemFactory.Produce(type);
-                    g.SetPosition(point.x, - 1);
+                    var g = gemFactory.Produce(type);
+                    g.SetPosition(point.x, -1);
                     Stage.Instance.AddLane(point.x, g);
                 }
             }
@@ -61,7 +76,7 @@ namespace Studio.Game.Commands
     {
         public Gem lhs, rhs;
 
-        public Judge judge => Stage.Instance.judge;
+        public Judge judge => Stage.judge;
 
         public async void Run()
         {
@@ -79,15 +94,21 @@ namespace Studio.Game.Commands
             }
         }
 
+        private bool ExplodeSpecial(Gem gem)
+        {
+            if (gem.type < GemType.Max)
+                return false;
+            
+            if (Stage.Instance.Explode(gem) == false)
+                Stage.Instance.Explode(gem);
+            return true;
+        }
+
         protected virtual void OnComplete()
         {
-            var ret = false;
-            if (lhs.type > GemType.Max)
-                ret = Stage.Instance.Explode(lhs);
-            if (rhs.type > GemType.Max)
-                ret = Stage.Instance.Explode(rhs) || ret;
+            var ret = ExplodeSpecial(lhs) || ExplodeSpecial(rhs);
 
-            var judge = Stage.Instance.judge;
+            var judge = Stage.judge;
             if (!judge.MatchAndExplode() && !ret)
             {
                 var cmd = new SwapGemRestore
@@ -119,7 +140,7 @@ namespace Studio.Game.Commands
                 return true;
             }
 
-            var judge = Stage.Instance.judge;
+            var judge = Stage.judge;
             var ret = false;
             if (lhs.type < GemType.Max)
                 ret = judge.MatchAndExplode(lhs);
@@ -149,8 +170,9 @@ namespace Studio.Game.Commands
                 var g = (Gem)p;
                 if (g == null)
                     continue;
-                ++count;
-                g.Explode();
+                
+                if (g.Explode())
+                    ++count;
                 g.onExplosion.Take(1).
                     Subscribe(_ =>
                     {

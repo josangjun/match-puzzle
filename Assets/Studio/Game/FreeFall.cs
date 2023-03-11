@@ -3,21 +3,16 @@ using MEC;
 using Studio.Framework;
 using System.Collections;
 using System.Collections.Generic;
-using System.Runtime.InteropServices.WindowsRuntime;
 using UnityEngine;
 using UniRx;
+using UnityEngine.Pool;
+using System.Threading.Tasks;
 
 namespace Studio.Game
 {
     [System.Serializable]
     public class FreeFall
     {
-        private static int count
-        {
-            get => Stage.moveCount;
-            set => Stage.moveCount = value;
-        }
-
         private const float Gravity = -9.81f;
         public Vector2 start;
         
@@ -30,75 +25,123 @@ namespace Studio.Game
             this.owner = owner;
         }
         
-        const int BottomY = Stage.ROW - 1;
+        const int LAST_ROW = Stage.ROW - 1;
 
-        private Gem bottom;
         public Point endPoint;
 
         public Point FindEndPoint()
         {
             endPoint = (Point)owner.rectTransform.anchoredPosition;
-            bottom = null;
             
-            while (true)
-            {
-                var next = endPoint.Move(Direction.Down);
-                bottom = (Gem)next;
-                if (bottom || next.y > BottomY)
-                    break;
+            var next = endPoint.Move(Direction.Down);
+            var bottom = (Gem)next;
+            if (!bottom && next.y <= LAST_ROW)
                 endPoint = next;
-            }
-
+            
             owner.SetPosition(endPoint, false);
             
             return endPoint;
         }
 
-        public bool keepWaiting => handle.IsRunning;
+        public bool keepWaiting { get; private set; }
 
-        private MEC.CoroutineHandle handle;
+        private System.Action onComplete;
 
         public void Start(System.Action action)
         {
-            if (handle.IsRunning)
+            if (keepWaiting)
                 return;
-            ++count;
-            handle = Tick_().RunCoroutine();
-            handle.OnDestroy(() =>
+
+            Enter();
+            onComplete = action;
+        }
+
+        private readonly static List<FreeFall> falls = new();
+
+        public static void Update()
+        {
+            var indices = ListPool<int>.Get();
+            for (var i = 0; i < falls.Count; ++i)
             {
-                --count;
-                if (action != null)
-                    action();
-            });
+                var f = falls[i];
+                if (!f.Tick())
+                {
+                    f.Exit();
+                    indices.Add(i);
+                }
+            }
+            for (var i = indices.Count - 1; i >= 0; --i)
+            {
+                var index = indices[i];
+                falls.RemoveAt(index);
+            }
+            ListPool<int>.Release(indices);
         }
 
         public void Stop()
         {
-            handle.IsRunning = false;
+            if (Stage.Instance)
+                Exit();
+            onComplete = null;
         }
 
-        private IEnumerator<float> Tick_()
+        private void Enter()
         {
+            ++Stage.Instance.moveCount;
             start = owner.rectTransform.anchoredPosition;
             elapsed = 0f;
             FindEndPoint();
+            falls.Add(this);
+            keepWaiting = true;
+        }
 
-            while (Tick())
-                yield return 0f;
+        private void Exit()
+        {
+            if (!keepWaiting)
+                return;
+            keepWaiting = false;
+            
             owner.touchTime = Time.time;
+            
+            if (onComplete != null)
+            {
+                onComplete();
+                onComplete = null;
+            }
 
-            if (owner.y < 0)
+            if (owner.y < 0 && !paused)
             {
                 SLogger.LogWarning($"invalid position:{owner}", owner);
-                WatchVacancy().RunCoroutine();
+                //owner.Return();
+            }
+            --Stage.Instance.moveCount;
+        }
+
+        private static bool paused;
+
+        public static void Pause(bool tf)
+        {
+            paused = tf;
+            if (!paused)
+            {
+                for (var i = 0; i < Stage.COL; ++i)
+                {
+                    for (var j = 0; j < Stage.ROW; ++j)
+                    {
+                        var g = Stage.Instance[i, j];
+                        if (g && !g.IsFloor())
+                            g.Fall();
+                    }
+                }
             }
         }
 
+        /*
         private IEnumerator<float> WatchVacancy()
         {
             do
                 yield return 0f;
-            while (count > 0);
+            while (Stage.moveCount > 0);
             
             while (owner.isActiveAndEnabled)
             {
@@ -114,16 +157,16 @@ namespace Studio.Game
                         }
                     }
                 }
-                if (count == 0 && owner.IsFloor())
+                if (Stage.moveCount == 0 && owner.IsFloor())
                     break;
                 yield return 0f;
             }
             owner.Return();
         }
-
+        */
         public bool Tick()
         {
-            if (!owner || !owner.isActiveAndEnabled)
+            if (!owner || !owner.isActiveAndEnabled || !keepWaiting)
             {
                 return false;
             }
@@ -139,8 +182,8 @@ namespace Studio.Game
             if (endPos.y >= p.y)
             {
                 owner.rectTransform.anchoredPosition = endPos;
-                
-                if (IsFloor())
+
+                if (paused || IsFloor())
                 {
                     elapsed = 0f;
                     owner.SetPosition(endPoint);
@@ -155,7 +198,7 @@ namespace Studio.Game
             }
             else
             {
-                bottom = owner.GetNext(Direction.Down);
+                var bottom = owner.GetNext(Direction.Down);
                 if (bottom)
                 {
                     var limit = bottom.rectTransform.anchoredPosition.y + Gem.Size.y;
@@ -171,7 +214,7 @@ namespace Studio.Game
             return true;
         }
 
-        public bool IsFloor()
+        private bool IsFloor()
         {
             var pt = (Point)owner;
             var ret = true;

@@ -340,7 +340,7 @@ MonoBehaviour:
       m_SubObjectName: 
       m_SubObjectType: 
       m_EditorAssetChanged: 0
-    localPosition: {x: -291.7286, y: 621.8, z: 0}
+    localPosition: {x: -291.95172, y: 621.8, z: 0}
     localRotation: {x: -0, y: 0, z: 0}
     localScale: {x: 1, y: 1, z: 1}
     rectTransform: {fileID: 2044327809}
@@ -797,6 +797,28 @@ MonoBehaviour:
             m_FloatArgument: 0
             m_StringArgument: White
             m_BoolArgument: 0
+          m_CallState: 2
+    ordinal: 0
+  - name: 18.Z, TogglePause()
+    key: 122
+    modifiers:
+      alt: 0
+      control: 0
+      shift: 0
+    evt:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 1058663903}
+          m_TargetAssemblyTypeName: Studio.Game.StageCheat, Studio.Game
+          m_MethodName: TogglePause
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 7
+            m_FloatArgument: 0
+            m_StringArgument: White
+            m_BoolArgument: 1
           m_CallState: 2
     ordinal: 0
 --- !u!1 &1058663899

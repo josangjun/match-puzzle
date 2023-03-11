@@ -32,6 +32,17 @@ namespace Studio.Framework
             action?.Invoke();
         }
 
+        public static float WaitUntilDone<T>(this System.IObservable<T> obs)
+        {
+            IEnumerator<float> Tick_()
+            {
+                var e = obs.ToYieldInstruction();
+                while (e.IsDone == false)
+                    yield return Timing.WaitForOneFrame;
+            }
+            return Tick_().WaitUntilDone();
+        }
+
         public static System.IObservable<UniRx.Unit> ToObservable(this Coroutine coroutine)
         {
             return new YieldWhile(coroutine).ToObservable();

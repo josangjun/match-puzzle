@@ -33,6 +33,8 @@ namespace Studio.Game
         [System.NonSerialized, NaughtyAttributes.ShowNonSerializedField]
         public int x, y;
 
+        public int key => (x << 16) | y;
+
         [SerializeField]
         private Image _image;
         public Image image => _image;
@@ -68,10 +70,6 @@ namespace Studio.Game
             if (!IsLocked())
             {
                 _type = type;
-            }
-            else
-            {
-                SLogger.LogWarning($"{this} is locked.");
             }
         }
 
@@ -114,12 +112,13 @@ namespace Studio.Game
         
         public void OnDrag(PointerEventData eventData)
         {
-            onDrag.OnNext(eventData);
+            if (ReferenceEquals(eventData.pointerDrag, gameObject))
+                onDrag.OnNext(eventData);
         }
 
         public void OnPointerDown(PointerEventData eventData)
         {
-            touchTime = Time.frameCount;
+            touchTime = Time.time;
             onPress.OnNext(this);
         }
 
@@ -197,13 +196,15 @@ namespace Studio.Game
 
         public Tween MovePosition(int x, int y, System.Action action = null, float time = 0.3f)
         {
-            ++Stage.moveCount;
+            if (IsLocked())
+                return default;
+            ++Stage.Instance.moveCount;
             var h = Lock();
             var dest = GetAnchoredPosition(x, y);
 
             var tween = rectTransform.DOAnchorPos(dest, time).OnKill(() =>
             {
-                --Stage.moveCount;
+                --Stage.Instance.moveCount;
                 h.Dispose();
                 if (action != null)
                     action();
@@ -228,9 +229,26 @@ namespace Studio.Game
         public void Join(GemInfo guest) =>
             _explosion.Join(guest);
 
+        [System.Serializable]
+        private class StackTrace
+        {
+            [SerializeField]
+            private string _str;
+            [SerializeField]
+            private int _frame;
+            [System.Diagnostics.Conditional("UNITY_EDITOR")]
+            public void Mark()
+            {
+                _str = System.Environment.StackTrace;
+                _frame = Time.frameCount;
+            }
+        }
+        [SerializeField]
+        private StackTrace _disable;
+
         public bool Explode()
         {
-            if (IsLocked())
+            if (IsLocked() || y < 0)
                 return false;
 
             var h = Lock();
@@ -301,7 +319,12 @@ namespace Studio.Game
 
         protected void OnDisable()
         {
+#if UNITY_EDITOR
+            if (!Application.isPlaying)
+                return;
+#endif
             _freeFall.Stop();
+            _disable.Mark();
         }
 
         public Gem GetNext(Direction dir)

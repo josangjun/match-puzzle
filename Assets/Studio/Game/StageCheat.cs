@@ -116,8 +116,8 @@ namespace Studio.Game
         [ConsoleCommand]
         public void HasMove()
         {
-            var match = Stage.Instance.judge.Match();
-            var moves = Stage.Instance.judge.CollectMove();
+            var match = Stage.judge.Match();
+            var moves = Stage.judge.CollectMove();
             SLogger.Log($"hasMove:{moves.ToJson()}, match:{match}");
         }
 
@@ -174,6 +174,13 @@ namespace Studio.Game
         {
             BuildInfo();
             DebugConsole.Instance.EmailLog();
+        }
+
+        [ConsoleCommand]
+        public void TogglePause()
+        {
+            var tf = Stage.Instance.paused;
+            Stage.Instance.paused = !tf;
         }
 #endif
     }
