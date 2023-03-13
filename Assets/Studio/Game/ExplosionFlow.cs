@@ -213,7 +213,7 @@ namespace Studio.Game
                     midPoint, destPoint
                 }, dist * 0.1f, PathType.CatmullRom, PathMode.Sidescroller2D);
                 tween.SetEase(Ease.InOutQuad);
-                while (tween.IsActive())
+                for (var e = 0f; e < 3f && tween.IsActive(); e += Time.deltaTime)
                     yield return 0f;
                 var g = (Gem)pt1;
                 if (g && !g.IsLocked())

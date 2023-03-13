@@ -40,7 +40,7 @@ namespace Studio.Game
             for (var j = 0; j < _list.Count; ++j)
             {
                 var g = _list[j];
-                if (g.y >= 0)
+                if (g.y >= 0 || !g.isActiveAndEnabled)
                 {
                     _list.RemoveAt(j--);
                     continue;

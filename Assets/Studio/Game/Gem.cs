@@ -246,6 +246,8 @@ namespace Studio.Game
         [SerializeField]
         private StackTrace _disable;
 
+        private CoroutineHandle hExplode;
+
         public bool Explode()
         {
             if (IsLocked() || y < 0)
@@ -253,8 +255,8 @@ namespace Studio.Game
 
             var h = Lock();
             _explosion.Explode();
-            var c = Explode_().RunCoroutine();
-            c.OnDestroy(() => h.Dispose());
+            hExplode = Explode_().RunCoroutineSingleton(hExplode, SingletonBehavior.Abort);
+            hExplode.OnDestroy(() => h.Dispose());
             
             return true;
         }
@@ -323,6 +325,7 @@ namespace Studio.Game
             if (!Application.isPlaying)
                 return;
 #endif
+            hExplode.IsRunning = false;
             _freeFall.Stop();
             _disable.Mark();
         }

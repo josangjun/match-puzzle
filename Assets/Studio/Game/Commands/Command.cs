@@ -11,6 +11,8 @@ namespace Studio.Game.Commands
     [System.Serializable]
     public class ProduceGem : ICommand
     {
+        public static readonly ProduceGem Default = new ProduceGem();
+
         public void Run()
         {
             var infoList = ListPool<GemInfo>.Get();

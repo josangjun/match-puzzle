@@ -211,9 +211,7 @@ namespace Studio.Game
 
         public void OnExplosion()
         {
-            var cmd = new ProduceGem();
-            
-            commands.AddLast(cmd);
+            commands.AddLast(ProduceGem.Default);
         }
 
         private void OnDrag(PointerEventData eventData)

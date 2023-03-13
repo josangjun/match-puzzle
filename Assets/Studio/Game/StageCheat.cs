@@ -182,6 +182,12 @@ namespace Studio.Game
             var tf = Stage.Instance.paused;
             Stage.Instance.paused = !tf;
         }
+
+        [ConsoleCommand]
+        public void ProduceGem()
+        {
+            Stage.Instance.commands.AddLast(Commands.ProduceGem.Default);
+        }
 #endif
     }
 }
