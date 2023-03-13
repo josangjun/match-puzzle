@@ -192,8 +192,8 @@ namespace Studio.Game
             image.SetAlpha(1f);
             for (var i = 0; i < 5; ++i)
             {
-                Point pt1;
-                while (true)
+                Point pt1 = new Point(-1, -1);
+                for (var e = 0f; e < 3f; e += Time.deltaTime)
                 {
                     pt1 = GetAvailableGem();
                     var diff = ((Vector2)pt1 - (Vector2)(Point)owner).magnitude;
@@ -201,6 +201,8 @@ namespace Studio.Game
                         break;
                     yield return 0f;
                 }
+                if (pt1.x < 0)
+                    break;
                 var pt2 = Point.Random(pt1, owner);
                 var midPoint = parent.TransformPoint(pt2);
                 var destPoint = parent.TransformPoint(pt1);
