@@ -226,7 +226,7 @@ namespace Studio.Game
 
         public float kExplosionTime = 0.3f;
 
-        public void Join(GemInfo guest) =>
+        public void Join(Gem guest) =>
             _explosion.Join(guest);
 
         [System.Serializable]

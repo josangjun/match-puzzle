@@ -94,19 +94,19 @@ namespace Studio.Game.Commands
             }
         }
 
-        private bool ExplodeSpecial(Gem gem)
+        private bool ExplodeSpecial(Gem host, Gem guest)
         {
-            if (gem.type < GemType.Max)
+            host.Join(guest);
+            if (host.type < GemType.Max)
                 return false;
             
-            if (Stage.Instance.Explode(gem) == false)
-                Stage.Instance.Explode(gem);
+            Stage.Instance.Explode(host);
             return true;
         }
 
         protected virtual void OnComplete()
         {
-            var ret = ExplodeSpecial(lhs) || ExplodeSpecial(rhs);
+            var ret = ExplodeSpecial(lhs, rhs) || ExplodeSpecial(rhs, lhs);
 
             var judge = Stage.judge;
             if (!judge.MatchAndExplode() && !ret)
@@ -149,46 +149,6 @@ namespace Studio.Game.Commands
                 ret = judge.MatchAndExplode(rhs) || ret;
 
             return ret;
-        }
-    }
-
-    [System.Serializable]
-    public class Explosion : ICommand
-    {
-        public List<Point> points = new List<Point>();
-
-        public Subject<List<Point>> onComplete = new Subject<List<Point>>();
-
-        public int count;
-
-        public void Run()
-        {
-            //SLogger.LogEditor("explode:"+points.Select(arg => (Gem)arg).Where(arg => arg).Select(arg => arg.ToString()).ToArray().ToJson());
-
-            foreach (var p in points)
-            {
-                var g = (Gem)p;
-                if (g == null)
-                    continue;
-                
-                if (g.Explode())
-                    ++count;
-                g.onExplosion.Take(1).
-                    Subscribe(_ =>
-                    {
-                        if (0 == --count)
-                            onComplete.OnNext(points);
-                    });
-            }
-        }
-    }
-
-    [System.Serializable]
-    public class PrepareBoard : ICommand
-    {
-        public void Run()
-        {
-
         }
     }
 }

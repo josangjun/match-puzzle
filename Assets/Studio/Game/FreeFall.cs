@@ -112,7 +112,7 @@ namespace Studio.Game
             if (owner.y < 0 && !paused)
             {
                 SLogger.LogWarning($"invalid position:{owner}", owner);
-                //owner.Return();
+                owner.Return();
             }
             --Stage.Instance.moveCount;
         }

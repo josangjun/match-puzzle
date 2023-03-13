@@ -28,10 +28,13 @@ namespace Studio.Game
                 return;
 
             var top = Stage.Instance[x, 0];
-            if (top && top.IsFloor())
+            if (top)
             {
-                _list.Remove(top);
-                return;
+                if (top.IsFloor())
+                {
+                    _list.Remove(top);
+                    return;
+                }
             }
 
             for (var j = 0; j < _list.Count; ++j)
@@ -69,9 +72,6 @@ namespace Studio.Game
             for (var i = 0; i < _lanes.Length; ++i)
             {
                 var lane = _lanes[i];
-
-                if (lane.Count == 0)
-                    continue;
 
                 lane.Update();
             }

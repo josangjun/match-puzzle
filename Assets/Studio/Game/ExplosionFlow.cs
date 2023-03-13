@@ -53,7 +53,7 @@ namespace Studio.Game
             });
         }
 
-        public void Join(GemInfo guest)
+        public void Join(Gem guest)
         {
             this.guest = guest;
         }
@@ -165,6 +165,11 @@ namespace Studio.Game
                 Stage.Instance.Explode(guest.gem);
                 h2 = ExplodePropeller_().RunCoroutine();
                 h3 = ExplodePropeller_().RunCoroutine();
+            }
+            else if (guest.type > GemType.Max)
+            {
+                guest.SetTypeSilently(GemType.None);
+                Stage.Instance.Explode(guest);
             }
             yield return Stage.Instance.OnMoveCountZeroAsObservable().WaitUntilDone();
 
